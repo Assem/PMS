@@ -1,29 +1,19 @@
 ###################
-What is CodeIgniter
+What is PMS
 ###################
 
-CodeIgniter is an Application Development Framework - a toolkit - for people
-who build web sites using PHP. Its goal is to enable you to develop projects
-much faster than you could if you were writing code from scratch, by providing
-a rich set of libraries for commonly needed tasks, as well as a simple
-interface and logical structure to access these libraries. CodeIgniter lets
-you creatively focus on your project by minimizing the amount of code needed
-for a given task.
+PMS stands for Pool Management System. This is an application that help compagnies create Pools and save results so that they can use them to take decisions.
 
 *******************
 Release Information
 *******************
 
-This repo contains in-development code for future releases. To download the
-latest stable release please visit the `CodeIgniter Downloads
-<http://www.codeigniter.com/download>`_ page.
+This application is in its first development stage.
 
 **************************
 Changelog and New Features
 **************************
 
-You can find a list of all changes for each release in the `user
-guide change log <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/source/changelog.rst>`_.
 
 *******************
 Server Requirements
@@ -53,17 +43,3 @@ agreement <https://github.com/bcit-ci/CodeIgniter/blob/develop/user_guide_src/so
 Resources
 *********
 
--  `User Guide <http://www.codeigniter.com/docs>`_
--  `Language File Translations <https://github.com/bcit-ci/codeigniter3-translations>`_
--  `Community Forums <http://forum.codeigniter.com/>`_
--  `Community Wiki <https://github.com/bcit-ci/CodeIgniter/wiki>`_
--  `Community IRC <http://www.codeigniter.com/irc>`_
-
-Report security issues to our `Security Panel <mailto:security@codeigniter.com>`_, thank you.
-
-***************
-Acknowledgement
-***************
-
-The CodeIgniter team would like to thank EllisLab, all the
-contributors to the CodeIgniter project and you, the CodeIgniter user.
