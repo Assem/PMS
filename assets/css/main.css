@@ -1,0 +1,12 @@
+.modal-header {
+	background-image: url('../img/yessir-background.jpg');
+	background-repeat: no-repeat;
+	background-size: 100px;
+	background-position: center;
+}
+
+.modal-footer {   border-top: 0px; }
+
+.modal {
+    overflow-y: scroll;
+}
