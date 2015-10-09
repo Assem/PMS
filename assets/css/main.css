@@ -10,3 +10,12 @@
 .modal {
     overflow-y: scroll;
 }
+
+.btn-primary {
+	background-color: gray;
+	border-color: gray;
+}
+
+.navbar-inverse .navbar-nav > .logout > a {
+  color: red;
+}

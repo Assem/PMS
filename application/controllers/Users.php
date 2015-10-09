@@ -13,6 +13,29 @@ class Users extends MY_Controller
     {
         parent::__construct();
     }
+    
+    public function index() {
+    	if( $this->require_role('admin') ) {
+    		
+    		$query = $this->db->get(config_item('user_table'), 10);
+    		//print_r($query->result());
+    		//exit;
+    		
+	    	$data = array(
+    			'content' => 'users/index',
+	    		'js_to_load' => array('users.js')
+	    	);
+	    	
+	    	$this->load->view('global/layout', $data);
+    	}
+    	
+    	/*
+    	 * <script src="{{ asset('bundles/chabecore/js/jquery.dataTables.min.js') }}"></script>
+			<script src="{{ asset('bundles/chabecore/js/dataTables.responsive.js') }}"></script>
+			<script src="{{ asset('bundles/chabecore/js/dataTables.bootstrap.min.js') }}"></script>
+			<script src="{{ asset('bundles/chabecore/js/plugins/jquery.dataTables.columnFilter.js') }}"></script>
+    	 */
+    }
 
     /**
      * Most minimal user creation. You will of course make your

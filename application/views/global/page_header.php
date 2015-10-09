@@ -7,32 +7,32 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 	<title>PMS Login</title>
 	
-	<link rel="stylesheet" href="<?php echo base_url("assets/css/bootstrap.css"); ?>" />
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/bootstrap.css"); ?>" />
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link rel="stylesheet" href="<?php echo base_url("assets/css/main.css"); ?>" />
+	
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/dataTables.bootstrap.css"); ?>" />
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/dataTables.responsive.css"); ?>" />
+	
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/jquery-ui.css"); ?>" />
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/jquery-ui-timepicker-addon.css"); ?>" />
+			
+	<style>
+    body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    }
+    </style>
 </head>
 <body>
-<!-- <div id="menu">
-	<ul>
-		<li><?php
-			if( isset( $auth_user_id ) ){
-				echo secure_anchor('examples/logout','Logout');
-			}else{
-				echo secure_anchor( LOGIN_PAGE . '?redirect=examples','Login');
-			}
-		?></li>
-		<li>
-			<?php echo secure_anchor('examples/optional_login_test','Optional Login'); ?>
-		</li>
-		<li>
-			<?php echo secure_anchor('examples/simple_verification','Simple Verification'); ?>
-		</li>
-	</ul>
-</div>
- -->
-<?php
+	<?php 
+	if(isset($auth_role) && $auth_role == 'admin') {
+		$this->load->view ( 'global/menu' );
+	}
+	?>
+	<?php
 
 /* End of file page_header.php */
 /* Location: /views/examples/page_header.php */
