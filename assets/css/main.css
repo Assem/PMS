@@ -1,3 +1,11 @@
+html, body {
+    /*height: 100%;*/
+}
+
+body {
+  /*background-color: red;*/
+}
+
 .modal-header {
 	background-image: url('../img/yessir-background.jpg');
 	background-repeat: no-repeat;
@@ -18,4 +26,34 @@
 
 .navbar-inverse .navbar-nav > .logout > a {
   color: red;
+}
+
+.navbar-inverse {
+	background-color: transparent;
+	border: none;
+}
+
+.container {
+	/*background-color: white;
+	border-color: #080808;
+	height: 100%;*/
+}
+
+.navbar-inverse .container {
+	background-color: #222;
+	border-color: #080808;
+}
+
+.pmsFilterTHeader .form-control {
+	width: 100%;
+}
+
+.pmsTHeader {
+	background: black;
+	color: white;
+}
+
+h1.pmsH1 {
+	border-bottom: 1px solid;
+	margin-bottom: 30px;
 }

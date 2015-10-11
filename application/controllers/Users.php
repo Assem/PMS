@@ -20,10 +20,15 @@ class Users extends MY_Controller
     		$query = $this->db->get(config_item('user_table'), 10);
     		//print_r($query->result());
     		//exit;
+    		$tt = $query->result();
+    		//echo $this->authentication->roles[$tt[0]->user_level];
+    		//exit;
+    		//
     		
 	    	$data = array(
     			'content' => 'users/index',
-	    		'js_to_load' => array('users.js')
+	    		'js_to_load' => array('users.js'),
+	    		'users' => $query->result()
 	    	);
 	    	
 	    	$this->load->view('global/layout', $data);

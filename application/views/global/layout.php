@@ -2,7 +2,7 @@
 	$this->load->view ( 'global/page_header' );
 ?>
 <!-- Page Content -->
-<div class="container">
+<div class="container" style="padding-top: 10px;">
 	<div class="row">
 		<div class="col-lg-12 text-center">
 			<?php
