@@ -1,5 +1,5 @@
 <?php
-	$this->load->view ( 'global/page_header' );
+	$this->load->view ( 'global/page_header', array('title' => $title) );
 ?>
 <!-- Page Content -->
 <div class="container" style="padding-top: 10px;">

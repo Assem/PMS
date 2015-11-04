@@ -55,5 +55,49 @@ body {
 
 h1.pmsH1 {
 	border-bottom: 1px solid;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
+}
+
+table.view-form tr td, table.view-form tr th {
+	padding: 8px;
+	text-align: left;
+}
+
+table.view-form {
+	width: 100%;
+}
+
+table.edit-form tr td, table.edit-form tr th {
+	padding: 8px;
+	text-align: left;
+}
+
+table.edit-form input {
+	width: 100%;
+}
+
+table.edit-form {
+	width: 100%;
+}
+
+.view-menu {
+	text-align: right;
+}
+
+.action-icon {
+	margin-right: 5px;
+}
+
+.submit-button {
+	width: 170px;
+    padding: 15px 0 15px 0;
+    margin-top: 15px;
+    font-size: 20px;
+    color: #eee;
+    background-color: black;
+    text-align: center;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;	
+    border: 0;
 }

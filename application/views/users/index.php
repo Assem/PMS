@@ -5,22 +5,22 @@
 			<tr role="row" class="pmsFilterTHeader">
 				<th>ID</th>
 				<th>Nom</th>
-				<th>Libellé</th>
-				<th>De</th>
-				<th>A</th>
-				<th>Client</th>
+				<th>Prénom</th>
+				<th>Email</th>
+				<th>GSM</th>
+				<th>Rôle</th>
 				<th>Actif</th>
-				<th>Actions</th>
+				<th></th>
 			</tr>
 			<tr role="row" class="pmsTHeader">
 				<th>ID</th>
 				<th>Nom</th>
-				<th>Libellé</th>
-				<th>De</th>
-				<th>A</th>
-				<th>Client</th>
+				<th>Prénom</th>
+				<th>Email</th>
+				<th>GSM</th>
+				<th>Rôle</th>
 				<th>Actif</th>
-				<th>Actions</th>
+				<th style="max-width: 70px">Actions</th>
 			</tr>
 		</thead>
 		<tbody id="tbody">
@@ -28,16 +28,17 @@
 				<?php foreach($users as $user): ?>
 					<tr style="border-color: gray;">
 						<td><?php echo $user->user_id; ?></td>
-						<td><?php echo $user->user_name; ?></td>
+						<td><?php echo $user->pms_user_last_name; ?></td>
+						<td><?php echo $user->pms_user_first_name; ?></td>
 						<td><?php echo $user->user_email; ?></td>
-						<td><?php echo $user->user_last_login; ?></td>
-						<td><?php echo $user->user_last_login; ?></td>
-						<td><?php echo $user->user_level; ?></td>
+						<td><?php echo $user->pms_user_gsm; ?></td>
+						<td><?php echo ucfirst($this->authentication->roles[$user->user_level]); ?></td>
 						<td>
-							<?php echo $user->user_banned; ?>
+							<?php echo ($user->user_banned)? 0:1; ?>
 						</td>
 						<td>
-							</td>
+							<?php drawActionsMenu('users', $user->user_id); ?>
+						</td>
 					</tr>
 				<?php endforeach;?>
 		</tbody>

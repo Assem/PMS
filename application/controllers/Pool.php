@@ -21,7 +21,8 @@ class Pool extends MY_Controller
 			}
 			
 			$data = array(
-				'content' => 'pools/index'
+				'content' => 'pools/index',
+				'title' => "Liste des sondages"
 			);
 			
 			$this->load->view('global/layout', $data);

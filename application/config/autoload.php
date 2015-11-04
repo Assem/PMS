@@ -94,7 +94,8 @@ $autoload['helper'] = array(
 		'serialization',
 		'url',
 		'form',
-		'cookie'
+		'cookie',
+		'my_view'
 );
 
 /*

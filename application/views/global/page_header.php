@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="generator" content="Bootply" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-	<title>PMS Login</title>
+	<title><?php echo $title; ?></title>
 	
 	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/bootstrap.css"); ?>" />
 	<!--[if lt IE 9]>

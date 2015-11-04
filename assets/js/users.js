@@ -1,8 +1,17 @@
 $(function() {
-	var aaSorting = [[ 3, "desc" ]];
+	var aaSorting = [[ 0, "desc" ]];
 	var aoColumnDefs = [
          { bSortable: false, aTargets: [ -1 ] },
-         { sType: "date-euro", aTargets: [ 3, 4 ] },
+         //{ sType: "date-euro", aTargets: [ 3, 4 ] },
 	];
-	YESSIR.myDataTable.createDataTable(aaSorting, aoColumnDefs);
+	var aoColumnFilterDefs = [		
+		{ type: "number" },		
+		{ type: "text" },		
+		{ type: "text" },		
+		{ type: "text" },		
+		{ type: "text" },		
+		{ type: "text" },		
+		{ type: "number" }	
+	];		
+	PMS.myDataTable.createDataTable(aaSorting, aoColumnDefs, aoColumnFilterDefs);
 });

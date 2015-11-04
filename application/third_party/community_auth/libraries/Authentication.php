@@ -88,6 +88,12 @@ class Authentication
 
 		// Make roles available by user_level (int) => role name (string)
 		$this->roles = config_item('levels_and_roles');
+		
+		$this->roles_for_select = [];
+		foreach ($this->roles as $level => $role) {
+			$this->roles_for_select[$level] = ucfirst($role);
+		}
+		
 
 		// Make levels available by role name (string) => user_level (int)
 		$this->levels = array_flip( $this->roles );

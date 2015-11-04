@@ -14,13 +14,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 class Users_model extends MY_Model {
-
+	
 	/**
 	 * Class Constructor
 	 */
 	public function __construct()
 	{
 		parent::__construct();
+	}
+	
+	/**
+	 * Return a user by it's ID if exists, else return False
+	 * 
+	 * @param int $id
+	 */
+	public function getUserByID($id) {
+		$query = $this->db->get_where(config_item('user_table'), array('user_id' => $id), 1);
+		
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		}
+		
+		return FALSE;
 	}
 
 	// --------------------------------------------------------------

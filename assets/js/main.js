@@ -1,9 +1,9 @@
 $(function() {
-	if (window.YESSIR === undefined) {
-        window.YESSIR = {};
+	if (window.PMS === undefined) {
+        window.PMS = {};
     }
-    var YESSIR = window.YESSIR;
-    YESSIR.myDataTable = {
+    var PMS = window.PMS;
+    PMS.myDataTable = {
         _dataTableLanguage: {
         	"sProcessing":     "Traitement en cours...",
     	    "sSearch":         "Rechercher&nbsp;:",
@@ -27,34 +27,29 @@ $(function() {
     	    }
         },
 
-        createDataTable: function (aaSorting, aoColumnDefs) {
+        createDataTable: function (aaSorting, aoColumnDefs, aoColumnsFilter) {
         	var otable = $('#datatable_fixed_column').DataTable({
     			"aaSorting": aaSorting,
     			"bAutoWidth": true,
     			"aoColumnDefs": aoColumnDefs,
     	    	"bInfo": false,
-    	    	"oLanguage": YESSIR.myDataTable._dataTableLanguage,
+    	    	"oLanguage": PMS.myDataTable._dataTableLanguage,
     	    	"lengthMenu": [ 5, 10, 25, 50, 75, 100 ]
     	    });
         	
         	$('#datatable_fixed_column').dataTable().columnFilter({
-        	    	sRangeFormat: "De {from} à {to}",		
+    	    	sRangeFormat: "De {from} à {to}",		
         	   	sPlaceHolder: "head:before",		
-        			aoColumns: [		
-        	           { type: "number" },		
-        	           { type: "text" },		
-        	            { type: "text" },		
-        	            { type: "date-range" },		
-        		 		{ type: "date-range" },		
-        		 		{ type: "text" },		
-        		 		{ type: "text" },		
-        	            { type: "number" }		
-        			]		
-        		});
+    			aoColumns: aoColumnsFilter
+    		});
         },
         
         validateDeletion: function () {
         	return confirm("Êtes-vous sûr de vouloir supprimer définitivement cet enregistrement?");
         }
 	};
+    
+    $('.delete-action').click(function(){
+    	return PMS.myDataTable.validateDeletion();
+    });
 });

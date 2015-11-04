@@ -124,7 +124,30 @@ class MY_Form_validation extends CI_Form_validation {
 	}
 	
 	// --------------------------------------------------------------
-
+	
+	/**
+	 * Is Unique
+	 *
+	 * Check if the input value doesn't already exist
+	 * in the specified database field, taking in consideration the edited record id
+	 *
+	 * @param	string	$str
+	 * @param	string	$field
+	 * @return	bool
+	 */
+	public function is_unique_exclude($str, $field)
+	{
+		$params = explode(', ', $field);
+		
+		$id_column = $params[1];
+		$id_to_exclude = $params[2];
+		$field = $params[0];
+		
+		sscanf($field, '%[^.].%[^.]', $table, $field);
+		return isset($this->CI->db)
+			? ($this->CI->db->limit(1)->where("$id_column !=", $id_to_exclude)->get_where($table, array($field => $str))->num_rows() === 0)
+			: FALSE;
+	}
 }
 
 /* End of file MY_Form_validation.php */

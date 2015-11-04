@@ -49,7 +49,7 @@ class Formval_callbacks extends CI_Model {
 		}
 		else
 		{
-			$this->form_validation->set_message(
+			/*$this->form_validation->set_message(
 				'external_callbacks', 
 				'<span class="redfield">%s</span> must contain:
 					<ol>
@@ -61,7 +61,7 @@ class Formval_callbacks extends CI_Model {
 						<li>No backslash, apostrophe or quote characters</li>
 					</ol>
 				</span>'
-			);
+			);*/
 
 			return FALSE;
 		}

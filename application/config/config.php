@@ -70,7 +70,7 @@ $config['url_suffix'] = '';
 | than english.
 |
 */
-$config['language']	= 'english';
+$config['language']	= 'french';
 
 /*
 |--------------------------------------------------------------------------
@@ -358,8 +358,10 @@ $config['encryption_key'] = 'G56vfhgd435DffECFD12446nbgf78965';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
+$config['sess_driver'] = 'database';
+$config['sess_use_database'] = TRUE;
 $config['sess_cookie_name'] = 'ci_session';
+$config['sess_table_name'] = 'ci_sessions';
 $config['sess_expiration'] = 7200;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;

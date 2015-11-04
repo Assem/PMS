@@ -12,6 +12,8 @@ class Users extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+        
+        $this->load->model('users_model');
     }
     
     public function index() {
@@ -26,6 +28,7 @@ class Users extends MY_Controller
     		//
     		
 	    	$data = array(
+	    		'title' => 'Liste des utilisateurs',
     			'content' => 'users/index',
 	    		'js_to_load' => array('users.js'),
 	    		'users' => $query->result()
@@ -33,13 +36,164 @@ class Users extends MY_Controller
 	    	
 	    	$this->load->view('global/layout', $data);
     	}
+    }
+    
+    /**
+     * View a user profile
+     * 
+     * @param int $id ID of the user to view
+     */
+    public function view($id=NULL) {
+    	if( $this->require_role('admin') ) {
+    		if(!isset($id)) {
+    			show_404();
+    		}
+    		
+    		$user = $this->users_model->getUserByID($id);
+    		
+    		$data = array(
+    			'content_data' => array(
+    				'fields' => array(
+	    				'Nom' 		=> $user->pms_user_last_name,
+	    				'Prénom' 	=> $user->pms_user_first_name,
+	    				'Email' 	=> $user->user_email,
+	    				'GSM' 		=> $user->pms_user_gsm,
+    					'Nom d\'utilisateur' => $user->user_name,
+    					'Code interne' => $user->pms_user_code,
+    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
+    					'Actif'		=> ($user->user_banned)? 'OUI' : 'NON',
+    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
+    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
+    					'Dernière connexion' => date('d/m/Y H:i:s', strtotime($user->user_last_login))
+    						
+    				)
+    			),
+    			'title' => "Detail d'un utilisateur",
+    			'content' => 'users/view',
+    			'user' => $user
+    		);
+    		
+    		$this->load->view('global/layout', $data);
+    	}
+    }
+    
+    /**
+     * Edit a user profile
+     *
+     * @param int $id ID of the user to edit
+     */
+    public function edit($id=NULL) {
+    	$this->output->enable_profiler(TRUE);
+    	if( $this->require_role('admin') ) {
+    		if(!isset($id)) {
+    			show_404();
+    		}
+    		
+    		$this->load->helper(array('form', 'url'));
+            $this->load->library('form_validation');
+    		
+    		$user = $this->users_model->getUserByID($id);
+    		
+    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
+    			$data_values = array(
+    				'pms_user_last_name' 	=> set_value('pms_user_last_name'),
+    				'pms_user_first_name' 	=> set_value('pms_user_first_name'),
+    				'user_email' 			=> set_value('user_email'),
+    				'pms_user_gsm' 			=> set_value('pms_user_gsm'),
+    				'user_name' 			=> set_value('user_name'),
+    				'pms_user_code' 		=> set_value('pms_user_code'),
+    				'user_level' 			=> set_value('user_level'),
+    				'user_banned' 			=> set_value('user_banned')
+    			);
+    			
+    			$this->form_validation->set_rules('pms_user_last_name', 'Nom', 'trim|required|max_length[80]');
+				$this->form_validation->set_rules('pms_user_first_name', 'Prénom', 'trim|required|max_length[80]');
+				$this->form_validation->set_rules('user_email', 'Email', "trim|required|valid_email|is_unique_exclude[users.user_email, user_id, $id]");
+				
+				$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
+				$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
+    			
+    			if ($this->form_validation->run()) {
+                       echo "TRUE";
+                }
+    		} else {
+    			$data_values = array(
+    				'pms_user_last_name' 	=> $user->pms_user_last_name,
+    				'pms_user_first_name' 	=> $user->pms_user_first_name,
+    				'user_email' 			=> $user->user_email,
+    				'pms_user_gsm' 			=> $user->pms_user_gsm,
+    				'user_name' 			=> $user->user_name,
+    				'pms_user_code' 		=> $user->pms_user_code,
+    				'user_level' 			=> $user->user_level,
+    				'user_banned' 			=> ($user->user_banned != 1)
+    			);
+    		}
+    		
+    		$data = array(
+    			'content_data' => array(
+    				'fields' => array(
+	    				'Nom' 		=> form_input('pms_user_last_name', $data_values['pms_user_last_name'], array(
+	    					'maxlength'	=> '80',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+	    				'Prénom' 	=> form_input('pms_user_first_name', $data_values['pms_user_first_name'], array(
+	    					'maxlength' => '80',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+	    				'Email' 	=> form_input(array(
+	    					'name'	=> 'user_email',
+	    					'id'	=> 'user_email',
+	    					'value'	=> $data_values['user_email'],
+	    					'type'	=> 'email',
+	    					'maxlength' => '150',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+	    				'GSM' 	=> form_input(array(
+	    					'name'	=> 'pms_user_gsm',
+	    					'id'	=> 'pms_user_gsm',
+	    					'value'	=> $data_values['pms_user_gsm'],
+	    					'type'	=> 'number',
+	    					'maxlength' => '30',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+    					'Nom d\'utilisateur'	=> form_input('user_name', $data_values['user_name'], array(
+	    					'maxlength'	=> '12',
+    						'style'		=> 'width:50%;'
+	    					)
+	    				),
+    					'Code interne'	=> form_input('pms_user_code', $data_values['pms_user_code'], array(
+	    					'maxlength'	=> '20',
+    						'style'		=> 'width:50%;',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+    					'Rôle'		=> form_dropdown('user_level', $this->authentication->roles_for_select, $data_values['user_level']),
+    					'Actif'		=> form_checkbox('user_banned', '1', $data_values['user_banned']),
+    					'Mot de passe'	=> form_password('user_pass', substr($user->user_pass, 0, 5), array(
+	    					'maxlength'	=> '60',
+	    					'required' 	=> '1'
+	    					)
+	    				),
+    					'Confirmation mot de passe'	=> form_password('user_pass_conf', substr($user->user_pass, 0, 5), array(
+	    					'maxlength'	=> '60',
+	    					'required' 	=> '1'
+	    					)
+	    				)
+    				)
+    			),
+    			'title' => "Edition d'un utilisateur",
+    			'content' => 'users/edit',
+    			'user' => $user
+    		);
+    		
+    		$this->load->view('global/layout', $data);
+    	}
     	
-    	/*
-    	 * <script src="{{ asset('bundles/chabecore/js/jquery.dataTables.min.js') }}"></script>
-			<script src="{{ asset('bundles/chabecore/js/dataTables.responsive.js') }}"></script>
-			<script src="{{ asset('bundles/chabecore/js/dataTables.bootstrap.min.js') }}"></script>
-			<script src="{{ asset('bundles/chabecore/js/plugins/jquery.dataTables.columnFilter.js') }}"></script>
-    	 */
+    	
     }
 
     /**
@@ -60,9 +214,9 @@ class Users extends MY_Controller
     {
         // Customize this array for your user
         $user_data = array(
-            'user_name'     => 'bayahiassem2',
+            'user_name'     => 'aba',
             'user_pass'     => 'Comp253A1',
-            'user_email'    => 'bayahiassem+2@yahoo.fr',
+            'user_email'    => 'bayahiassem@yahoo.fr',
             'user_level'    => '9', // 9 if you want to login @ examples/index.
         );
 
@@ -144,8 +298,11 @@ class Users extends MY_Controller
         }
         
         $this->setup_login_form();
-
-        $data = array('content' => 'users/login_form');
+        
+        $data = array(
+        	'content' => 'users/login_form',
+        	'title' => 'PMS Login'
+        );
         
         $this->load->view('global/layout', $data);
     }
