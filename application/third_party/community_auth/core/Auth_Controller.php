@@ -314,7 +314,9 @@ class Auth_Controller extends CI_Controller {
 			'auth_user_name'  => $this->auth_user_name,
 			'auth_level'      => $this->auth_level,
 			'auth_role'       => $this->auth_role,
-			'auth_email'      => $this->auth_email
+			'auth_email'      => $this->auth_email,
+			'auth_first_name' => $this->auth_data->pms_user_first_name,
+			'auth_last_name'  => $this->auth_data->pms_user_last_name
 		);
 
 		// Set user specific variables to be available as config items

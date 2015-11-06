@@ -115,5 +115,5 @@ ADD COLUMN `pms_user_first_name` VARCHAR(80) NOT NULL AFTER `passwd_recovery_dat
 ADD COLUMN `pms_user_last_name` VARCHAR(80) NOT NULL AFTER `pms_user_first_name`;
 
 ALTER TABLE `PMS`.`users` 
-ADD COLUMN `pms_user_gsm` INT(20) NOT NULL AFTER `passwd_recovery_date`,
+ADD COLUMN `pms_user_gsm` INT(30) NOT NULL AFTER `passwd_recovery_date`,
 ADD COLUMN `pms_user_code` VARCHAR(20) NOT NULL AFTER `pms_user_first_name`;

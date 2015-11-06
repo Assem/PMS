@@ -37,6 +37,47 @@ class Users_model extends MY_Model {
 		
 		return FALSE;
 	}
+	
+	/**
+	 * Delete the user having the passed ID
+	 * 
+	 * @param integer $id
+	 */
+	public function delete($id){
+		$this->db->delete(config_item('user_table'), array('user_id' => $id));
+	}
+	
+	/**
+	 * Update the user having the passed ID with the passed data
+	 * 
+	 * @param integer $id
+	 * @param array $data
+	 */
+	public function update($id, $data){
+		$this->db->update(config_item('user_table'), $data, array('user_id' => $id));
+		
+		if ($this->db->affected_rows() == 1) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Insert a new user
+	 * 
+	 * @param array $data
+	 */
+	public function create($data) {
+		$this->db->set($data)
+				->insert(config_item('user_table'));
+		
+		if ($this->db->affected_rows() == 1) {
+			return true;
+		}
+		
+		return false;
+	}
 
 	// --------------------------------------------------------------
 

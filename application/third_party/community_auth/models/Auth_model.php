@@ -43,7 +43,9 @@ class Auth_model extends MY_Model {
 			'user_salt',
 			'user_id',
 			'user_modified',
-			'user_banned'
+			'user_banned',
+			'pms_user_first_name',
+			'pms_user_last_name'
 		);
 
 		// User table query
@@ -106,7 +108,9 @@ class Auth_model extends MY_Model {
 			'user_level',
 			'user_agent_string',
 			'user_id',
-			'user_banned'
+			'user_banned',
+			'pms_user_first_name',
+			'pms_user_last_name'
 		);
 
 		$this->db->select( $selected_columns );

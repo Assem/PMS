@@ -1,4 +1,8 @@
 <h1 class="pmsH1">Listes des utilisateurs</h1>
+<?php
+	$this->load->view ( 'global/flash_messages', array('title' => $title) );
+?>
+<?php echo drawActionsMenuItem('users/add', 'add.png', 'Ajouter'); ?>
 <div class="dataTable_wrapper">
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>

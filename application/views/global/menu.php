@@ -24,6 +24,7 @@
 				<li <?php echo(($active_controller == 'users')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Utilisateurs'); ?></li>
 				<li class="logout"><?php echo secure_anchor('users/logout', 'Déconnexion'); ?></li>
 			</ul>
+			<span class="welcome-span"><?php echo "Bonjour $auth_last_name $auth_first_name" ?></span>
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>

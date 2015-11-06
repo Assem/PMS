@@ -39,41 +39,74 @@ class Users extends MY_Controller
     }
     
     /**
+     * Check if we have a user with the passed $id  
+     * 
+     * @param integer $id
+     */
+    private function _checkUser($id) {
+    	if(!isset($id) || !is_numeric($id)) {
+    		show_404();
+    	}
+    		
+    	$user = $this->users_model->getUserByID($id);
+    	
+    	return $user;
+    }
+    
+    /**
      * View a user profile
      * 
      * @param int $id ID of the user to view
      */
     public function view($id=NULL) {
     	if( $this->require_role('admin') ) {
-    		if(!isset($id)) {
-    			show_404();
-    		}
-    		
-    		$user = $this->users_model->getUserByID($id);
+    		$user = $this->_checkUser($id);
     		
     		$data = array(
-    			'content_data' => array(
-    				'fields' => array(
-	    				'Nom' 		=> $user->pms_user_last_name,
-	    				'Prénom' 	=> $user->pms_user_first_name,
-	    				'Email' 	=> $user->user_email,
-	    				'GSM' 		=> $user->pms_user_gsm,
-    					'Nom d\'utilisateur' => $user->user_name,
-    					'Code interne' => $user->pms_user_code,
-    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
-    					'Actif'		=> ($user->user_banned)? 'OUI' : 'NON',
-    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
-    					'Dernière connexion' => date('d/m/Y H:i:s', strtotime($user->user_last_login))
-    						
-    				)
-    			),
     			'title' => "Detail d'un utilisateur",
     			'content' => 'users/view',
     			'user' => $user
     		);
     		
+    		if($user){
+	    		$data['content_data'] = array(
+	    				'fields' => array(
+		    				'Nom' 		=> $user->pms_user_last_name,
+		    				'Prénom' 	=> $user->pms_user_first_name,
+		    				'Email' 	=> $user->user_email,
+		    				'GSM' 		=> $user->pms_user_gsm,
+	    					'Nom d\'utilisateur' => $user->user_name,
+	    					'Code interne' => $user->pms_user_code,
+	    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
+	    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
+	    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
+	    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
+	    					'Dernière connexion' => date('d/m/Y H:i:s', strtotime($user->user_last_login))
+	    						
+	    				)
+	    		);
+    		}
+    		
     		$this->load->view('global/layout', $data);
+    	}
+    }
+    
+    /**
+     * Delete a user profile
+     *
+     * @param int $id ID of the user to delete
+     */
+    public function delete($id=NULL) {
+    	if( $this->require_role('admin') ) {
+    		$user = $this->_checkUser($id);
+    		
+    		if($user) {
+    			$this->users_model->delete($id);
+    			
+    			$this->session->set_flashdata('success', 'Utilisateur supprimé avec succès!');
+    			
+    			redirect('/users/index');
+    		}
     	}
     }
     
@@ -83,16 +116,191 @@ class Users extends MY_Controller
      * @param int $id ID of the user to edit
      */
     public function edit($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin') ) {
-    		if(!isset($id)) {
-    			show_404();
-    		}
+    		$user = $this->_checkUser($id);
     		
     		$this->load->helper(array('form', 'url'));
             $this->load->library('form_validation');
     		
-    		$user = $this->users_model->getUserByID($id);
+    		$data = array(
+    			'title' => "Edition d'un utilisateur",
+    			'content' => 'users/edit',
+    			'user' => $user
+    		);
+    		
+    		if($user){
+	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
+	    			$data_values = array(
+	    				'pms_user_last_name' 	=> set_value('pms_user_last_name'),
+	    				'pms_user_first_name' 	=> set_value('pms_user_first_name'),
+	    				'user_email' 			=> set_value('user_email'),
+	    				'pms_user_gsm' 			=> set_value('pms_user_gsm'),
+	    				'user_name' 			=> set_value('user_name'),
+	    				'pms_user_code' 		=> set_value('pms_user_code'),
+	    				'user_level' 			=> set_value('user_level'),
+	    				'user_banned' 			=> set_value('user_banned')
+	    			);
+	    			
+	    			$this->_setValidationRules('edit', $id);
+					
+					if(!empty(trim(set_value('user_pass')))) {
+						$data_values['user_salt']     = $this->authentication->random_salt();
+						$data_values['user_pass']     = $this->authentication->hash_passwd(trim(set_value('user_pass')), $data_values['user_salt']);
+						
+						$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
+						$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
+					}
+						
+	    			if ($this->form_validation->run()) {
+	    				$data_values['user_banned'] = (empty($data_values['user_banned']))? '1' : '0';
+	    				$data_values['user_modified'] = date('Y-m-d H:i:s');
+	    				
+	    				if($this->users_model->update($id, $data_values)){
+	    					$this->session->set_flashdata('success', 'Utilisateur mis à jour avec succès!');
+	    					
+	    					redirect('/users/view/'.$id);
+	    				} else {
+	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
+	    				}
+	                }
+	    		} else {
+	    			$data_values = array(
+	    				'pms_user_last_name' 	=> $user->pms_user_last_name,
+	    				'pms_user_first_name' 	=> $user->pms_user_first_name,
+	    				'user_email' 			=> $user->user_email,
+	    				'pms_user_gsm' 			=> $user->pms_user_gsm,
+	    				'user_name' 			=> $user->user_name,
+	    				'pms_user_code' 		=> $user->pms_user_code,
+	    				'user_level' 			=> $user->user_level,
+	    				'user_banned' 			=> ($user->user_banned != 1)
+	    			);
+	    		}
+	    		
+	    		$data['content_data'] = $this->_getFields('edit', $data_values);
+    		}
+    		
+    		$this->load->view('global/layout', $data);
+    	}
+    }
+    
+    private function _setValidationRules($action='edit', $id=NULL) {
+    	$unique_fct = 'is_unique_exclude';
+    	$unique_fct_params = ", user_id, $id";
+    	
+    	if($action == 'add') {
+    		$unique_fct = 'is_unique';
+    		$unique_fct_params = "";
+    	
+			$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
+			$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
+		}	
+    	
+    	$this->form_validation->set_rules('pms_user_last_name', 'Nom', 'trim|required|max_length[80]');
+		$this->form_validation->set_rules('pms_user_first_name', 'Prénom', 'trim|required|max_length[80]');
+		$this->form_validation->set_rules('user_email', 'Email', "trim|required|valid_email|{$unique_fct}[users.user_email{$unique_fct_params}]");
+		$this->form_validation->set_rules('pms_user_gsm', 'GSM', 'trim|required|max_length[30]');
+		$this->form_validation->set_rules('user_name', "Nom d'utilisateur", "trim|max_length[12]|{$unique_fct}[users.user_name{$unique_fct_params}]");
+		$this->form_validation->set_rules('pms_user_code', 'Code interne', "trim|required|max_length[20]|{$unique_fct}[users.pms_user_code{$unique_fct_params}]");
+    }
+    
+    private function _getFields($action='edit', $data_values) {
+    	$data = array(
+			'fields' => array(
+				'Nom <font color="red">*</font>' 		=> form_input('pms_user_last_name', $data_values['pms_user_last_name'], array(
+					'maxlength'	=> '80',
+					'required' 	=> '1',
+					'class'		=> 'form-control'
+					)
+				),
+				'Prénom <font color="red">*</font>' 	=> form_input('pms_user_first_name', $data_values['pms_user_first_name'], array(
+					'maxlength' => '80',
+					'required' 	=> '1',
+					'class'		=> 'form-control'
+					)
+				),
+				'Email <font color="red">*</font>' 	=> form_input(array(
+					'name'	=> 'user_email',
+					'id'	=> 'user_email',
+					'value'	=> $data_values['user_email'],
+					'type'	=> 'email',
+					'maxlength' => '150',
+					'required' 	=> '1',
+					'class'		=> 'form-control'
+					)
+				),
+				'GSM <font color="red">*</font>' 	=> form_input(array(
+					'name'	=> 'pms_user_gsm',
+					'id'	=> 'pms_user_gsm',
+					'value'	=> $data_values['pms_user_gsm'],
+					'type'	=> 'number',
+					'maxlength' => '30',
+					'required' 	=> '1',
+					'class'		=> 'form-control'
+					)
+				),
+				'Nom d\'utilisateur'	=> form_input('user_name', $data_values['user_name'], array(
+					'maxlength'	=> '12',
+					'style'		=> 'width:50%;',
+					'class'		=> 'form-control'
+					)
+				),
+				'Code interne <font color="red">*</font>'	=> form_input('pms_user_code', $data_values['pms_user_code'], array(
+					'maxlength'	=> '20',
+					'style'		=> 'width:50%;',
+					'required' 	=> '1',
+					'class'		=> 'form-control'
+					)
+				),
+				'Rôle <font color="red">*</font>'		=> form_dropdown('user_level', $this->authentication->roles_for_select, $data_values['user_level'], 'class="form-control"'),
+				'Actif'		=> form_checkbox('user_banned', '1', $data_values['user_banned'], 'class="form-control"')
+			)
+		);
+    	
+    	if($action == 'edit') {
+    		$data['fields']['Mot de passe <span id="helpBlock" class="help-block">Ne saisir que pour mettre à jour</span>'] = form_password('user_pass', '', array(
+				'maxlength'	=> '60',
+				'class'		=> 'form-control'
+				)
+			);
+    		
+    		$data['fields']['Confirmation mot de passe'] = form_password('user_pass_conf', '', array(
+				'maxlength'	=> '60',
+				'class'		=> 'form-control'
+				)
+			);
+    	} else {
+    		$data['fields']['Mot de passe <font color="red">*</font><span id="helpBlock" class="help-block">Ne saisir que pour mettre à jour</span>'] = form_password('user_pass', '', array(
+				'maxlength'	=> '60',
+				'class'		=> 'form-control',
+				'required'	=> '1'
+				)
+			);
+    		
+    		$data['fields']['Confirmation mot de passe <font color="red">*</font>'] = form_password('user_pass_conf', '', array(
+				'maxlength'	=> '60',
+				'class'		=> 'form-control',
+				'required'	=> '1'
+				)
+			);
+    	}
+    	
+    	return $data;
+    }
+    
+	/**
+     * Add a new user
+     *
+     */
+    public function add() {
+    	$this->output->enable_profiler(TRUE);
+    	if( $this->require_role('admin') ) {
+    		$this->load->helper(array('form', 'url'));
+            $this->load->library('form_validation');
+    		
+    		$data = array(
+    			'title' => "Ajouter un utilisateur",
+    			'content' => 'users/add'
+    		);
     		
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
     			$data_values = array(
@@ -106,94 +314,47 @@ class Users extends MY_Controller
     				'user_banned' 			=> set_value('user_banned')
     			);
     			
-    			$this->form_validation->set_rules('pms_user_last_name', 'Nom', 'trim|required|max_length[80]');
-				$this->form_validation->set_rules('pms_user_first_name', 'Prénom', 'trim|required|max_length[80]');
-				$this->form_validation->set_rules('user_email', 'Email', "trim|required|valid_email|is_unique_exclude[users.user_email, user_id, $id]");
-				
-				$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
-				$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
+    			$this->_setValidationRules('add');
     			
-    			if ($this->form_validation->run()) {
-                       echo "TRUE";
+				if ($this->form_validation->run()) {
+					$data_values['user_banned']	  = (empty($data_values['user_banned']))? '1' : '0';
+					$data_values['user_salt']     = $this->authentication->random_salt();
+					$data_values['user_pass']     = $this->authentication->hash_passwd($this->input->post('user_pass'), $data_values['user_salt']);
+					$data_values['user_id']       = $this->_get_unused_id();
+					$data_values['user_date']     = date('Y-m-d H:i:s');
+					$data_values['user_modified'] = date('Y-m-d H:i:s');
+		
+		            // If username is not used, it must be entered into the record as NULL
+		            if( empty( $data_values['user_name'] ) )
+		            {
+		                $data_values['user_name'] = NULL;
+		            }
+		            
+					if($this->users_model->create($data_values)){
+    					$this->session->set_flashdata('success', 'Utilisateur créé avec succès!');
+    					
+    					redirect('/users/view/'.$data_values['user_id']);
+    				} else {
+    					$this->session->set_flashdata('error', 'La création a échoué!');
+    				}
                 }
     		} else {
     			$data_values = array(
-    				'pms_user_last_name' 	=> $user->pms_user_last_name,
-    				'pms_user_first_name' 	=> $user->pms_user_first_name,
-    				'user_email' 			=> $user->user_email,
-    				'pms_user_gsm' 			=> $user->pms_user_gsm,
-    				'user_name' 			=> $user->user_name,
-    				'pms_user_code' 		=> $user->pms_user_code,
-    				'user_level' 			=> $user->user_level,
-    				'user_banned' 			=> ($user->user_banned != 1)
+    				'pms_user_last_name' 	=> '',
+    				'pms_user_first_name' 	=> '',
+    				'user_email' 			=> '',
+    				'pms_user_gsm' 			=> '',
+    				'user_name' 			=> '',
+    				'pms_user_code' 		=> '',
+    				'user_level' 			=> '',
+    				'user_banned' 			=> TRUE
     			);
     		}
-    		
-    		$data = array(
-    			'content_data' => array(
-    				'fields' => array(
-	    				'Nom' 		=> form_input('pms_user_last_name', $data_values['pms_user_last_name'], array(
-	    					'maxlength'	=> '80',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-	    				'Prénom' 	=> form_input('pms_user_first_name', $data_values['pms_user_first_name'], array(
-	    					'maxlength' => '80',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-	    				'Email' 	=> form_input(array(
-	    					'name'	=> 'user_email',
-	    					'id'	=> 'user_email',
-	    					'value'	=> $data_values['user_email'],
-	    					'type'	=> 'email',
-	    					'maxlength' => '150',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-	    				'GSM' 	=> form_input(array(
-	    					'name'	=> 'pms_user_gsm',
-	    					'id'	=> 'pms_user_gsm',
-	    					'value'	=> $data_values['pms_user_gsm'],
-	    					'type'	=> 'number',
-	    					'maxlength' => '30',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-    					'Nom d\'utilisateur'	=> form_input('user_name', $data_values['user_name'], array(
-	    					'maxlength'	=> '12',
-    						'style'		=> 'width:50%;'
-	    					)
-	    				),
-    					'Code interne'	=> form_input('pms_user_code', $data_values['pms_user_code'], array(
-	    					'maxlength'	=> '20',
-    						'style'		=> 'width:50%;',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-    					'Rôle'		=> form_dropdown('user_level', $this->authentication->roles_for_select, $data_values['user_level']),
-    					'Actif'		=> form_checkbox('user_banned', '1', $data_values['user_banned']),
-    					'Mot de passe'	=> form_password('user_pass', substr($user->user_pass, 0, 5), array(
-	    					'maxlength'	=> '60',
-	    					'required' 	=> '1'
-	    					)
-	    				),
-    					'Confirmation mot de passe'	=> form_password('user_pass_conf', substr($user->user_pass, 0, 5), array(
-	    					'maxlength'	=> '60',
-	    					'required' 	=> '1'
-	    					)
-	    				)
-    				)
-    			),
-    			'title' => "Edition d'un utilisateur",
-    			'content' => 'users/edit',
-    			'user' => $user
-    		);
+	    		
+	    	$data['content_data'] = $this->_getFields('add', $data_values);
     		
     		$this->load->view('global/layout', $data);
     	}
-    	
-    	
     }
 
     /**
@@ -214,9 +375,9 @@ class Users extends MY_Controller
     {
         // Customize this array for your user
         $user_data = array(
-            'user_name'     => 'aba',
-            'user_pass'     => 'Comp253A1',
-            'user_email'    => 'bayahiassem@yahoo.fr',
+            'user_name'     => 'aba3',
+            'user_pass'     => 'Comp253A1',//Tgff154jhy54b
+            'user_email'    => 'bayahiassem36@yahoo.fr',
             'user_level'    => '9', // 9 if you want to login @ examples/index.
         );
 
