@@ -81,8 +81,7 @@ class Users extends MY_Controller
 	    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
 	    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
 	    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
-	    					'Dernière connexion' => date('d/m/Y H:i:s', strtotime($user->user_last_login))
-	    						
+	    					'Dernière connexion' => isset($user->user_last_login)?date('d/m/Y H:i:s', strtotime($user->user_last_login)):''
 	    				)
 	    		);
     		}
