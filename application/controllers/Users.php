@@ -18,14 +18,7 @@ class Users extends MY_Controller
     
     public function index() {
     	if( $this->require_role('admin') ) {
-    		
     		$query = $this->db->get(config_item('user_table'), 10);
-    		//print_r($query->result());
-    		//exit;
-    		$tt = $query->result();
-    		//echo $this->authentication->roles[$tt[0]->user_level];
-    		//exit;
-    		//
     		
 	    	$data = array(
 	    		'title' => 'Liste des utilisateurs',
@@ -70,19 +63,19 @@ class Users extends MY_Controller
     		
     		if($user){
 	    		$data['content_data'] = array(
-	    				'fields' => array(
-		    				'Nom' 		=> $user->pms_user_last_name,
-		    				'Prénom' 	=> $user->pms_user_first_name,
-		    				'Email' 	=> $user->user_email,
-		    				'GSM' 		=> $user->pms_user_gsm,
-	    					'Nom d\'utilisateur' => $user->user_name,
-	    					'Code interne' => $user->pms_user_code,
-	    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
-	    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
-	    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
-	    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
-	    					'Dernière connexion' => isset($user->user_last_login)?date('d/m/Y H:i:s', strtotime($user->user_last_login)):''
-	    				)
+    				'fields' => array(
+	    				'Nom' 		=> $user->pms_user_last_name,
+	    				'Prénom' 	=> $user->pms_user_first_name,
+	    				'Email' 	=> $user->user_email,
+	    				'GSM' 		=> $user->pms_user_gsm,
+    					'Nom d\'utilisateur' => $user->user_name,
+    					'Code interne' => $user->pms_user_code,
+    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
+    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
+    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
+    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
+    					'Dernière connexion' => isset($user->user_last_login)?date('d/m/Y H:i:s', strtotime($user->user_last_login)):''
+    				)
 	    		);
     		}
     		
