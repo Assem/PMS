@@ -13,7 +13,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link        http://community-auth.com
  */
 
-class Users_model extends MY_Model {
+class Pools_model extends MY_Model {
 	
 	/**
 	 * Class Constructor
@@ -22,8 +22,8 @@ class Users_model extends MY_Model {
 	{
 		parent::__construct();
 		
-		$this->table_name = config_item('user_table');
-		$this->pk_column = 'user_id';
+		$this->table_name = 'pools';
+		$this->pk_column = 'id';
 	}
 	
 	/**
@@ -50,7 +50,7 @@ class Users_model extends MY_Model {
 		
 		return false;
 	}
-	
+
 	// --------------------------------------------------------------
 
 	/**

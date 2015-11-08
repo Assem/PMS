@@ -18,13 +18,11 @@ class Users extends MY_Controller
     
     public function index() {
     	if( $this->require_role('admin') ) {
-    		$query = $this->db->get(config_item('user_table'), 10);
-    		
-	    	$data = array(
+    		$data = array(
 	    		'title' => 'Liste des utilisateurs',
     			'content' => 'users/index',
 	    		'js_to_load' => array('users.js'),
-	    		'users' => $query->result()
+	    		'users' => $this->users_model->getDataList()
 	    	);
 	    	
 	    	$this->load->view('global/layout', $data);
@@ -41,7 +39,7 @@ class Users extends MY_Controller
     		show_404();
     	}
     		
-    	$user = $this->users_model->getUserByID($id);
+    	$user = $this->users_model->getRecordByID($id);
     	
     	return $user;
     }

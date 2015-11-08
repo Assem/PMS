@@ -63,10 +63,14 @@ $lang['form_validation_is_natural_no_zero']	= 'The {field} field must only conta
 $lang['form_validation_decimal']		= 'The {field} field must contain a decimal number.';
 $lang['form_validation_less_than']		= 'The {field} field must contain a number less than {param}.';
 $lang['form_validation_less_than_equal_to']	= 'The {field} field must contain a number less than or equal to {param}.';
+$lang['form_validation_date_less_than_equal_to']	= 'La date {field} doit être inférieur ou égale à la date {param}.';
 $lang['form_validation_greater_than']		= 'The {field} field must contain a number greater than {param}.';
 $lang['form_validation_greater_than_equal_to']	= 'The {field} field must contain a number greater than or equal to {param}.';
+$lang['form_validation_date_greater_than_equal_to']	= 'La date {field} doit être supérieur ou égale à la date {param}.';
 $lang['form_validation_error_message_not_set']	= 'Unable to access an error message corresponding to your field name {field}.';
 $lang['form_validation_in_list']		= 'The {field} field must be one of: {param}.';
+$lang['form_validation_valid_date']		= 'Le champ {field} doit être une date sous le format "dd/mm/yyyy".';
+
 $lang['form_validation_external_callbacks']		= '<span class="redfield">%s</span> doit contenir:
 					<ol>
 						<li>Au moins ' . config_item('min_chars_for_password') . ' caractères</li>

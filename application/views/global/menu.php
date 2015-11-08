@@ -19,7 +19,7 @@
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<?php $active_controller = $this->router->fetch_class();?>
-				<li <?php echo(($active_controller == 'pool')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Sondages'); ?></li>
+				<li <?php echo(($active_controller == 'pools')?'class="active"':''); ?>><?php echo secure_anchor('pools/index', 'Sondages'); ?></li>
 				<li <?php echo(($active_controller == 'questionnaire')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Questionnaires'); ?></li>
 				<li <?php echo(($active_controller == 'users')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Utilisateurs'); ?></li>
 				<li class="logout"><?php echo secure_anchor('users/logout', 'Déconnexion'); ?></li>

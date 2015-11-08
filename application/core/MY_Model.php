@@ -59,6 +59,10 @@ class MY_Model extends CI_Model {
 	 */
 	public $validation_rules = array();
 	
+	protected $table_name;
+	
+	protected $pk_column = 'id';
+	
 	// --------------------------------------------------------------
 
 	/**
@@ -159,6 +163,43 @@ class MY_Model extends CI_Model {
 	}
 
 	// --------------------------------------------------------------
+	
+	public function getDataList() {
+		$query = $this->db->get($this->table_name);
+		
+		return $query->result();
+	}
+	
+	/**
+	 * Return a record by it's ID if exists, else return False
+	 * 
+	 * @param int $id
+	 */
+	public function getRecordByID($id) {
+		$query = $this->db->get_where($this->table_name, array($this->pk_column => $id), 1);
+		
+		if ($query->num_rows() == 1) {
+			return $query->row();
+		}
+		
+		return FALSE;
+	}
+	
+	/**
+	 * Insert a new record
+	 * 
+	 * @param array $data
+	 */
+	public function create($data) {
+		$this->db->set($data)
+				->insert($this->table_name);
+		
+		if ($this->db->affected_rows() == 1) {
+			return true;
+		}
+		
+		return false;
+	}
 }
 
 /* End of file MY_Model.php */

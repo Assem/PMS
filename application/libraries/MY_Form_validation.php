@@ -148,6 +148,37 @@ class MY_Form_validation extends CI_Form_validation {
 			? ($this->CI->db->limit(1)->where("$id_column !=", $id_to_exclude)->get_where($table, array($field => $str))->num_rows() === 0)
 			: FALSE;
 	}
+	
+	/**
+	 * Check if the passed string is a valid 'm-d-Y' date
+	 * 
+	 * @param string $str
+	 */
+	public function valid_date($str) {
+		$d = DateTime::createFromFormat('Y-m-d', $str);
+		
+		return $d && $d->format('Y-m-d') == $str;
+	}
+	
+	public function date_less_than_equal_to($str, $field) {
+		$params = explode(',', $field);
+		
+		if($params[1]){
+			return DateTime::createFromFormat('Y-m-d H:i:s', "$str 00:00:00")->gettimestamp() <= DateTime::createFromFormat('Y-m-d H:i:s', $params[1]." 00:00:00")->gettimestamp();
+		}
+		
+		return true;
+	}
+	
+	public function date_greater_than_equal_to($str, $field) {
+		$params = explode(',', $field);
+		
+		if($params[1]){
+			return DateTime::createFromFormat('Y-m-d H:i:s', "$str 00:00:00")->gettimestamp() >= DateTime::createFromFormat('Y-m-d H:i:s', $params[1]." 00:00:00")->gettimestamp();
+		}
+		
+		return true;
+	}
 }
 
 /* End of file MY_Form_validation.php */

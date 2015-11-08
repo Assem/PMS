@@ -20,8 +20,8 @@ body {
 }
 
 .btn-primary {
-	background-color: gray;
-	border-color: gray;
+	background-color: black;
+	border-color: black;
 }
 
 .navbar-inverse .navbar-nav > .logout > a {
@@ -124,4 +124,15 @@ div.required-notice {
 	color: white;
     float: right;
     padding-top: 15px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+  color: #fff;
+  background-color: black;
+  border-color: black;
 }
