@@ -72,7 +72,7 @@ class Pools extends MY_Controller
 					'class'		=> 'form-control'
 					)
 				),
-				'Nbr maximum de fiches' 	=> form_input(array(
+				'Nbr maximum de fiches <span id="helpBlock" class="help-block">Vide ou 0 veut dire pas de limite</span>' 	=> form_input(array(
 					'name'	=> 'max_surveys_number',
 					'id'	=> 'max_surveys_number',
 					'value'	=> $data_values['max_surveys_number'],
@@ -127,7 +127,7 @@ class Pools extends MY_Controller
      */
     public function add() {
     	$this->output->enable_profiler(TRUE);
-    	if( $this->require_role('admin') ) {
+    	if( $this->require_role('admin,super-agent') ) {
     		$this->load->helper(array('form', 'url'));
             $this->load->library('form_validation');
     		
@@ -178,6 +178,64 @@ class Pools extends MY_Controller
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);
+    		
+    		$this->load->view('global/layout', $data);
+    	}
+    }
+    
+	/**
+     * Check if we have a pool with the passed $id  
+     * 
+     * @param integer $id
+     */
+    private function _checkRecord($id) {
+    	if(!isset($id) || !is_numeric($id)) {
+    		show_404();
+    	}
+    		
+    	$pool = $this->pools_model->getRecordByID($id);
+    	
+    	return $pool;
+    }
+    
+    /**
+     * View a pools detail
+     * 
+     * @param int $id ID of the pool to view
+     */
+    public function view($id=NULL) {
+    	$this->output->enable_profiler(TRUE);
+    	
+    	if( $this->require_role('admin,super-agent') ) {
+    		$pool = $this->_checkRecord($id);
+    		
+    		$data = array(
+    			'title' => "Detail d'un sondage",
+    			'content' => 'pools/view',
+    			'pool' => $pool
+    		);
+    		
+    		if($pool){
+    			$createdBy = $this->pools_model->getCreatedby($pool);
+    			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
+    					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
+    			
+    			$data['content_data'] = array(
+    				'fields' => array(
+	    				'Code interne' 		=> $pool->code,
+	    				'Client' 			=> $pool->customer,
+    					'Libellé' 			=> $pool->label,
+	    				'Description'		=> $pool->description,
+    					'Date de début' 	=> date('d/m/Y', strtotime($pool->start_date)),
+    					'Date de fin' 		=> date('d/m/Y', strtotime($pool->end_date)),
+    					'Nbr maximum de fiches' 		=> $pool->max_surveys_number,
+    					'Actif'				=> ($pool->actif)? 'OUI' : 'NON',
+    					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($pool->creation_date)),
+    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($pool->update_date)),
+    					'Créé par' 			=> $createdByLink
+    				)
+	    		);
+    		}
     		
     		$this->load->view('global/layout', $data);
     	}
