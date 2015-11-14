@@ -13,7 +13,7 @@ class Users extends MY_Controller
     {
         parent::__construct();
         
-        $this->load->model('users_model');
+        $this->load->model('users_model', 'main_model');
     }
     
     public function index() {
@@ -22,26 +22,11 @@ class Users extends MY_Controller
 	    		'title' => 'Liste des utilisateurs',
     			'content' => 'users/index',
 	    		'js_to_load' => array('users.js'),
-	    		'users' => $this->users_model->getDataList()
+	    		'users' => $this->main_model->getDataList()
 	    	);
 	    	
 	    	$this->load->view('global/layout', $data);
     	}
-    }
-    
-    /**
-     * Check if we have a user with the passed $id  
-     * 
-     * @param integer $id
-     */
-    private function _checkUser($id) {
-    	if(!isset($id) || !is_numeric($id)) {
-    		show_404();
-    	}
-    		
-    	$user = $this->users_model->getRecordByID($id);
-    	
-    	return $user;
     }
     
     /**
@@ -51,7 +36,7 @@ class Users extends MY_Controller
      */
     public function view($id=NULL) {
     	if( $this->require_role('admin') ) {
-    		$user = $this->_checkUser($id);
+    		$user = $this->_checkRecord($id);
     		
     		$data = array(
     			'title' => "Detail d'un utilisateur",
@@ -88,10 +73,10 @@ class Users extends MY_Controller
      */
     public function delete($id=NULL) {
     	if( $this->require_role('admin') ) {
-    		$user = $this->_checkUser($id);
+    		$user = $this->_checkRecord($id);
     		
     		if($user) {
-    			$this->users_model->delete($id);
+    			$this->main_model->delete($id);
     			
     			$this->session->set_flashdata('success', 'Utilisateur supprimé avec succès!');
     			
@@ -107,7 +92,7 @@ class Users extends MY_Controller
      */
     public function edit($id=NULL) {
     	if( $this->require_role('admin') ) {
-    		$user = $this->_checkUser($id);
+    		$user = $this->_checkRecord($id);
     		
     		$this->load->helper(array('form', 'url'));
             $this->load->library('form_validation');
@@ -145,7 +130,12 @@ class Users extends MY_Controller
 	    				$data_values['user_banned'] = (empty($data_values['user_banned']))? '1' : '0';
 	    				$data_values['user_modified'] = date('Y-m-d H:i:s');
 	    				
-	    				if($this->users_model->update($id, $data_values)){
+	    			 	// If username is not used, it must be entered into the record as NULL
+			            if( empty( $data_values['user_name'] ) ) {
+			                $data_values['user_name'] = NULL;
+			            }
+	    				
+	    				if($this->main_model->update($id, $data_values)){
 	    					$this->session->set_flashdata('success', 'Utilisateur mis à jour avec succès!');
 	    					
 	    					redirect('/users/view/'.$id);
@@ -320,7 +310,7 @@ class Users extends MY_Controller
 		                $data_values['user_name'] = NULL;
 		            }
 		            
-					if($this->users_model->create($data_values)){
+					if($this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Utilisateur créé avec succès!');
     					
     					redirect('/users/view/'.$data_values['user_id']);

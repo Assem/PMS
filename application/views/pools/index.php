@@ -35,8 +35,8 @@
 						<td><?php echo $pool->code; ?></td>
 						<td><?php echo $pool->label; ?></td>
 						<td><?php echo $pool->customer; ?></td>
-						<td><?php echo DateTime::createFromFormat('Y-m-d H:i:s', $pool->start_date." 00:00:00")->format('m/d/Y'); ?></td>
-						<td><?php echo DateTime::createFromFormat('Y-m-d H:i:s', $pool->end_date." 00:00:00")->format('m/d/Y'); ?></td>
+						<td><?php drawDate($pool->start_date); ?></td>
+						<td><?php drawDate($pool->end_date); ?></td>
 						<td>
 							<?php echo ($pool->actif)? 1:0; ?>
 						</td>

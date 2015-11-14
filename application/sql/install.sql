@@ -154,3 +154,22 @@ ADD CONSTRAINT `fk_pools_1`
   ON UPDATE NO ACTION;
 
 -- --------------------------------------------------------
+  
+--
+-- Table structure for table `questions`
+--
+
+CREATE TABLE `PMS`.`questions` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(255) NOT NULL,
+  `order` INT NOT NULL,
+  `type` INT NOT NULL,
+  `required` TINYINT NOT NULL DEFAULT 1,
+  `id_pool` INT(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_questions_pool_idx` (`id_pool` ASC),
+  CONSTRAINT `fk_questions_pool`
+    FOREIGN KEY (`id_pool`)
+    REFERENCES `PMS`.`pools` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)ENGINE=InnoDB DEFAULT CHARSET=utf8;

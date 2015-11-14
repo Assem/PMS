@@ -13,7 +13,9 @@ class Pools extends MY_Controller
 	{
 		parent::__construct();
 		
-		$this->load->model('pools_model');
+		$this->load->model('pools_model', 'main_model');
+		$this->load->helper(array('form', 'url', 'my_date'));
+        $this->load->library('form_validation');
 	}
 	
 	/**
@@ -29,12 +31,31 @@ class Pools extends MY_Controller
 				'content' => 'pools/index',
 				'title' => "Liste des sondages",
 	    		'js_to_load' => array('pools.js'),
-	    		'pools' => $this->pools_model->getDataList()
+	    		'pools' => $this->main_model->getDataList()
 			);
 			
 			$this->load->view('global/layout', $data);
 		}
 	}
+	
+	/**
+     * Delete a pool
+     *
+     * @param int $id ID of the user to delete
+     */
+    public function delete($id=NULL) {
+    	if( $this->require_role('admin,super-agent') ) {
+    		$record = $this->_checkRecord($id);
+    		
+    		if($record) {
+    			$this->main_model->delete($id);
+    			
+    			$this->session->set_flashdata('success', 'Sondage supprimé avec succès!');
+    			
+    			redirect('/pools/index');
+    		}
+    	}
+    }
 	
 	private function _getFields($action='edit', $data_values) {
     	$data = array(
@@ -55,7 +76,6 @@ class Pools extends MY_Controller
 					'name'	=> 'start_date',
 					'id'	=> 'start_date',
 					'value'	=> $data_values['start_date'],
-					'type'	=> 'date',
 					'class'		=> 'form-control'
 					)
 				),
@@ -63,7 +83,6 @@ class Pools extends MY_Controller
 					'name'	=> 'end_date',
 					'id'	=> 'end_date',
 					'value'	=> $data_values['end_date'],
-					'type'	=> 'date',
 					'class'		=> 'form-control'
 					)
 				),
@@ -95,7 +114,7 @@ class Pools extends MY_Controller
     
 	private function _setValidationRules($action='edit', $id=NULL) {
     	$unique_fct = 'is_unique_exclude';
-    	$unique_fct_params = ", user_id, $id";
+    	$unique_fct_params = ", id, $id";
     	
     	if($action == 'add') {
     		$unique_fct = 'is_unique';
@@ -109,12 +128,12 @@ class Pools extends MY_Controller
 		$this->form_validation->set_rules(
 				'start_date', 
 				'Date de début', 
-				"trim|valid_date|date_less_than_equal_to[Date de fin,".$this->input->post('end_date')."]", 
+				"trim|valid_date|date_less_than_equal_to[".$this->input->post('end_date')."]", 
 				array('date_less_than_equal_to' => 'La date de début doit être inférieur ou égale à la date de fin'));
 		$this->form_validation->set_rules(
 				'end_date', 
 				'Date de fin', 
-				"trim|date_greater_than_equal_to[Date de début,".$this->input->post('start_date')."]",
+				"trim|valid_date|date_greater_than_equal_to[".$this->input->post('start_date')."]",
 				array('date_greater_than_equal_to' => 'La date de fin doit être supérieur ou égale à la date de début'));
 		
 		$this->form_validation->set_rules('max_surveys_number', 'Nbr maximum de fiches', 'trim|integer|max_length[11]');
@@ -128,11 +147,9 @@ class Pools extends MY_Controller
     public function add() {
     	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin,super-agent') ) {
-    		$this->load->helper(array('form', 'url'));
-            $this->load->library('form_validation');
-    		
     		$data = array(
     			'title' => "Ajouter un sondage",
+    			'js_to_load' => array('pools.js'),
     			'content' => 'pools/add'
     		);
     		
@@ -155,8 +172,11 @@ class Pools extends MY_Controller
 					$data_values['creation_date']	= date('Y-m-d H:i:s');
 					$data_values['update_date']		= date('Y-m-d H:i:s');
 					$data_values['actif']	  = (empty($data_values['actif']))? '0' : '1';
+					
+					$data_values['start_date'] = prepareDateForSave($data_values['start_date']);
+					$data_values['end_date'] = prepareDateForSave($data_values['end_date']);
 		
-		            if($this->pools_model->create($data_values)){
+		            if($this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Sondage créé avec succès!');
     					
     					redirect('/pools/index');
@@ -166,13 +186,13 @@ class Pools extends MY_Controller
                 }
     		} else {
     			$data_values = array(
-    				'code' 	=> '',
-    				'label' 	=> '',
-    				'customer' 			=> '',
+    				'code' 					=> '',
+    				'label' 				=> '',
+    				'customer' 				=> '',
     				'start_date' 			=> '',
-    				'end_date' 			=> '',
-    				'max_surveys_number' 		=> '',
-    				'actif' 			=> TRUE,
+    				'end_date' 				=> '',
+    				'max_surveys_number' 	=> '',
+    				'actif' 				=> TRUE,
     				'description' 			=> ''
     			);
     		}
@@ -184,21 +204,6 @@ class Pools extends MY_Controller
     }
     
 	/**
-     * Check if we have a pool with the passed $id  
-     * 
-     * @param integer $id
-     */
-    private function _checkRecord($id) {
-    	if(!isset($id) || !is_numeric($id)) {
-    		show_404();
-    	}
-    		
-    	$pool = $this->pools_model->getRecordByID($id);
-    	
-    	return $pool;
-    }
-    
-    /**
      * View a pools detail
      * 
      * @param int $id ID of the pool to view
@@ -216,7 +221,7 @@ class Pools extends MY_Controller
     		);
     		
     		if($pool){
-    			$createdBy = $this->pools_model->getCreatedby($pool);
+    			$createdBy = $this->main_model->getCreatedby($pool);
     			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
     					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
     			
@@ -226,8 +231,8 @@ class Pools extends MY_Controller
 	    				'Client' 			=> $pool->customer,
     					'Libellé' 			=> $pool->label,
 	    				'Description'		=> $pool->description,
-    					'Date de début' 	=> date('d/m/Y', strtotime($pool->start_date)),
-    					'Date de fin' 		=> date('d/m/Y', strtotime($pool->end_date)),
+    					'Date de début' 	=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
+    					'Date de fin' 		=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
     					'Nbr maximum de fiches' 		=> $pool->max_surveys_number,
     					'Actif'				=> ($pool->actif)? 'OUI' : 'NON',
     					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($pool->creation_date)),
@@ -235,6 +240,70 @@ class Pools extends MY_Controller
     					'Créé par' 			=> $createdByLink
     				)
 	    		);
+    		}
+    		
+    		$this->load->view('global/layout', $data);
+    	}
+    }
+    
+	/**
+     * Edit a pool
+     *
+     * @param int $id ID of the pool to edit
+     */
+    public function edit($id=NULL) {
+    	if( $this->require_role('admin,super-agent') ) {
+    		$pool = $this->_checkRecord($id);
+    		
+    		$data = array(
+    			'title' => "Edition d'un sondage",
+    			'js_to_load' => array('pools.js'),
+    			'content' => 'pools/edit',
+    			'pool' => $pool
+    		);
+    		
+    		if($pool){
+	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
+	    			$data_values = array(
+	    				'code' 					=> set_value('code'),
+	    				'label' 				=> set_value('label'),
+	    				'customer' 				=> set_value('customer'),
+	    				'start_date' 			=> set_value('start_date'),
+	    				'end_date' 				=> set_value('end_date'),
+	    				'max_surveys_number' 	=> set_value('max_surveys_number'),
+	    				'actif' 				=> set_value('actif'),
+	    				'description' 			=> set_value('description')
+	    			);
+	    			
+	    			$this->_setValidationRules('edit', $id);
+	    			
+	    			if ($this->form_validation->run()) {
+	    				$data_values['update_date']	= date('Y-m-d H:i:s');
+	    				$data_values['start_date'] = prepareDateForSave($data_values['start_date']);
+						$data_values['end_date'] = prepareDateForSave($data_values['end_date']);
+	    				
+	    			 	if($this->main_model->update($id, $data_values)){
+	    					$this->session->set_flashdata('success', 'Sondage mis à jour avec succès!');
+	    					
+	    					redirect('/pools/view/'.$id);
+	    				} else {
+	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
+	    				}
+	                }
+	    		} else {
+	    			$data_values = array(
+	    				'code' 					=> $pool->code,
+	    				'label' 				=> $pool->label,
+	    				'customer' 				=> $pool->customer,
+	    				'start_date' 			=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
+	    				'end_date' 				=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
+	    				'max_surveys_number' 	=> $pool->max_surveys_number,
+	    				'actif' 				=> $pool->actif,
+	    				'description' 			=> $pool->description,
+	    			);
+	    		}
+	    		
+	    		$data['content_data'] = $this->_getFields('edit', $data_values);
     		}
     		
     		$this->load->view('global/layout', $data);

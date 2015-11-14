@@ -39,3 +39,12 @@ function drawActionsMenu($controller, $id) {
 	echo drawActionsMenuItem("$controller/edit/$id", 'edit.png', 'Editer');
 	echo drawActionsMenuItem("$controller/delete/$id", 'delete.png', 'Supprimer', 'delete-action');
 }
+
+/**
+ * Draw a date in d/m/Y if defined
+ * 
+ * @param DateTime $date
+ */
+function drawDate($date) {
+	echo (isset($date))? DateTime::createFromFormat('Y-m-d H:i:s', $date." 00:00:00")->format('d/m/Y'):'';
+}

@@ -1,5 +1,5 @@
 $(function() {
-	var aaSorting = [[ 0, "desc" ]];
+	var aaSorting = [[ 4, "desc" ]];
 	var aoColumnDefs = [
          { bSortable: false, aTargets: [ -1 ] },
          { sType: "date-euro", aTargets: [ 4, 5 ] },
@@ -13,5 +13,9 @@ $(function() {
 		{ type: "date-range" },		
 		{ type: "number" }	
 	];		
-	PMS.myDataTable.createDataTable(aaSorting, aoColumnDefs, aoColumnFilterDefs);
+	PMS.myDataTable.createDataTable($('#datatable_fixed_column'), aaSorting, aoColumnDefs, aoColumnFilterDefs);
+    
+    $( "#start_date, #end_date" ).datepicker({
+    	dateFormat: "dd/mm/yy"
+    });
 });

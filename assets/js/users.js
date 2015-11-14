@@ -13,5 +13,5 @@ $(function() {
 		{ type: "text" },		
 		{ type: "number" }	
 	];		
-	PMS.myDataTable.createDataTable(aaSorting, aoColumnDefs, aoColumnFilterDefs);
+	PMS.myDataTable.createDataTable($('#datatable_fixed_column'), aaSorting, aoColumnDefs, aoColumnFilterDefs);
 });

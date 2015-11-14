@@ -200,6 +200,31 @@ class MY_Model extends CI_Model {
 		
 		return false;
 	}
+	
+	/**
+	 * Delete the record having the passed ID
+	 * 
+	 * @param integer $id
+	 */
+	public function delete($id){
+		$this->db->delete($this->table_name, array($this->pk_column => $id));
+	}
+	
+	/**
+	 * Update the record having the passed ID with the passed data
+	 * 
+	 * @param integer $id
+	 * @param array $data
+	 */
+	public function update($id, $data){
+		$this->db->update($this->table_name, $data, array($this->pk_column => $id));
+		
+		if ($this->db->affected_rows() == 1) {
+			return true;
+		}
+		
+		return false;
+	}
 }
 
 /* End of file MY_Model.php */

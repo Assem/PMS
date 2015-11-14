@@ -17,6 +17,7 @@ require_once APPPATH . 'third_party/community_auth/core/Auth_Controller.php';
 
 class MY_Controller extends Auth_Controller
 {
+	public $main_model;
 	/**
 	 * Class constructor
 	 */
@@ -24,6 +25,21 @@ class MY_Controller extends Auth_Controller
 	{
 		parent::__construct();
 	}
+	
+	/**
+     * Check if we have a record with the passed $id  
+     * 
+     * @param integer $id
+     */
+    protected function _checkRecord($id) {
+    	if(!isset($id) || !is_numeric($id)) {
+    		show_404();
+    	}
+    		
+    	$record = $this->main_model->getRecordByID($id);
+    	
+    	return $record;
+    }
 }
 
 /* End of file MY_Controller.php */

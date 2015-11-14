@@ -27,8 +27,8 @@ $(function() {
     	    }
         },
 
-        createDataTable: function (aaSorting, aoColumnDefs, aoColumnsFilter) {
-        	var otable = $('#datatable_fixed_column').DataTable({
+        createDataTable: function (container, aaSorting, aoColumnDefs, aoColumnsFilter) {
+        	var otable = container.DataTable({
     			"aaSorting": aaSorting,
     			"bAutoWidth": true,
     			"aoColumnDefs": aoColumnDefs,

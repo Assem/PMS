@@ -14,7 +14,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 
 class MY_Form_validation extends CI_Form_validation {
-
+	private $DATE_TIME_FORMAT = 'd/m/Y H:i:s';
+	private $DATE_FORMAT = 'd/m/Y';
 	/**
 	 * Access to protected $_error_array
 	 */
@@ -155,26 +156,34 @@ class MY_Form_validation extends CI_Form_validation {
 	 * @param string $str
 	 */
 	public function valid_date($str) {
-		$d = DateTime::createFromFormat('Y-m-d', $str);
+		$d = DateTime::createFromFormat($this->DATE_FORMAT, $str);
 		
-		return $d && $d->format('Y-m-d') == $str;
+		return $d && $d->format($this->DATE_FORMAT) == $str;
 	}
 	
 	public function date_less_than_equal_to($str, $field) {
-		$params = explode(',', $field);
+		$first_date = DateTime::createFromFormat($this->DATE_TIME_FORMAT, "$str 00:00:00");
+		$second_date = false;
+		if($field) {
+			$second_date = DateTime::createFromFormat($this->DATE_TIME_FORMAT, $field." 00:00:00");
+		}
 		
-		if($params[1]){
-			return DateTime::createFromFormat('Y-m-d H:i:s', "$str 00:00:00")->gettimestamp() <= DateTime::createFromFormat('Y-m-d H:i:s', $params[1]." 00:00:00")->gettimestamp();
+		if($first_date && $second_date){
+			return $first_date->gettimestamp() <= $second_date->gettimestamp();
 		}
 		
 		return true;
 	}
 	
 	public function date_greater_than_equal_to($str, $field) {
-		$params = explode(',', $field);
+		$first_date = DateTime::createFromFormat($this->DATE_TIME_FORMAT, "$str 00:00:00");
+		$second_date = false;
+		if($field) {
+			$second_date = DateTime::createFromFormat($this->DATE_TIME_FORMAT, $field." 00:00:00");
+		}
 		
-		if($params[1]){
-			return DateTime::createFromFormat('Y-m-d H:i:s', "$str 00:00:00")->gettimestamp() >= DateTime::createFromFormat('Y-m-d H:i:s', $params[1]." 00:00:00")->gettimestamp();
+		if($first_date && $second_date){
+			return $first_date->gettimestamp() >= $second_date->gettimestamp();
 		}
 		
 		return true;

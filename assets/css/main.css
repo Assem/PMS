@@ -136,3 +136,5 @@ div.required-notice {
   background-color: black;
   border-color: black;
 }
+
+.ui-datepicker{ z-index: 9999 !important;}
