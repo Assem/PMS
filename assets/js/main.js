@@ -37,7 +37,7 @@ $(function() {
     	    	"lengthMenu": [ 5, 10, 25, 50, 75, 100 ]
     	    });
         	
-        	$('#datatable_fixed_column').dataTable().columnFilter({
+        	container.dataTable().columnFilter({
     	    	sRangeFormat: "De {from} à {to}",		
         	   	sPlaceHolder: "head:before",		
     			aoColumns: aoColumnsFilter

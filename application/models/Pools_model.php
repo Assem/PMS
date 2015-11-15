@@ -2,15 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Community Auth - Examples Model
- *
- * Community Auth is an open source authentication application for CodeIgniter 3
- *
- * @package     Community Auth
- * @author      Robert B Gottier
- * @copyright   Copyright (c) 2011 - 2015, Robert B Gottier. (http://brianswebdesign.com/)
- * @license     BSD - http://www.opensource.org/licenses/BSD-3-Clause
- * @link        http://community-auth.com
+ * @author      Assem Bayahi
  */
 
 class Pools_model extends MY_Model {
@@ -23,18 +15,34 @@ class Pools_model extends MY_Model {
 		parent::__construct();
 		
 		$this->load->model('users_model');
+		$this->load->model('questions_model');
 		
 		$this->table_name = 'pools';
 		$this->pk_column = 'id';
 	}
 	
 	/**
-	 * Return the user how created the pool
+	 * Return the user hwo created the pool
 	 * 
-	 * @param integer $id
+	 * @param Pools $pool
 	 */
 	public function getCreatedby($pool) {
 		return $this->users_model->getRecordByID($pool->created_by);
+	}
+	
+	/**
+	 * Return all the questions of the pool
+	 * 
+	 * @param Pools $pool
+	 */
+	public function getQuestions($pool) {
+		$questions = $this->getMany2OneRecords('questions', 'id_pool', $pool->id);
+		
+		foreach ($questions as $question) {
+			$question->type_name = $this->questions_model->getType($question);
+		}
+		
+		return $questions;
 	}
 }
 

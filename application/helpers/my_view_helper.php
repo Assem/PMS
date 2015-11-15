@@ -41,6 +41,26 @@ function drawActionsMenu($controller, $id) {
 }
 
 /**
+ * Draw buttons to manage the order of elements
+ * 
+ * @param string $controller Controller
+ * @param string $id
+ * @param int $rank
+ * @param int $max_rank
+ */
+function drawManageRankingMenu($controller, $id, $rank, $max_rank) {
+	if($rank > 1) {
+		echo drawActionsMenuItem("$controller/move_rank/$id/first", 'first.png', 'Placer en premier');
+		echo drawActionsMenuItem("$controller/move_rank/$id/up", 'up.png', 'Avancer');
+	}
+	
+	if($rank < $max_rank) {
+		echo drawActionsMenuItem("$controller/move_rank/$id/down", 'down.png', 'Réculer');
+		echo drawActionsMenuItem("$controller/move_rank/$id/last", 'last.png', 'Placer à la fin');
+	}
+}
+
+/**
  * Draw a date in d/m/Y if defined
  * 
  * @param DateTime $date

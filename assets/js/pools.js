@@ -14,6 +14,18 @@ $(function() {
 		{ type: "number" }	
 	];		
 	PMS.myDataTable.createDataTable($('#datatable_fixed_column'), aaSorting, aoColumnDefs, aoColumnFilterDefs);
+	
+	var q_aaSorting = [[ 0, "asc" ]];
+	var q_aoColumnDefs = [
+         { bSortable: false, aTargets: [ -1 ] },
+	];
+	var q_aoColumnFilterDefs = [		
+		{ type: "number" },		
+		{ type: "text" },		
+		{ type: "text" },		
+		{ type: "number" }
+	];	
+	PMS.myDataTable.createDataTable($('#questions_datatable'), q_aaSorting, q_aoColumnDefs, q_aoColumnFilterDefs);
     
     $( "#start_date, #end_date" ).datepicker({
     	dateFormat: "dd/mm/yy"

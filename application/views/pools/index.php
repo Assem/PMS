@@ -28,23 +28,22 @@
 			</tr>
 		</thead>
 		<tbody id="tbody">
-			<?php $i = 0;?>
-				<?php foreach($pools as $pool): ?>
-					<tr style="border-color: gray;">
-						<td><?php echo $pool->id; ?></td>
-						<td><?php echo $pool->code; ?></td>
-						<td><?php echo $pool->label; ?></td>
-						<td><?php echo $pool->customer; ?></td>
-						<td><?php drawDate($pool->start_date); ?></td>
-						<td><?php drawDate($pool->end_date); ?></td>
-						<td>
-							<?php echo ($pool->actif)? 1:0; ?>
-						</td>
-						<td>
-							<?php drawActionsMenu('pools', $pool->id); ?>
-						</td>
-					</tr>
-				<?php endforeach;?>
+			<?php foreach($pools as $pool): ?>
+				<tr style="border-color: gray;">
+					<td><?php echo $pool->id; ?></td>
+					<td><?php echo $pool->code; ?></td>
+					<td><?php echo $pool->label; ?></td>
+					<td><?php echo $pool->customer; ?></td>
+					<td><?php drawDate($pool->start_date); ?></td>
+					<td><?php drawDate($pool->end_date); ?></td>
+					<td>
+						<?php echo ($pool->actif)? 1:0; ?>
+					</td>
+					<td>
+						<?php drawActionsMenu('pools', $pool->id); ?>
+					</td>
+				</tr>
+			<?php endforeach;?>
 		</tbody>
 	</table>
 </div>

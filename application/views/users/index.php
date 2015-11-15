@@ -28,23 +28,22 @@
 			</tr>
 		</thead>
 		<tbody id="tbody">
-			<?php $i = 0;?>
-				<?php foreach($users as $user): ?>
-					<tr style="border-color: gray;">
-						<td><?php echo $user->user_id; ?></td>
-						<td><?php echo $user->pms_user_last_name; ?></td>
-						<td><?php echo $user->pms_user_first_name; ?></td>
-						<td><?php echo $user->user_email; ?></td>
-						<td><?php echo $user->pms_user_gsm; ?></td>
-						<td><?php echo ucfirst($this->authentication->roles[$user->user_level]); ?></td>
-						<td>
-							<?php echo ($user->user_banned)? 0:1; ?>
-						</td>
-						<td>
-							<?php drawActionsMenu('users', $user->user_id); ?>
-						</td>
-					</tr>
-				<?php endforeach;?>
+			<?php foreach($users as $user): ?>
+				<tr style="border-color: gray;">
+					<td><?php echo $user->user_id; ?></td>
+					<td><?php echo $user->pms_user_last_name; ?></td>
+					<td><?php echo $user->pms_user_first_name; ?></td>
+					<td><?php echo $user->user_email; ?></td>
+					<td><?php echo $user->pms_user_gsm; ?></td>
+					<td><?php echo ucfirst($this->authentication->roles[$user->user_level]); ?></td>
+					<td>
+						<?php echo ($user->user_banned)? 0:1; ?>
+					</td>
+					<td>
+						<?php drawActionsMenu('users', $user->user_id); ?>
+					</td>
+				</tr>
+			<?php endforeach;?>
 		</tbody>
 	</table>
 </div>

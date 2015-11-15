@@ -225,6 +225,18 @@ class MY_Model extends CI_Model {
 		
 		return false;
 	}
+	
+	/**
+	 * Return all records related to the model by many2one relation
+	 * 
+	 * @param string $related_table The related table
+	 * @param string $foreign_key The foreign key value
+	 */
+	protected function getMany2OneRecords($related_table, $foreign_key, $value) {
+		$query = $this->db->get_where($related_table, array($foreign_key => $value));
+		
+		return $query->result();
+	}
 }
 
 /* End of file MY_Model.php */

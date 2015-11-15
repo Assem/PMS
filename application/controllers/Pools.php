@@ -41,7 +41,7 @@ class Pools extends MY_Controller
 	/**
      * Delete a pool
      *
-     * @param int $id ID of the user to delete
+     * @param int $id ID of the pool to delete
      */
     public function delete($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
@@ -252,14 +252,18 @@ class Pools extends MY_Controller
      * @param int $id ID of the pool to edit
      */
     public function edit($id=NULL) {
+    	$this->output->enable_profiler(TRUE);
+    	
     	if( $this->require_role('admin,super-agent') ) {
     		$pool = $this->_checkRecord($id);
+    		$questions = $this->main_model->getQuestions($pool);
     		
     		$data = array(
     			'title' => "Edition d'un sondage",
     			'js_to_load' => array('pools.js'),
     			'content' => 'pools/edit',
-    			'pool' => $pool
+    			'pool' => $pool,
+    			'questions' => $questions
     		);
     		
     		if($pool){
