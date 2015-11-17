@@ -217,10 +217,14 @@ class Pools extends MY_Controller
     		$data = array(
     			'title' => "Detail d'un sondage",
     			'content' => 'pools/view',
+    			'js_to_load' => array('pools.js'),
     			'pool' => $pool
     		);
     		
     		if($pool){
+    			$questions = $this->main_model->getQuestions($pool);
+    			$data['questions'] = $questions;
+    			
     			$createdBy = $this->main_model->getCreatedby($pool);
     			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
     					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
@@ -256,17 +260,18 @@ class Pools extends MY_Controller
     	
     	if( $this->require_role('admin,super-agent') ) {
     		$pool = $this->_checkRecord($id);
-    		$questions = $this->main_model->getQuestions($pool);
     		
     		$data = array(
     			'title' => "Edition d'un sondage",
     			'js_to_load' => array('pools.js'),
     			'content' => 'pools/edit',
-    			'pool' => $pool,
-    			'questions' => $questions
+    			'pool' => $pool
     		);
     		
     		if($pool){
+    			$questions = $this->main_model->getQuestions($pool);
+    			$data['questions'] = $questions;
+    			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(
 	    				'code' 					=> set_value('code'),

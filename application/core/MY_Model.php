@@ -232,10 +232,16 @@ class MY_Model extends CI_Model {
 	 * @param string $related_table The related table
 	 * @param string $foreign_key The foreign key value
 	 */
-	protected function getMany2OneRecords($related_table, $foreign_key, $value) {
-		$query = $this->db->get_where($related_table, array($foreign_key => $value));
+	protected function getMany2OneRecords($related_table, $foreign_key, $value, $order_by=NULL) {
+		$this->db->from($related_table);
+		$this->db->where(array($foreign_key => $value));
 		
-		return $query->result();
+		if($order_by) {
+			$this->db->order_by($order_by);
+		}
+		$result = $this->db->get()->result();
+		
+		return $result;
 	}
 }
 

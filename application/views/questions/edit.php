@@ -23,6 +23,12 @@
 	<div class="required-notice">* Champ obligatoire</div>
 	<?php echo form_submit('submit', 'Enregistrer', array('class' => 'submit-button')); ?>
 	<?php echo form_reset('reset', 'Réinitialiser', array('class' => 'submit-button')); ?>
+	
+	<?php
+		if($question->type != 'free_text') {
+			$this->load->view ( 'answers/_list', array('question' => $question, 'answers' => $answers, 'action' => 'edit') );
+		}
+	?>
 
 <?php endif; ?>
 

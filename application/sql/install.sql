@@ -162,7 +162,7 @@ ADD CONSTRAINT `fk_pools_1`
 CREATE TABLE `PMS`.`questions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `description` VARCHAR(255) NOT NULL,
-  `order` INT NOT NULL,
+  `order` INT(3) NOT NULL,
   `type` INT NOT NULL,
   `required` TINYINT NOT NULL DEFAULT 1,
   `id_pool` INT(10) UNSIGNED NOT NULL,
@@ -176,3 +176,23 @@ CREATE TABLE `PMS`.`questions` (
 
 ALTER TABLE `PMS`.`questions` 
 CHANGE COLUMN `type` `type` VARCHAR(15) NOT NULL ;
+
+-- --------------------------------------------------------
+  
+--
+-- Table structure for table `answers`
+--
+
+CREATE TABLE `PMS`.`answers` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `description` VARCHAR(255) NOT NULL,
+  `value` INT(2) NULL,
+  `order` INT(3) NOT NULL,
+  `id_question` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_answers_question_idx` (`id_question` ASC),
+  CONSTRAINT `fk_answers_question`
+    FOREIGN KEY (`id_question`)
+    REFERENCES `PMS`.`questions` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8;

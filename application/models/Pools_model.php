@@ -36,7 +36,7 @@ class Pools_model extends MY_Model {
 	 * @param Pools $pool
 	 */
 	public function getQuestions($pool) {
-		$questions = $this->getMany2OneRecords('questions', 'id_pool', $pool->id);
+		$questions = $this->getMany2OneRecords('questions', 'id_pool', $pool->id, 'order asc');
 		
 		foreach ($questions as $question) {
 			$question->type_name = $this->questions_model->getType($question);
@@ -45,6 +45,3 @@ class Pools_model extends MY_Model {
 		return $questions;
 	}
 }
-
-/* End of file users_model.php */
-/* Location: /models/users_model.php */

@@ -24,7 +24,7 @@
 	<?php echo form_reset('reset', 'Réinitialiser', array('class' => 'submit-button')); ?>
 	
 	<?php
-		$this->load->view ( 'questions/_list', array('pool' => $pool, 'questions' => $questions) );
+		$this->load->view ( 'questions/_list', array('pool' => $pool, 'questions' => $questions, 'action' => 'edit') );
 	?>
 
 <?php endif; ?>

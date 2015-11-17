@@ -53,6 +53,10 @@ body {
 	color: white;
 }
 
+.pmsTHeader th {
+	text-align: center;
+}
+
 h1.pmsH1 {
 	border-bottom: 1px solid;
 	margin-bottom: 20px;

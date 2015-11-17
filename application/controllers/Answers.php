@@ -2,19 +2,19 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * PMS - Questions Controller
+ * PMS - Answers Controller
  *
  * @author      Assem Bayahi
 */
 
-class Questions extends MY_Controller
+class Answers extends MY_Controller
 {
 	public function __construct()
 	{
 		parent::__construct();
 		
-		$this->load->model('questions_model', 'main_model');
-		$this->load->model('pools_model');
+		$this->load->model('answers_model', 'main_model');
+		$this->load->model('questions_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
 	}
@@ -48,8 +48,15 @@ class Questions extends MY_Controller
 					'class'		=> 'form-control'
 					)
 				),
-				'Type <font color="red">*</font>' 	=> form_dropdown('type', $this->main_model->getTypes(), $data_values['type'], 'class="form-control"'),
-				'Obligatoire'		=> form_checkbox('required', '1', $data_values['required'], 'class="form-control"')
+				'Valeur' 	=> form_input(array(
+					'name'	=> 'value',
+					'id'	=> 'value',
+					'value'	=> $data_values['value'],
+					'type'	=> 'number',
+					'maxlength' => '2',
+					'class'		=> 'form-control'
+					)
+				)
 			)
 		);
     	
@@ -58,29 +65,32 @@ class Questions extends MY_Controller
     
 	private function _setValidationRules($action='edit', $id=NULL) {
     	$this->form_validation->set_rules('description', 'Description', 'trim|required|max_length[255]');
+		$this->form_validation->set_rules('value', 'Valeur', 'trim|integer|max_length[2]');
     }
 	
 	/**
-     * Add a new question to a Pool
+     * Add a new answer to a question
      * 
-     * @param int $pool_id ID of the Pool to witch the question will be added
+     * @param int $id_question ID of the Question to witch the answer will be added
      */
-    public function add($pool_id) {
+    public function add($id_question) {
     	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin,super-agent') ) {
-    		if(!isset($pool_id) || !is_numeric($pool_id)) {
+    		if(!isset($id_question) || !is_numeric($id_question)) {
 	    		show_404();
 	    	}
 	    		
-	    	$pool = $this->pools_model->getRecordByID($pool_id);
+	    	$question = $this->questions_model->getRecordByID($id_question);
 	    	
-	    	if(!$pool) {
+	    	if(!$question) {
 	    		show_404();
 	    	}
+	    	
+	    	$pool = $this->questions_model->getPool($question);
     	
     		$data = array(
-    			'title' => "Ajouter une question",
-    			'content' => 'questions/add'
+    			'title' => "Ajouter une réponse",
+    			'content' => 'answers/add'
     		);
     		
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
@@ -108,12 +118,12 @@ class Questions extends MY_Controller
     		} else {
     			$data_values = array(
     				'description' 			=> '',
-    				'type' 					=> '',
-    				'required' 				=> FALSE
+    				'value' 					=> ''
     			);
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);
+	    	$data['content_data']['question'] = $question;
 	    	$data['content_data']['pool'] = $pool;
     		
     		$this->load->view('global/layout', $data);

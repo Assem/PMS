@@ -13,6 +13,10 @@
 		<?php echo drawActionsMenuItem('pools/delete/'.$pool->id, 'delete.png', 'Supprimer', 'delete-action') ?>
 	</div>
 	<?php drawModelData($fields, 2, 'view-form'); ?>
+	
+	<?php
+		$this->load->view ( 'questions/_list', array('pool' => $pool, 'questions' => $questions, 'action' => 'view') );
+	?>
 
 <?php endif; ?>
 
