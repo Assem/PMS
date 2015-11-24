@@ -28,7 +28,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 
 $config['levels_and_roles'] = array(
-	'1' => 'agent',
+	'1' => 'customer',
+	'3' => 'agent',
 	'6' => 'super-agent',
 	'9' => 'admin'
 );

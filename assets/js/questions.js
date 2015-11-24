@@ -1,12 +1,8 @@
 $(function() {
 	var q_aaSorting = [[ 0, "asc" ]];
-	var q_aoColumnDefs = [];
-	
-	if(action == 'edit') {
-		q_aoColumnDefs = [
-              { bSortable: false, aTargets: [ -1 ] },
-     	];
-	}
+	var q_aoColumnDefs = [
+         { bSortable: false, aTargets: [ -1 ] },
+	];
 	var q_aoColumnFilterDefs = [		
 		{ type: "number" },		
 		{ type: "text" },		

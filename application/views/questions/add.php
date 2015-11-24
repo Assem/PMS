@@ -14,4 +14,3 @@
 <div class="required-notice">* Champ obligatoire</div>
 <?php echo form_submit('submit', 'Enregistrer', array('class' => 'submit-button')); ?>
 <?php echo form_reset('reset', 'Réinitialiser', array('class' => 'submit-button')); ?>
-

@@ -20,7 +20,7 @@ class Answers extends MY_Controller
 	}
 	
 	/**
-     * Delete a question
+     * Delete an answser
      *
      * @param int $id ID of the record to delete
      */
@@ -30,11 +30,11 @@ class Answers extends MY_Controller
     		
     		if($record) {
     			$this->main_model->delete($id);
-    			$this->main_model->shiftDown($record->id_pool, $record->order);
+    			$this->main_model->shiftDown($record->id_question, $record->order);
     			
-    			$this->session->set_flashdata('success', 'Question supprimée avec succès!');
+    			$this->session->set_flashdata('success', 'Réponse supprimée avec succès!');
     			
-    			redirect('/pools/edit/'.$record->id_pool);
+    			redirect('/questions/edit/'.$record->id_question);
     		}
     	}
     }
@@ -53,7 +53,7 @@ class Answers extends MY_Controller
 					'id'	=> 'value',
 					'value'	=> $data_values['value'],
 					'type'	=> 'number',
-					'maxlength' => '2',
+					'max' => '99',
 					'class'		=> 'form-control'
 					)
 				)
@@ -95,30 +95,28 @@ class Answers extends MY_Controller
     		
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
     			$data_values = array(
-    				'description' 			=> set_value('description'),
-    				'type' 					=> set_value('type'),
-    				'required' 				=> set_value('required')
+    				'description' 	=> set_value('description', '', FALSE),
+    				'value' 		=> set_value('value')
     			);
     			
     			$this->_setValidationRules('add');
     			
 				if ($this->form_validation->run()) {
-					$data_values['required']	= (empty($data_values['required']))? '0' : '1';
-					$data_values['order'] = $this->main_model->getNextIndex($pool_id);
-					$data_values['id_pool'] = $pool->id;
+					$data_values['order'] = $this->main_model->getNextIndex($id_question);
+					$data_values['id_question'] = $id_question;
 					
 					if($this->main_model->create($data_values)){
-    					$this->session->set_flashdata('success', 'Question créée avec succès!');
+    					$this->session->set_flashdata('success', 'Réponse créée avec succès!');
     					
-    					redirect('/pools/edit/'.$pool->id);
+    					redirect('/questions/edit/'.$id_question);
     				} else {
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
                 }
     		} else {
     			$data_values = array(
-    				'description' 			=> '',
-    				'value' 					=> ''
+    				'description' 	=> '',
+    				'value' 		=> ''
     			);
     		}
 	    		
@@ -131,40 +129,32 @@ class Answers extends MY_Controller
     }
     
 	/**
-     * View a pools detail
+     * View a answer's detail
      * 
-     * @param int $id ID of the pool to view
+     * @param int $id ID of the answer to view
      */
     public function view($id=NULL) {
     	$this->output->enable_profiler(TRUE);
     	
     	if( $this->require_role('admin,super-agent') ) {
-    		$pool = $this->_checkRecord($id);
+    		$answer = $this->_checkRecord($id);
     		
     		$data = array(
-    			'title' => "Detail d'un sondage",
-    			'content' => 'pools/view',
-    			'pool' => $pool
+    			'title' => "Detail d'une réponse",
+    			'content' => 'answers/view',
+    			'answer' => $answer
     		);
     		
-    		if($pool){
-    			$createdBy = $this->main_model->getCreatedby($pool);
-    			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
-    					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
+    		if($answer){
+    			$question = $this->questions_model->getRecordByID($answer->id_question);
+	    		$pool = $this->questions_model->getPool($question);
     			
     			$data['content_data'] = array(
-    				'fields' => array(
-	    				'Code interne' 		=> $pool->code,
-	    				'Client' 			=> $pool->customer,
-    					'Libellé' 			=> $pool->label,
-	    				'Description'		=> $pool->description,
-    					'Date de début' 	=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
-    					'Date de fin' 		=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
-    					'Nbr maximum de fiches' 		=> $pool->max_surveys_number,
-    					'Actif'				=> ($pool->actif)? 'OUI' : 'NON',
-    					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($pool->creation_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($pool->update_date)),
-    					'Créé par' 			=> $createdByLink
+    				'question' 	=> $question,
+    				'pool'		=> $pool,
+    				'fields' 	=> array(
+	    				'Description'		=> $answer->description,
+    					'Valeur'			=> $answer->value
     				)
 	    		);
     		}
@@ -182,49 +172,45 @@ class Answers extends MY_Controller
     	$this->output->enable_profiler(TRUE);
     	
     	if( $this->require_role('admin,super-agent') ) {
-    		$question = $this->_checkRecord($id);
+    		$answer = $this->_checkRecord($id);
     		
     		$data = array(
-    			'title' => "Edition d'une question",
-    			'content' => 'questions/edit',
-    			'js_to_load' => array('questions.js'),
-    			'question' => $question,
-    			'pool'		=> $this->main_model->getPool($question)
+    			'title' => "Edition d'une réponse",
+    			'content' => 'answers/edit',
+    			'answer' => $answer
     		);
     		
-    		if($question) {
-    			$answers = $this->main_model->getAnswers($question->id);
-    			$data['answers'] = $answers;
-    			
+    		if($answer) {
+    			$question = $this->questions_model->getRecordByID($answer->id_question);
+	    		$pool = $this->questions_model->getPool($question);
+	    		
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(
-	    				'description' 			=> set_value('description'),
-    					'type' 					=> set_value('type'),
-    					'required' 				=> set_value('required')
+	    				'description' 		=> set_value('description', '', FALSE),
+    					'value' 			=> set_value('value')
 	    			);
 	    			
 	    			$this->_setValidationRules('edit', $id);
 	    			
 	    			if ($this->form_validation->run()) {
-		    			$data_values['required']	= (empty($data_values['required']))? '0' : '1';
-						
-						if($this->main_model->update($id, $data_values)){
-	    					$this->session->set_flashdata('success', 'Question mise à jour avec succès!');
+		    			if($this->main_model->update($id, $data_values)){
+	    					$this->session->set_flashdata('success', 'Réponse mise à jour avec succès!');
 	    					
-	    					redirect('/pools/edit/'.$question->id_pool);
+	    					redirect('/questions/edit/'.$question->id);
 	    				} else {
 	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
 	    				}
 	                }
 	    		} else {
 	    			$data_values = array(
-	    				'description' 	=> $question->description,
-    					'type' 			=> $question->type,
-    					'required' 		=> $question->required
+	    				'description' 	=> $answer->description,
+    					'value' 		=> $answer->value
 	    			);
 	    		}
 	    		
 	    		$data['content_data'] = $this->_getFields('edit', $data_values);
+	    		$data['content_data']['question'] = $question;
+	    		$data['content_data']['pool'] = $pool;
     		}
     		
     		$this->load->view('global/layout', $data);
@@ -232,7 +218,7 @@ class Answers extends MY_Controller
     }
     
     /**
-     * Change the rank/order of a question
+     * Change the rank/order of an answer
      * 
      * @param int $id
      * @param string $action
@@ -241,37 +227,37 @@ class Answers extends MY_Controller
     	$this->output->enable_profiler(TRUE);
     	
     	if( $this->require_role('admin,super-agent') ) {
-    		$question = $this->_checkRecord($id);
+    		$answer = $this->_checkRecord($id);
     		
-    		if($question) {
+    		if($answer) {
     			switch ($action) {
     				case 'first':
     					$new_rank = 1;
     					$function = 'shiftUp';
     					$order_from = $new_rank - 1;
-    					$order_to = $question->order;
+    					$order_to = $answer->order;
     					break;
     				case 'up':
-    					$new_rank = $question->order - 1;
+    					$new_rank = $answer->order - 1;
     					$function = 'shiftUp';
     					$order_from = $new_rank - 1;
-    					$order_to = $question->order;
+    					$order_to = $answer->order;
     					break;
     				case 'down':
-    					$new_rank = $question->order + 1;
+    					$new_rank = $answer->order + 1;
     					$function = 'shiftDown';
     					$order_from = $new_rank - 1;
-    					$order_to = $question->order + 2;
+    					$order_to = $answer->order + 2;
     					break;
     				case 'last':
-    					$new_rank = $this->main_model->getNextIndex($question->id_pool) - 1;
+    					$new_rank = $this->main_model->getNextIndex($answer->id_question) - 1;
     					$function = 'shiftDown';
-    					$order_from = $question->order;
+    					$order_from = $answer->order;
     					$order_to = $new_rank + 1;
     					break;
     			}
     					
-    			$this->main_model->$function($question->id_pool, $order_from, $order_to);
+    			$this->main_model->$function($answer->id_question, $order_from, $order_to);
     					
     			if($this->main_model->update($id, array('order' => $new_rank))) {
     				$this->session->set_flashdata('success', 'Rang mis à jour avec succès!');
@@ -279,7 +265,7 @@ class Answers extends MY_Controller
     				$this->session->set_flashdata('error', 'La mise à jour a échoué!');
     			}
     					
-    			redirect('/pools/edit/'.$question->id_pool);
+    			redirect('/questions/edit/'.$answer->id_question);
     		}
     	}
     }

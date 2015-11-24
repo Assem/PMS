@@ -14,24 +14,68 @@ class Pools extends MY_Controller
 		parent::__construct();
 		
 		$this->load->model('pools_model', 'main_model');
+		$this->load->model('sheets_model');
+		
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
+        
+        $this->output->enable_profiler(TRUE);
+	}
+	
+	/**
+	 * Select a pool to start creating users survey sheet
+	 */
+	public function select() {
+		if( $this->require_role('admin,super-agent,agent') ) {
+			$pools = array();
+			
+			foreach ($this->main_model->getActivePools() as $pool) {
+				$pools[$pool->id] = '['.$pool->code.'] '.$pool->label;
+			}
+				
+			$data = array(
+				'content' => 'pools/select',
+				'title' => "Sélection de sondage",
+	    		'js_to_load' => array('pools.js'),
+	    		'content_data' => array(
+					'fields' => array(
+						'Sondage' 	=> form_dropdown('pool', $pools, null, 'class="form-control"')
+					)
+				)
+			);
+			
+			if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' && set_value('pool', false)){
+				$seleted_pool_id = set_value('pool', false);
+				
+				redirect('/respondents/add/'.$seleted_pool_id);
+			}
+			
+			$this->load->view('global/layout', $data);
+		}
 	}
 	
 	/**
 	 * List all the pools
 	 */
 	public function index() {
-		if( $this->require_min_level(1) ) {
-			if( !$this->is_role('admin') ) { //if not admin, then it's an agent so we redirect him
+		if( $this->require_role('admin,super-agent,agent') ) {
+			if( $this->is_role('agent') ) { //if it's an agent so we redirect him
 				redirect( secure_site_url('pools/select') );
+			}
+			
+			$pools = array();
+			$pools_list = $this->main_model->getDataList();
+			
+			foreach ($pools_list as $pool) {
+				$pool->sheets_count = $this->main_model->countSheets($pool).'/'.$pool->max_surveys_number;
+				$pools[] = $pool;
 			}
 			
 			$data = array(
 				'content' => 'pools/index',
 				'title' => "Liste des sondages",
 	    		'js_to_load' => array('pools.js'),
-	    		'pools' => $this->main_model->getDataList()
+	    		'pools' => $pools
 			);
 			
 			$this->load->view('global/layout', $data);
@@ -60,13 +104,13 @@ class Pools extends MY_Controller
 	private function _getFields($action='edit', $data_values) {
     	$data = array(
 			'fields' => array(
-				'Code interne <font color="red">*</font>' 		=> form_input('code', $data_values['code'], array(
+				'Code interne <font color="red">*</font>'	=> form_input('code', $data_values['code'], array(
 					'maxlength'	=> '30',
 					'required' 	=> '1',
 					'class'		=> 'form-control'
 					)
 				),
-				'Libellé <font color="red">*</font>' 	=> form_input('label', $data_values['label'], array(
+				'Libellé <font color="red">*</font>'	=> form_input('label', $data_values['label'], array(
 					'maxlength' => '80',
 					'required' 	=> '1',
 					'class'		=> 'form-control'
@@ -153,18 +197,18 @@ class Pools extends MY_Controller
     			'content' => 'pools/add'
     		);
     		
-    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-    			$data_values = array(
-    				'code' 				=> set_value('code'),
-    				'label' 			=> set_value('label'),
-    				'customer' 			=> set_value('customer'),
-    				'start_date' 		=> set_value('start_date'),
-    				'end_date' 			=> set_value('end_date'),
-    				'max_surveys_number'=> set_value('max_surveys_number'),
-    				'actif' 			=> set_value('actif'),
-    				'description' 		=> set_value('description'),
-    			);
+    		$data_values = array(
+    			'code' 				=> set_value('code'),
+    			'label' 			=> set_value('label'),
+    			'customer' 			=> set_value('customer'),
+    			'start_date' 		=> set_value('start_date'),
+   				'end_date' 			=> set_value('end_date'),
+   				'max_surveys_number'=> set_value('max_surveys_number'),
+   				'actif' 			=> set_value('actif', TRUE),
+   				'description' 		=> set_value('description', '', FALSE)
+    		);
     			
+    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
     			$this->_setValidationRules('add');
     			
 				if ($this->form_validation->run()) {
@@ -184,17 +228,6 @@ class Pools extends MY_Controller
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
                 }
-    		} else {
-    			$data_values = array(
-    				'code' 					=> '',
-    				'label' 				=> '',
-    				'customer' 				=> '',
-    				'start_date' 			=> '',
-    				'end_date' 				=> '',
-    				'max_surveys_number' 	=> '',
-    				'actif' 				=> TRUE,
-    				'description' 			=> ''
-    			);
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);
@@ -222,6 +255,8 @@ class Pools extends MY_Controller
     		);
     		
     		if($pool){
+    			$pool->sheets_count = $this->main_model->countSheets($pool);
+    			
     			$questions = $this->main_model->getQuestions($pool);
     			$data['questions'] = $questions;
     			

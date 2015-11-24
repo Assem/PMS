@@ -28,7 +28,7 @@
 </head>
 <body>
 	<?php 
-	if(isset($auth_role) && $auth_role == 'admin') {
+	if(isset($auth_role)) {
 		$this->load->view ( 'global/menu' );
 	}
 	?>

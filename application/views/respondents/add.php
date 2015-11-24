@@ -1,14 +1,14 @@
-<h1 class="pmsH1">Ajouter un sondage</h1>
+<h1 class="pmsH1-small">Sondage <?php echo $pool->label; ?>: Information sur le répondant</h1>
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
 ?>
 <?php echo validation_errors('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Erreur! </strong>', '</div>'); ?>
 
 <div class="view-menu">
-	<?php echo drawActionsMenuItem('pools/index', 'cancel.png', 'Annuler et quitter') ?>
+	<?php echo drawActionsMenuItem('pools/select', 'cancel.png', 'Annuler et revenir à la sélection des sondages') ?>
 </div>
 
-<?php echo form_open('pools/add'); ?>
+<?php echo form_open('respondents/add/'.$pool->id); ?>
 <?php drawModelData($fields, 2, 'edit-form'); ?>
 
 <div class="required-notice">* Champ obligatoire</div>

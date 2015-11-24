@@ -8,6 +8,13 @@
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
+	
+	<?php echo secure_anchor('sheets/index/pool-'.$pool->id, $pool->sheets_count.' Fiches', 
+			array(
+					'title' => 'Consulter les fiches',
+					'class' => 'counter_link'
+	)); ?>
+	
 	<div class="view-menu">
 		<?php echo drawActionsMenuItem('pools/edit/'.$pool->id, 'edit.png', 'Editer') ?>
 		<?php echo drawActionsMenuItem('pools/delete/'.$pool->id, 'delete.png', 'Supprimer', 'delete-action') ?>

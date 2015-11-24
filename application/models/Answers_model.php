@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author      Assem Bayahi
  */
 
-class Answers_model extends MY_Model {
+class Answers_model extends Ordered_model {
 	
 	/**
 	 * Class Constructor
@@ -19,6 +19,7 @@ class Answers_model extends MY_Model {
 		
 		$this->table_name = 'answers';
 		$this->pk_column = 'id';
+		$this->parent_column = 'id_question';
 	}
 	
 	/**

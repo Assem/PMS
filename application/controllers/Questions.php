@@ -85,7 +85,7 @@ class Questions extends MY_Controller
     		
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
     			$data_values = array(
-    				'description' 			=> set_value('description'),
+    				'description' 			=> set_value('description', '', FALSE),
     				'type' 					=> set_value('type'),
     				'required' 				=> set_value('required')
     			);
@@ -121,40 +121,32 @@ class Questions extends MY_Controller
     }
     
 	/**
-     * View a pools detail
+     * View a question's detail
      * 
-     * @param int $id ID of the pool to view
+     * @param int $id ID of the question to view
      */
     public function view($id=NULL) {
     	$this->output->enable_profiler(TRUE);
     	
     	if( $this->require_role('admin,super-agent') ) {
-    		$pool = $this->_checkRecord($id);
+    		$question = $this->_checkRecord($id);
     		
     		$data = array(
-    			'title' => "Detail d'un sondage",
-    			'content' => 'pools/view',
-    			'pool' => $pool
+    			'title' => "Detail d'une question",
+    			'content' => 'questions/view',
+    			'js_to_load' => array('questions.js'),
+    			'question' => $question
     		);
     		
-    		if($pool){
-    			$createdBy = $this->main_model->getCreatedby($pool);
-    			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
-    					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
+    		if($question){
+    			$data['answers'] = $this->main_model->getAnswers($question->id);
+    			$data['pool'] = $this->main_model->getPool($question);
     			
     			$data['content_data'] = array(
     				'fields' => array(
-	    				'Code interne' 		=> $pool->code,
-	    				'Client' 			=> $pool->customer,
-    					'Libellé' 			=> $pool->label,
-	    				'Description'		=> $pool->description,
-    					'Date de début' 	=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
-    					'Date de fin' 		=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
-    					'Nbr maximum de fiches' 		=> $pool->max_surveys_number,
-    					'Actif'				=> ($pool->actif)? 'OUI' : 'NON',
-    					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($pool->creation_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($pool->update_date)),
-    					'Créé par' 			=> $createdByLink
+	    				'Description'		=> $question->description,
+    					'Type'				=> $this->main_model->getType($question),
+    					'Obligatoire'		=> ($question->required)? 'OUI' : 'NON'
     				)
 	    		);
     		}
@@ -188,7 +180,7 @@ class Questions extends MY_Controller
     			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(
-	    				'description' 			=> set_value('description'),
+	    				'description' 			=> set_value('description', '', FALSE),
     					'type' 					=> set_value('type'),
     					'required' 				=> set_value('required')
 	    			);
@@ -199,7 +191,7 @@ class Questions extends MY_Controller
 		    			$data_values['required']	= (empty($data_values['required']))? '0' : '1';
 						
 						if($this->main_model->update($id, $data_values)){
-	    					$this->session->set_flashdata('success', 'Question mise à jour avec succès!');
+							$this->session->set_flashdata('success', 'Question mise à jour avec succès!');
 	    					
 	    					redirect('/pools/edit/'.$question->id_pool);
 	    				} else {

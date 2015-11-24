@@ -59,4 +59,30 @@ class Questions_model extends Ordered_model {
 		
 		return $answers;
 	}
+
+	/**
+	 * Delete all the answers of a question
+	 * 
+	 * @param int $id_question
+	 */
+	private function deleteAnswers($id_question) {
+		$this->db->delete('answers', array('id_question' => $id_question));
+	}
+	
+	/**
+	 * If update goes fine then we have to delete all old answers if needed
+	 * 
+	 * {@inheritDoc}
+	 * @see MY_Model::update()
+	 */
+	public function update($id, $data) {
+		$question = $this->getRecordByID($id);
+		$res = parent::update($id, $data);
+		
+		if($res && ($data['type'] != $question->type) && ($data['type'] == 'free_text')) {
+			$this->deleteAnswers($id);
+		}
+		
+		return $res;
+	}
 }

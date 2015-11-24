@@ -24,6 +24,8 @@ class MY_Controller extends Auth_Controller
 	public function __construct()
 	{
 		parent::__construct();
+		
+		$this->output->enable_profiler(TRUE);
 	}
 	
 	/**

@@ -4,7 +4,7 @@ $(function() {
     }
     var PMS = window.PMS;
     PMS.myDataTable = {
-        _dataTableLanguage: {
+    	_dataTableLanguage: {
         	"sProcessing":     "Traitement en cours...",
     	    "sSearch":         "Rechercher&nbsp;:",
     	    "sLengthMenu":     "Afficher _MENU_ &eacute;l&eacute;ments",
@@ -42,6 +42,22 @@ $(function() {
         	   	sPlaceHolder: "head:before",		
     			aoColumns: aoColumnsFilter
     		});
+        	
+        	PMS.myDataTable.showTableInfos(otable);
+        	
+        	otable.on( 'draw.dt', function () {
+        		PMS.myDataTable.showTableInfos(otable);
+        	});
+        	
+        	return otable;
+        },
+        
+        showTableInfos: function(otable) {
+        	var info = otable.page.info();
+        	
+        	$('#tableInfo').html(
+			    'Nombre total: '+info.recordsTotal+' | Nombre filtré: '+info.recordsDisplay
+			);
         },
         
         validateDeletion: function () {

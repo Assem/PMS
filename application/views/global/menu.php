@@ -19,9 +19,13 @@
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<?php $active_controller = $this->router->fetch_class();?>
-				<li <?php echo(($active_controller == 'pools')?'class="active"':''); ?>><?php echo secure_anchor('pools/index', 'Sondages'); ?></li>
-				<li <?php echo(($active_controller == 'questionnaire')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Questionnaires'); ?></li>
-				<li <?php echo(($active_controller == 'users')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Utilisateurs'); ?></li>
+				<?php if($auth_role == 'admin' || $auth_role == 'super-agent'): ?>
+					<li <?php echo(($active_controller == 'pools')?'class="active"':''); ?>><?php echo secure_anchor('pools/index', 'Sondages'); ?></li>
+				<?php endif; ?>
+				<?php if($auth_role == 'admin'): ?>
+					<li <?php echo(($active_controller == 'sheets')?'class="active"':''); ?>><?php echo secure_anchor('sheets/index', 'Fiches'); ?></li>
+					<li <?php echo(($active_controller == 'users')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Utilisateurs'); ?></li>
+				<?php endif; ?>
 				<li class="logout"><?php echo secure_anchor('users/logout', 'Déconnexion'); ?></li>
 			</ul>
 			<span class="welcome-span"><?php echo "Bonjour $auth_last_name $auth_first_name" ?></span>

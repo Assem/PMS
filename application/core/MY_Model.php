@@ -195,7 +195,12 @@ class MY_Model extends CI_Model {
 				->insert($this->table_name);
 		
 		if ($this->db->affected_rows() == 1) {
-			return true;
+			$inserted_id = $this->db->insert_id();
+			if($inserted_id) {
+				return $inserted_id;
+			}
+			
+			return TRUE;
 		}
 		
 		return false;

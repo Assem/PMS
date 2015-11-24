@@ -62,6 +62,12 @@ h1.pmsH1 {
 	margin-bottom: 20px;
 }
 
+h1.pmsH1-small {
+	border-bottom: 1px solid;
+	margin-bottom: 20px;
+	font-size: 22px;
+}
+
 table.view-form tr td, table.view-form tr th {
 	padding: 8px;
 	text-align: left;
@@ -83,6 +89,10 @@ table.edit-form input {
 }
 
 table.edit-form {
+	width: 100%;
+}
+
+table.answers {
 	width: 100%;
 }
 
@@ -142,3 +152,34 @@ div.required-notice {
 }
 
 .ui-datepicker{ z-index: 9999 !important;}
+
+.counter {
+	font-size: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    position: absolute;
+    line-height: 16px;
+    padding-top: 16px;
+    background: #fff;
+    border: 3px solid black;
+    color: black;
+    text-align: center;
+}
+
+#sheets_counter a {
+	text-decoration: none;
+}
+
+a.counter_link {
+	text-decoration: none;
+	color: black;
+	border: 3px solid black;
+	padding: 5px;
+	border-radius: 10px;
+}
+
+#tableInfo {
+	font-weight: bold;
+	margin-top: 8px;
+}

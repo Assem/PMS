@@ -196,3 +196,86 @@ CREATE TABLE `PMS`.`answers` (
     REFERENCES `PMS`.`questions` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+   
+-- --------------------------------------------------------
+  
+--
+-- Table structure for table `sheets`
+--
+
+CREATE TABLE `PMS`.`sheets` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `id_pool` INT UNSIGNED NOT NULL,
+  `id_respondent` INT UNSIGNED NOT NULL,
+  `notes` VARCHAR(255) NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_sheets_pool_idx` (`id_pool` ASC),
+  INDEX `fk_sheets_respondent_idx` (`id_respondent` ASC),
+  CONSTRAINT `fk_sheets_pool`
+    FOREIGN KEY (`id_pool`)
+    REFERENCES `PMS`.`pools` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sheets_respondent`
+    FOREIGN KEY (`id_respondent`)
+    REFERENCES `PMS`.`respondents` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `PMS`.`sheets` 
+ADD COLUMN `created_by` INT UNSIGNED NOT NULL AFTER `notes`,
+ADD COLUMN `creation_date` DATETIME NOT NULL AFTER `created_by`,
+ADD INDEX `fk_sheets_agent_idx` (`created_by` ASC);
+ALTER TABLE `PMS`.`sheets` 
+ADD CONSTRAINT `fk_sheets_agent`
+  FOREIGN KEY (`created_by`)
+  REFERENCES `PMS`.`users` (`user_id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+  
+CREATE TABLE `PMS`.`geolocations` (
+  `id` INT NOT NULL,
+  `id_user` INT UNSIGNED NOT NULL,
+  `id_sheet` INT NOT NULL,
+  `error` VARCHAR(200) NULL,
+  `latitude` VARCHAR(30) NULL,
+  `longitude` VARCHAR(30) NULL,
+  `creation_date` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_geolocations_agent_idx` (`id_user` ASC),
+  INDEX `fk_geolocations_sheet_idx` (`id_sheet` ASC),
+  CONSTRAINT `fk_geolocations_agent`
+    FOREIGN KEY (`id_user`)
+    REFERENCES `PMS`.`users` (`user_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_geolocations_sheet`
+    FOREIGN KEY (`id_sheet`)
+    REFERENCES `PMS`.`sheets` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+ALTER TABLE `PMS`.`geolocations` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
+
+    
+CREATE TABLE `PMS`.`sheet_answers` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id_question` INT NOT NULL,
+  `value` VARCHAR(255) NULL,
+  `id_sheet` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_sheet_answers_question_idx` (`id_question` ASC),
+  INDEX `fk_sheet_answers_sheet_idx` (`id_sheet` ASC),
+  UNIQUE INDEX `sheet_question` (`id_question` ASC, `id_sheet` ASC),
+  CONSTRAINT `fk_sheet_answers_question`
+    FOREIGN KEY (`id_question`)
+    REFERENCES `PMS`.`questions` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_sheet_answers_sheet`
+    FOREIGN KEY (`id_sheet`)
+    REFERENCES `PMS`.`sheets` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)ENGINE=InnoDB DEFAULT CHARSET=utf8;
