@@ -28,6 +28,10 @@ class Questions extends MY_Controller
     	if( $this->require_role('admin,super-agent') ) {
     		$record = $this->_checkRecord($id);
     		
+    		$pool = $this->pools_model->getRecordByID($record->id_pool);
+	    	
+	    	$this->_can_edit($pool);
+    		
     		if($record) {
     			$this->main_model->delete($id);
     			$this->main_model->shiftDown($record->id_pool, $record->order);
@@ -59,6 +63,20 @@ class Questions extends MY_Controller
 	private function _setValidationRules($action='edit', $id=NULL) {
     	$this->form_validation->set_rules('description', 'Description', 'trim|required|max_length[255]');
     }
+    
+    /**
+     * Check if the pool have already some sheets, if yes, we can not add, edit or delete question
+     * 
+     * @param pool $pool
+     */
+    private function _can_edit($pool) {
+    	//we can not add a question to pool having already some sheets (otherwise, we will have a problem with the stats)
+    	if($this->pools_model->countSheets($pool) > 0) {
+    		$this->session->set_flashdata('error', 'Vous ne pouvez pas ajouter, éditer ou supprimer une question d\'un sondage qui possède des fiches!');
+    		
+    		redirect('/pools/view/'.$pool->id);
+    	}
+    }
 	
 	/**
      * Add a new question to a Pool
@@ -77,8 +95,10 @@ class Questions extends MY_Controller
 	    	if(!$pool) {
 	    		show_404();
 	    	}
-    	
-    		$data = array(
+	    	
+	    	$this->_can_edit($pool);
+	    	
+	    	$data = array(
     			'title' => "Ajouter une question",
     			'content' => 'questions/add'
     		);
@@ -140,7 +160,11 @@ class Questions extends MY_Controller
     		
     		if($question){
     			$data['answers'] = $this->main_model->getAnswers($question->id);
-    			$data['pool'] = $this->main_model->getPool($question);
+    			
+    			$pool = $this->main_model->getPool($question);
+    			$pool->sheets_count = $this->pools_model->countSheets($pool);
+    			
+    			$data['pool'] = $pool;
     			
     			$data['content_data'] = array(
     				'fields' => array(
@@ -165,13 +189,16 @@ class Questions extends MY_Controller
     	
     	if( $this->require_role('admin,super-agent') ) {
     		$question = $this->_checkRecord($id);
+    		$pool = $this->main_model->getPool($question);
+    		
+    		$this->_can_edit($pool);
     		
     		$data = array(
     			'title' => "Edition d'une question",
     			'content' => 'questions/edit',
     			'js_to_load' => array('questions.js'),
     			'question' => $question,
-    			'pool'		=> $this->main_model->getPool($question)
+    			'pool'		=> $pool
     		);
     		
     		if($question) {

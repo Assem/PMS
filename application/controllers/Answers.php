@@ -15,6 +15,7 @@ class Answers extends MY_Controller
 		
 		$this->load->model('answers_model', 'main_model');
 		$this->load->model('questions_model');
+		$this->load->model('pools_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
 	}
@@ -29,6 +30,10 @@ class Answers extends MY_Controller
     		$record = $this->_checkRecord($id);
     		
     		if($record) {
+    			$question = $this->questions_model->getRecordByID($record->id_question);
+	    		$pool = $this->questions_model->getPool($question);
+		    	$this->_can_edit($pool);
+	    	
     			$this->main_model->delete($id);
     			$this->main_model->shiftDown($record->id_question, $record->order);
     			
@@ -69,6 +74,20 @@ class Answers extends MY_Controller
     }
 	
 	/**
+     * Check if the pool have already some sheets, if yes, we can not add, edit or delete question
+     * 
+     * @param pool $pool
+     */
+    private function _can_edit($pool) {
+    	//we can not add a question to pool having already some sheets (otherwise, we will have a problem with the stats)
+    	if($this->pools_model->countSheets($pool) > 0) {
+    		$this->session->set_flashdata('error', 'Vous ne pouvez pas ajouter, éditer ou supprimer une question d\'un sondage qui possède des fiches!');
+    		
+    		redirect('/pools/view/'.$pool->id);
+    	}
+    }
+	
+	/**
      * Add a new answer to a question
      * 
      * @param int $id_question ID of the Question to witch the answer will be added
@@ -87,6 +106,7 @@ class Answers extends MY_Controller
 	    	}
 	    	
 	    	$pool = $this->questions_model->getPool($question);
+	    	$this->_can_edit($pool);
     	
     		$data = array(
     			'title' => "Ajouter une réponse",
@@ -148,6 +168,7 @@ class Answers extends MY_Controller
     		if($answer){
     			$question = $this->questions_model->getRecordByID($answer->id_question);
 	    		$pool = $this->questions_model->getPool($question);
+    			$pool->sheets_number = $this->pools_model->countSheets($pool);
     			
     			$data['content_data'] = array(
     				'question' 	=> $question,
@@ -183,6 +204,8 @@ class Answers extends MY_Controller
     		if($answer) {
     			$question = $this->questions_model->getRecordByID($answer->id_question);
 	    		$pool = $this->questions_model->getPool($question);
+	    		
+	    		$this->_can_edit($pool);
 	    		
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(

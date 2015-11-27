@@ -78,4 +78,12 @@ class Pools_model extends MY_Model {
 		
 		return $results;
 	}
+	
+	public function getPoolsWithSheetsNumber() {
+		$results = $this->db->select($this->table_name.'.*, (SELECT count(*) FROM sheets WHERE sheets.id_pool = pools.id) as sheets_number')
+			->from($this->table_name)
+			->get()->result();
+		
+		return $results;
+	}
 }

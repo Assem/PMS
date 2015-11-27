@@ -1,3 +1,22 @@
+<?php 
+	function getData($from, $sheet) {
+		switch ($from) {
+			case 'pool':
+				echo '<td>'.strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name).'</td>' ;
+    			break;
+    		case 'user':
+    			echo '<td>['.$sheet->pool_code.'] '.$sheet->pool_label.'</td>' ;
+    			break;
+    		default:
+    			echo '<td>['.$sheet->pool_code.'] '.$sheet->pool_label.'</td>' ;
+    			echo '<td>'.strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name).'</td>' ;
+    			break;
+		}
+	}
+?>
+<script type="text/javascript">
+var from = '<?php echo $from; ?>';
+</script>
 <h1 class="pmsH1"><?php echo $title; ?></h1>
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
@@ -13,13 +32,13 @@
 		<thead>
 			<tr role="row" class="pmsFilterTHeader">
 				<th>ID</th>
-				<th>Agent</th>
+				<?php echo $columns; ?>
 				<th>Date</th>
 				<th></th>
 			</tr>
 			<tr role="row" class="pmsTHeader">
 				<th>ID</th>
-				<th>Agent</th>
+				<?php echo $columns; ?>
 				<th>Date</th>
 				<th style="max-width: 70px">Actions</th>
 			</tr>
@@ -28,7 +47,7 @@
 			<?php foreach($sheets as $sheet): ?>
 				<tr style="border-color: gray;">
 					<td><?php echo $sheet->id; ?></td>
-					<td><?php echo strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name) ; ?></td>
+					<?php getData($from, $sheet); ?>
 					<td><?php echo date('d/m/Y H:i:s', strtotime($sheet->creation_date)); ?></td>
 					<td>
 						<?php drawActionsMenu('sheets', $sheet->id); ?>

@@ -10,8 +10,10 @@
 	?>
 	<div class="view-menu">
 		<?php echo drawActionsMenuItem('pools/view/'.$pool->id, 'back.png', 'Revenir au sondage') ?>
-		<?php echo drawActionsMenuItem('questions/edit/'.$question->id, 'edit.png', 'Editer') ?>
-		<?php echo drawActionsMenuItem('questions/delete/'.$question->id, 'delete.png', 'Supprimer', 'delete-action') ?>
+		<?php if($pool->sheets_count == 0): ?>
+			<?php echo drawActionsMenuItem('questions/edit/'.$question->id, 'edit.png', 'Editer') ?>
+			<?php echo drawActionsMenuItem('questions/delete/'.$question->id, 'delete.png', 'Supprimer', 'delete-action') ?>
+		<?php endif; ?>
 	</div>
 	<?php drawModelData($fields, 2, 'view-form'); ?>
 	

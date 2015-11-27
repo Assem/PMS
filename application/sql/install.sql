@@ -177,6 +177,16 @@ CREATE TABLE `PMS`.`questions` (
 ALTER TABLE `PMS`.`questions` 
 CHANGE COLUMN `type` `type` VARCHAR(15) NOT NULL ;
 
+ALTER TABLE `PMS`.`questions` 
+DROP FOREIGN KEY `fk_questions_pool`;
+ALTER TABLE `PMS`.`questions` 
+ADD CONSTRAINT `fk_questions_pool`
+  FOREIGN KEY (`id_pool`)
+  REFERENCES `PMS`.`pools` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+
 -- --------------------------------------------------------
   
 --
@@ -279,3 +289,42 @@ CREATE TABLE `PMS`.`sheet_answers` (
     REFERENCES `PMS`.`sheets` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    
+ALTER TABLE `PMS`.`respondents` 
+DROP FOREIGN KEY `fk_respondent_pool`;
+ALTER TABLE `PMS`.`respondents` 
+ADD CONSTRAINT `fk_respondent_pool`
+  FOREIGN KEY (`id_pool`)
+  REFERENCES `PMS`.`pools` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `PMS`.`sheets` 
+DROP FOREIGN KEY `fk_sheets_pool`;
+ALTER TABLE `PMS`.`sheets` 
+ADD CONSTRAINT `fk_sheets_pool`
+  FOREIGN KEY (`id_pool`)
+  REFERENCES `PMS`.`pools` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `PMS`.`sheets` 
+DROP FOREIGN KEY `fk_sheets_respondent`;
+ALTER TABLE `PMS`.`sheets` 
+ADD CONSTRAINT `fk_sheets_respondent`
+  FOREIGN KEY (`id_respondent`)
+  REFERENCES `PMS`.`respondents` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `PMS`.`geolocations` 
+DROP FOREIGN KEY `fk_geolocations_sheet`;
+ALTER TABLE `PMS`.`geolocations` 
+CHANGE COLUMN `id_sheet` `id_sheet` INT(11) NULL ;
+ALTER TABLE `PMS`.`geolocations` 
+ADD CONSTRAINT `fk_geolocations_sheet`
+  FOREIGN KEY (`id_sheet`)
+  REFERENCES `PMS`.`sheets` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE SET NULL;

@@ -70,7 +70,7 @@ class Respondents extends MY_Controller
     }
     
     /**
-     * Delete a respondant (if we cancel sheet creation for example)
+     * Delete a respondent (if we cancel sheet creation for example)
      *
      * @param int $id ID of the user to delete
      */
@@ -78,9 +78,9 @@ class Respondents extends MY_Controller
     	$this->session->keep_flashdata('success');
     	
     	if( $this->require_role('admin,super-agent,agent') ) {
-    		$respondant = $this->_checkRecord($id);
+    		$respondent = $this->_checkRecord($id);
     		
-    		if($respondant) {
+    		if($respondent) {
     			$this->main_model->delete($id);
     			
     			if($redirect_to_selection) {
@@ -91,82 +91,74 @@ class Respondents extends MY_Controller
     	}
     }
     
+    private function _setValueToNull($data_array, $fields_list) {
+    	foreach ($fields_list as $field) {
+    		if(empty($data_array[$field])) {
+    			$data_array[$field] = NULL;
+    		}
+    	}
+    	
+    	return $data_array;
+    }
+    
     /**
-     * Edit a user profile
+     * Edit a respondent profile
      *
-     * @param int $id ID of the user to edit
+     * @param int $id ID of the respondent to edit
      */
     public function edit($id=NULL) {
-    	/*if( $this->require_role('admin') ) {
-    		$user = $this->_checkRecord($id);
+    	if( $this->require_role('admin,super-agent,agent') ) {
+    		$respondent = $this->_checkRecord($id);
     		
     		$this->load->helper(array('form', 'url'));
             $this->load->library('form_validation');
     		
     		$data = array(
-    			'title' => "Edition d'un utilisateur",
-    			'content' => 'users/edit',
-    			'user' => $user
+    			'title' => "Fiche du répondant",
+    			'content' => 'respondents/edit',
+    			'respondent' => $respondent
     		);
     		
-    		if($user){
+    		if($respondent){
+    			$pool = $this->pools_model->getRecordByID($respondent->id_pool);
+    			
+    			$data['pool'] = $pool;
+    			
+    			$data_values = array(
+	    			'age' 					=> set_value('age', $respondent->age),
+	    			'country' 				=> set_value('country', $respondent->country),
+	    			'city' 					=> set_value('city', $respondent->city),
+	    			'email' 				=> set_value('email', $respondent->email),
+	    			'sexe' 					=> set_value('sexe', $respondent->sexe),
+	    			'educational_level' 	=> set_value('educational_level', $respondent->educational_level),
+	    			'marital_status' 		=> set_value('marital_status', $respondent->marital_status),
+	    			'professional_status' 	=> set_value('professional_status', $respondent->professional_status),
+	    			'childs_nbr' 			=> set_value('childs_nbr', $respondent->childs_nbr),
+	    			'brothers_nbr' 			=> set_value('brothers_nbr', $respondent->brothers_nbr),
+	    			'sisters_nbr' 			=> set_value('sisters_nbr', $respondent->sisters_nbr),
+	    			'gsm' 					=> set_value('gsm', $respondent->gsm),
+	    			'company_type' 			=> set_value('company_type', $respondent->company_type)
+	    		);
+    			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-	    			$data_values = array(
-	    				'pms_user_last_name' 	=> set_value('pms_user_last_name'),
-	    				'pms_user_first_name' 	=> set_value('pms_user_first_name'),
-	    				'user_email' 			=> set_value('user_email'),
-	    				'pms_user_gsm' 			=> set_value('pms_user_gsm'),
-	    				'user_name' 			=> set_value('user_name'),
-	    				'pms_user_code' 		=> set_value('pms_user_code'),
-	    				'user_level' 			=> set_value('user_level'),
-	    				'user_banned' 			=> set_value('user_banned')
-	    			);
-	    			
-	    			$this->_setValidationRules('edit', $id);
-					
-					if(!empty(trim(set_value('user_pass')))) {
-						$data_values['user_salt']     = $this->authentication->random_salt();
-						$data_values['user_pass']     = $this->authentication->hash_passwd(trim(set_value('user_pass')), $data_values['user_salt']);
-						
-						$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
-						$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
-					}
+	    			$this->_setValidationRules();
 						
 	    			if ($this->form_validation->run()) {
-	    				$data_values['user_banned'] = (empty($data_values['user_banned']))? '1' : '0';
-	    				$data_values['user_modified'] = date('Y-m-d H:i:s');
-	    				
-	    			 	// If username is not used, it must be entered into the record as NULL
-			            if( empty( $data_values['user_name'] ) ) {
-			                $data_values['user_name'] = NULL;
-			            }
+	    				$data_values = $this->_setValueToNull($data_values, array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 'gsm'));
 	    				
 	    				if($this->main_model->update($id, $data_values)){
-	    					$this->session->set_flashdata('success', 'Utilisateur mis à jour avec succès!');
-	    					
-	    					redirect('/users/view/'.$id);
+	    					$this->session->set_flashdata('success', 'Répondant mis à jour avec succès!');
 	    				} else {
 	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
 	    				}
 	                }
-	    		} else {
-	    			$data_values = array(
-	    				'pms_user_last_name' 	=> $user->pms_user_last_name,
-	    				'pms_user_first_name' 	=> $user->pms_user_first_name,
-	    				'user_email' 			=> $user->user_email,
-	    				'pms_user_gsm' 			=> $user->pms_user_gsm,
-	    				'user_name' 			=> $user->user_name,
-	    				'pms_user_code' 		=> $user->pms_user_code,
-	    				'user_level' 			=> $user->user_level,
-	    				'user_banned' 			=> ($user->user_banned != 1)
-	    			);
 	    		}
 	    		
-	    		$data['content_data'] = $this->_getFields('edit', $data_values);
+	    		$data['content_data'] = $this->_getFields($data_values);
     		}
     		
     		$this->load->view('global/layout', $data);
-    	}*/
+    	}
     }
     
     private function _setValidationRules() {
@@ -327,6 +319,8 @@ class Respondents extends MY_Controller
     			$this->_setValidationRules();
     			
 				if ($this->form_validation->run()) {
+					$data_values = $this->_setValueToNull($data_values, array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 'gsm'));
+					
 					$data_values['created_by']		= $this->auth_user_id;
 					$data_values['creation_date']	= date('Y-m-d H:i:s');
 					$data_values['id_pool']	= $pool_id;

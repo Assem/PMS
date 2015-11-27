@@ -64,10 +64,10 @@ class Pools extends MY_Controller
 			}
 			
 			$pools = array();
-			$pools_list = $this->main_model->getDataList();
+			$pools_list = $this->main_model->getPoolsWithSheetsNumber();
 			
 			foreach ($pools_list as $pool) {
-				$pool->sheets_count = $this->main_model->countSheets($pool).'/'.$pool->max_surveys_number;
+				$pool->sheets_count = $pool->sheets_number.'/'.$pool->max_surveys_number;
 				$pools[] = $pool;
 			}
 			
@@ -304,6 +304,8 @@ class Pools extends MY_Controller
     		);
     		
     		if($pool){
+    			$pool->sheets_count = $this->main_model->countSheets($pool);
+    			
     			$questions = $this->main_model->getQuestions($pool);
     			$data['questions'] = $questions;
     			

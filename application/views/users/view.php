@@ -8,6 +8,11 @@
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
+	<?php echo secure_anchor('sheets/index/user-'.$user->user_id, $user->sheets_number.' Fiches', 
+		array(
+			'title' => 'Consulter les fiches',
+			'class' => 'counter_link'
+	)); ?>
 	<div class="view-menu">
 		<?php echo drawActionsMenuItem('users/edit/'.$user->user_id, 'edit.png', 'Editer') ?>
 		<?php echo drawActionsMenuItem('users/delete/'.$user->user_id, 'delete.png', 'Supprimer', 'delete-action') ?>

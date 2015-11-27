@@ -34,9 +34,11 @@ function drawActionsMenuItem($url, $icon, $title, $class='') {
  * @param string $controller module controller
  * @param string $id id of the object
  */
-function drawActionsMenu($controller, $id) {
+function drawActionsMenu($controller, $id, $can_edit=TRUE) {
 	echo drawActionsMenuItem("$controller/view/$id", 'view.png', 'Afficher');
-	echo drawActionsMenuItem("$controller/edit/$id", 'edit.png', 'Editer');
+	if($can_edit) {
+		echo drawActionsMenuItem("$controller/edit/$id", 'edit.png', 'Editer');
+	}
 	echo drawActionsMenuItem("$controller/delete/$id", 'delete.png', 'Supprimer', 'delete-action');
 }
 

@@ -45,6 +45,8 @@ class Users extends MY_Controller
     		);
     		
     		if($user){
+    			$user->sheets_number = $this->main_model->countSheets($user);
+    			
 	    		$data['content_data'] = array(
     				'fields' => array(
 	    				'Nom' 		=> $user->pms_user_last_name,

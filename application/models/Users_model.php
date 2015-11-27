@@ -181,7 +181,19 @@ class Users_model extends MY_Model {
 	}
 
 	// --------------------------------------------------------------
-
+	
+	/**
+	 * Count all the sheets created by this user
+	 * 
+	 * @param user $user
+	 */
+	public function countSheets($user) {
+		$this->db->where('created_by', $user->user_id);
+		$this->db->from('sheets');
+		return $this->db->count_all_results();
+	}
+	
+	
 }
 
 /* End of file users_model.php */

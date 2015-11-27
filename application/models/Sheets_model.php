@@ -90,4 +90,39 @@ class Sheets_model extends MY_Model {
 		
 		return $results;
 	}
+	
+	/**
+	 * Return all the sheets created by a user
+	 * 
+	 * @param int $user_id
+	 */
+	function getUserSheets($user_id) {
+		$results = $this->db->select($this->table_name.'.*, pools.code as pool_code, pools.label as pool_label', false)
+			->where($this->table_name.'.created_by', $user_id)
+			->order_by($this->table_name.'.creation_date', 'desc')
+			->from($this->table_name)
+			->join('pools', 'pools.id = sheets.id_pool')
+			->get()
+			->result();
+		
+		return $results;
+	}
+	
+	/**
+	 * Return all sheets with info on the Pool and Agent
+	 * 
+	 */
+	function getSheetsWithPoolAndUser() {
+		$results = $this->db->select($this->table_name.'.*, 
+				pools.code as pool_code, pools.label as pool_label, 
+				users.pms_user_last_name, users.pms_user_first_name', false)
+			->order_by($this->table_name.'.creation_date', 'desc')
+			->from($this->table_name)
+			->join('pools', 'pools.id = sheets.id_pool')
+			->join('users', 'users.user_id = sheets.created_by')
+			->get()
+			->result();
+		
+		return $results;
+	}
 }

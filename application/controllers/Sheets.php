@@ -15,6 +15,7 @@ class Sheets extends MY_Controller
         
         $this->load->model('sheets_model', 'main_model');
 		$this->load->model('pools_model');
+		$this->load->model('users_model');
 		$this->load->model('respondents_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
@@ -24,6 +25,8 @@ class Sheets extends MY_Controller
     	if( $this->require_role('admin') ) {
     		$title = 'Liste des fiches';
     		$back_url = '';
+    		$columns = '<th>Pool</th><th>Agent</th>';
+    		$relation = '';
     		
     		if(isset($from)) {
     			$relation = explode('-', $from)[0];
@@ -39,11 +42,25 @@ class Sheets extends MY_Controller
     					$title = "Sondage '".$pool->code."': Liste des fiches";
     					$sheets = $this->main_model->getPoolSheets($id);
     					
-    					$back_url = 'pools/view/'.$pool->id;
+    					$back_url = 'pools/view/'.$id;
+    					$columns = '<th>Agent</th>';
+    					$columns_data = '';
+    					break;
+    				case 'user':
+    					$user = $this->users_model->getRecordByID($id);
+    					
+    					if(!$user) {
+    						show_404();
+    					}
+    					$title = "Agent '".$user->pms_user_code."': Liste des fiches";
+    					$sheets = $this->main_model->getUserSheets($id);
+    					
+    					$back_url = 'users/view/'.$id;
+    					$columns = '<th>Pool</th>';
     					break;
     			}
     		} else {
-    			$sheets = $this->main_model->getDataList();
+    			$sheets = $this->main_model->getSheetsWithPoolAndUser();
     		}
     			
     		$data = array(
@@ -51,8 +68,9 @@ class Sheets extends MY_Controller
     			'content' 		=> 'sheets/index',
 	    		'js_to_load' 	=> array('sheets.js'),
 	    		'sheets' 		=> $sheets,
-    			'pool' 			=> $pool,
-    			'back_url' 		=> $back_url
+    			'back_url' 		=> $back_url,
+    			'from'			=> $relation,
+    			'columns'		=> $columns
 	    	);
 	    	
 	    	$this->load->view('global/layout', $data);
