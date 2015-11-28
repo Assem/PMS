@@ -18,6 +18,25 @@
 		<?php echo drawActionsMenuItem('users/delete/'.$user->user_id, 'delete.png', 'Supprimer', 'delete-action') ?>
 	</div>
 	<?php drawModelData($fields, 2, 'view-form'); ?>
+	
+	<div id="positions_map">
+		<h3>Dernière position</h3>
+		<?php if($user->last_position):?>
+			<?php $position = $user->last_position[0]; ?>
+			<p>
+				<?php echo date('d/m/Y H:i:s', strtotime($position->creation_date)).'<br>Sondage: ['.$position->pool_code.'] '.$position->pool_label.' - ID Fiche: '.$position->sheet_id;?>
+			</p>
+			<?php if($position->latitude): ?>
+				<?php $latlong = $position->latitude.','.$position->longitude; ?>
+				<img src="https://maps.googleapis.com/maps/api/staticmap?center=<?php echo $latlong?>&zoom=15&size=600x300&maptype=roadmap
+							&markers=color:blue|<?php echo $latlong?>"/>
+			<?php else: ?>
+				<p>Erreur: <?php echo $position->error; ?></p>
+			<?php endif; ?>
+		<?php else: ?>
+			<p>Pas de position enregistrée</p>
+		<?php endif; ?>
+	</div>
 
 <?php endif; ?>
 

@@ -19,6 +19,9 @@ class Sheets_model extends MY_Model {
 		
 		$this->load->model('geolocations_model');
 		$this->load->model('sheet_answers_model');
+		$this->load->model('pools_model');
+		$this->load->model('respondents_model');
+		$this->load->model('users_model');
 	}
 	
 	/**
@@ -120,6 +123,68 @@ class Sheets_model extends MY_Model {
 			->from($this->table_name)
 			->join('pools', 'pools.id = sheets.id_pool')
 			->join('users', 'users.user_id = sheets.created_by')
+			->get()
+			->result();
+		
+		return $results;
+	}
+	
+	/**
+	 * Return the pool of the sheet
+	 * 
+	 * @param sheet $sheet
+	 */
+	function getPool($sheet) {
+		return $this->pools_model->getRecordByID($sheet->id_pool);
+	}
+	
+	/**
+	 * Return the respondent data of the sheet
+	 * 
+	 * @param sheet $sheet
+	 */
+	function getRespondent($sheet) {
+		return $this->respondents_model->getRecordByID($sheet->id_respondent);
+	}
+	
+	/**
+	 * Return the user hwo created the sheet
+	 * 
+	 * @param sheet $sheet
+	 */
+	public function getCreatedby($sheet) {
+		return $this->users_model->getRecordByID($sheet->created_by);
+	}
+	
+	/**
+	 * Return the geolocation data of the sheet
+	 * 
+	 * @param sheet $sheet
+	 */
+	public function getLocation($sheet) {
+		return $this->geolocations_model->getSheetPosition($sheet->id);
+	}
+	
+	/**
+	 * Return all the answers of the sheet
+	 * 
+	 * @param sheet $sheet
+	 */
+	public function getAnswers($sheet) {
+		$results = $this->db->select('sheet_answers.*, 
+				questions.description as q_description,
+				questions.id as q_id,
+				questions.type as q_type,
+				questions.order as q_order,
+				answers.id as a_id,
+				answers.description as a_description,
+				answers.order as a_order', 
+				false)
+			->where('sheet_answers.id_sheet', $sheet->id)
+			->from('sheet_answers')
+			->join('questions', 'questions.id = sheet_answers.id_question')
+			->join('answers', 'answers.id_question = questions.id', 'LEFT')
+			->order_by('questions.order asc, answers.order asc')
 			->get()
 			->result();
 		

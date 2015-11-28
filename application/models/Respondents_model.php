@@ -40,6 +40,10 @@ class Respondents_model extends MY_Model {
 		);
 	}
 	
+	public function getEducationalLevel($respondent) {
+		return $this->getEducationalLevel_List()[$respondent->educational_level];
+	}
+	
 	public static function getMaritalStatus_List() {
 		return array(
 			'0' => '',
@@ -48,6 +52,10 @@ class Respondents_model extends MY_Model {
 			'3'	=> 'Divorcé',
 			'4'	=> 'Veuf'
 		);
+	}
+	
+	public function getMaritalStatus($respondent) {
+		return $this->getMaritalStatus_List()[$respondent->marital_status];
 	}
 	
 	public static function getProfessionalStatus_List() {
@@ -62,6 +70,10 @@ class Respondents_model extends MY_Model {
 		);
 	}
 	
+	public function getProfessionalStatus($respondent) {
+		return $this->getProfessionalStatus_List()[$respondent->professional_status];
+	}
+	
 	public static function getCompanyType_List() {
 		return array(
 			'0' => '',
@@ -70,10 +82,18 @@ class Respondents_model extends MY_Model {
 		);
 	}
 	
+	public function getCompanyType($respondent) {
+		return $this->getCompanyType_List()[$respondent->company_type];
+	}
+	
 	public static function getCountry_List() {
 		return array(
 			'1'	=> 'Algérie'
 		);
+	}
+	
+	public function getCountry($respondent) {
+		return $this->getCountry_List()[$respondent->country];
 	}
 	
 	public static function getCity_List($id_country=1) {
@@ -88,5 +108,9 @@ class Respondents_model extends MY_Model {
 		);
 		
 		return $cities[$id_country];
+	}
+	
+	public function getCity($respondent) {
+		return $this->getCity_List()[$respondent->city];
 	}
 }

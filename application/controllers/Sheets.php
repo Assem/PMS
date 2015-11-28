@@ -69,8 +69,9 @@ class Sheets extends MY_Controller
 	    		'js_to_load' 	=> array('sheets.js'),
 	    		'sheets' 		=> $sheets,
     			'back_url' 		=> $back_url,
-    			'from'			=> $relation,
-    			'columns'		=> $columns
+    			'relation'		=> $relation,
+    			'columns'		=> $columns,
+    			'from'			=> "/$from"
 	    	);
 	    	
 	    	$this->load->view('global/layout', $data);
@@ -78,137 +79,120 @@ class Sheets extends MY_Controller
     }
     
     /**
-     * View a user profile
+     * View a sheet
      * 
-     * @param int $id ID of the user to view
+     * @param int $id ID of the sheet to view
      */
-    public function view($id=NULL) {
-    	/*if( $this->require_role('admin') ) {
-    		$user = $this->_checkRecord($id);
+    public function view($id=NULL, $redirect=NULL) {
+    	if( $this->require_role('admin') ) {
+    		$sheet = $this->_checkRecord($id);
+    		$back_url = 'sheets/index';
     		
-    		$data = array(
-    			'title' => "Detail d'un utilisateur",
-    			'content' => 'users/view',
-    			'user' => $user
-    		);
-    		
-    		if($user){
-	    		$data['content_data'] = array(
-    				'fields' => array(
-	    				'Nom' 		=> $user->pms_user_last_name,
-	    				'Prénom' 	=> $user->pms_user_first_name,
-	    				'Email' 	=> $user->user_email,
-	    				'GSM' 		=> $user->pms_user_gsm,
-    					'Nom d\'utilisateur' => $user->user_name,
-    					'Code interne' => $user->pms_user_code,
-    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
-    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
-    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
-    					'Dernière connexion' => isset($user->user_last_login)?date('d/m/Y H:i:s', strtotime($user->user_last_login)):''
-    				)
-	    		);
+    		if(isset($redirect)) {
+    			$back_url = "sheets/index/$redirect";
     		}
     		
-    		$this->load->view('global/layout', $data);
-    	}*/
-    }
-    
-    /**
-     * Delete a user profile
-     *
-     * @param int $id ID of the user to delete
-     */
-    public function delete($id=NULL) {
-    	/*if( $this->require_role('admin') ) {
-    		$user = $this->_checkRecord($id);
-    		
-    		if($user) {
-    			$this->main_model->delete($id);
-    			
-    			$this->session->set_flashdata('success', 'Utilisateur supprimé avec succès!');
-    			
-    			redirect('/users/index');
-    		}
-    	}*/
-    }
-    
-    /**
-     * Edit a user profile
-     *
-     * @param int $id ID of the user to edit
-     */
-    public function edit($id=NULL) {
-    	/*if( $this->require_role('admin') ) {
-    		$user = $this->_checkRecord($id);
-    		
-    		$this->load->helper(array('form', 'url'));
-            $this->load->library('form_validation');
-    		
     		$data = array(
-    			'title' => "Edition d'un utilisateur",
-    			'content' => 'users/edit',
-    			'user' => $user
+    			'title' 	=> "Fiche N°$id",
+    			'content' 	=> 'sheets/view',
+    			'sheet' 	=> $sheet,
+    			'back_url' 	=> $back_url,
+    			'redirect'	=> $redirect
     		);
     		
-    		if($user){
-	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-	    			$data_values = array(
-	    				'pms_user_last_name' 	=> set_value('pms_user_last_name'),
-	    				'pms_user_first_name' 	=> set_value('pms_user_first_name'),
-	    				'user_email' 			=> set_value('user_email'),
-	    				'pms_user_gsm' 			=> set_value('pms_user_gsm'),
-	    				'user_name' 			=> set_value('user_name'),
-	    				'pms_user_code' 		=> set_value('pms_user_code'),
-	    				'user_level' 			=> set_value('user_level'),
-	    				'user_banned' 			=> set_value('user_banned')
-	    			);
-	    			
-	    			$this->_setValidationRules('edit', $id);
-					
-					if(!empty(trim(set_value('user_pass')))) {
-						$data_values['user_salt']     = $this->authentication->random_salt();
-						$data_values['user_pass']     = $this->authentication->hash_passwd(trim(set_value('user_pass')), $data_values['user_salt']);
-						
-						$this->form_validation->set_rules('user_pass', 'Mot de passe', 'trim|required|external_callbacks[model,formval_callbacks,_check_password_strength,TRUE]');
-						$this->form_validation->set_rules('user_pass_conf', 'Confirmation mot de passe', 'required|matches[user_pass]');
-					}
-						
-	    			if ($this->form_validation->run()) {
-	    				$data_values['user_banned'] = (empty($data_values['user_banned']))? '1' : '0';
-	    				$data_values['user_modified'] = date('Y-m-d H:i:s');
-	    				
-	    			 	// If username is not used, it must be entered into the record as NULL
-			            if( empty( $data_values['user_name'] ) ) {
-			                $data_values['user_name'] = NULL;
-			            }
-	    				
-	    				if($this->main_model->update($id, $data_values)){
-	    					$this->session->set_flashdata('success', 'Utilisateur mis à jour avec succès!');
-	    					
-	    					redirect('/users/view/'.$id);
-	    				} else {
-	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
+    		if($sheet){
+    			$pool = $this->main_model->getPool($sheet);
+	    		$respondent = $this->main_model->getRespondent($sheet);
+	    		$geolocation = $this->main_model->getLocation($sheet);
+	    		$answers = $this->main_model->getAnswers($sheet);
+	    		
+	    		$id_question = false;
+	    		$answers_data = array();
+	    		$question_answers = array();
+	    		$label = $type = false;
+	    		
+	    		foreach ($answers as $answer) {
+	    			if($id_question != $answer->id_question) {
+	    				if($id_question) {
+		    				$answers_data[$label] = $this->load->view('questions/_draw_question_view', 
+			    				array(
+			    					'answers' 	=> $question_answers,
+			    					'type'		=> $type
+			    				),
+			    				TRUE
+			    			);
 	    				}
-	                }
-	    		} else {
-	    			$data_values = array(
-	    				'pms_user_last_name' 	=> $user->pms_user_last_name,
-	    				'pms_user_first_name' 	=> $user->pms_user_first_name,
-	    				'user_email' 			=> $user->user_email,
-	    				'pms_user_gsm' 			=> $user->pms_user_gsm,
-	    				'user_name' 			=> $user->user_name,
-	    				'pms_user_code' 		=> $user->pms_user_code,
-	    				'user_level' 			=> $user->user_level,
-	    				'user_banned' 			=> ($user->user_banned != 1)
-	    			);
+	    				
+	    				$id_question = $answer->id_question;
+	    				$question_answers = array();
+	    				$label = $answer->q_order.'. '.$answer->q_description;
+	    				$type = $answer->q_type;
+	    			}
+	    			
+	    			$question_answers[] = $answer;
 	    		}
 	    		
-	    		$data['content_data'] = $this->_getFields('edit', $data_values);
+    			if($id_question) {
+	    			$answers_data[$label] = $this->load->view('questions/_draw_question_view', 
+		    			array(
+		    				'answers' 	=> $question_answers,
+		   					'type'		=> $type
+		   				),
+		   				TRUE
+		   			);
+    			}
+	    		
+	    		$latlong = $geolocation->latitude.','.$geolocation->longitude;
+							
+	    		$createdBy = $this->main_model->getCreatedby($sheet);
+    			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
+    					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
+	    	
+	    		$data['content_data'] = array(
+    				'sheet_fields' => array(
+	    				'Date' 		=> date('d/m/Y H:i:s', strtotime($sheet->creation_date)),
+	    				'Agent' 	=> $createdByLink,
+	    				'Remarque' 	=> $sheet->notes,
+    					'Location'  => "<img src='https://maps.googleapis.com/maps/api/staticmap?center=$latlong&zoom=15&size=400x200&maptype=roadmap
+							&markers=color:blue|$latlong'/>"
+    				),
+	    			'respondent_view' => $this->load->view('respondents/_view_for_sheet', 
+	    				array(
+	    					'respondent' => $respondent
+	    				),
+	    				TRUE
+	    			),
+	    			'answers_fields' => $answers_data
+	    		);
+	    		
+	    		$data['title'] = "Sondage '".$pool->code."' - Fiche N°$id";
     		}
     		
     		$this->load->view('global/layout', $data);
-    	}*/
+    	}
+    }
+    
+    /**
+     * Delete a sheet
+     *
+     * @param int $id ID of the sheet to delete
+     */
+    public function delete($id=NULL, $redirect=NULL) {
+    	if( $this->require_role('admin') ) {
+    		$sheet = $this->_checkRecord($id);
+    		
+    		if($sheet) {
+    			$this->main_model->delete($id);
+    			
+    			$this->session->set_flashdata('success', 'Fiche supprimée avec succès!');
+    			
+    			if($redirect) {
+    				redirect("/sheets/index/$redirect");
+    			}
+    			
+    			redirect("/sheets/index");
+    		}
+    	}
     }
     
     private function _getFields($data_values) {

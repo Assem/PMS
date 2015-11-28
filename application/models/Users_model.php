@@ -193,7 +193,27 @@ class Users_model extends MY_Model {
 		return $this->db->count_all_results();
 	}
 	
-	
+	/**
+	 * Return the most recent positions of the user
+	 * 
+	 * @return geolocation record
+	 */
+	public function getLastPositions($user, $limit=0) {
+		$this->db->select('geolocations.*, 
+				pools.code as pool_code, pools.label as pool_label, 
+				sheets.id sheet_id', false)
+			->where('id_user', $user->user_id)
+			->order_by('geolocations.creation_date', 'desc')
+			->from('geolocations')
+			->join('sheets', 'sheets.id = geolocations.id_sheet', 'LEFT')
+			->join('pools', 'pools.id = sheets.id_pool', 'LEFT');
+		
+		if($limit) {
+			$this->db->limit($limit);
+		}
+		
+		return $this->db->get()->result();
+	}
 }
 
 /* End of file users_model.php */

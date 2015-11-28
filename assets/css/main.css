@@ -73,6 +73,18 @@ table.view-form tr td, table.view-form tr th {
 	text-align: left;
 }
 
+table.view-form tr.even, table.view-form tr.even {
+	background-color: #f9f9f9;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+}
+
+table.edit-form tr.even, table.edit-form tr.even {
+	background-color: #f9f9f9;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+}
+
 table.view-form {
 	width: 100%;
 }
@@ -182,4 +194,8 @@ a.counter_link {
 #tableInfo {
 	font-weight: bold;
 	margin-top: 8px;
+}
+
+img.answer_tick {
+	margin-right: 5px;
 }

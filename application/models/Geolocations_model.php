@@ -17,4 +17,18 @@ class Geolocations_model extends MY_Model {
 		
 		$this->table_name = 'geolocations';
 	}
+	
+	/**
+	 * Get the geolocation data of a sheet
+	 * 
+	 * @param int $sheet_id
+	 */
+	public function getSheetPosition($sheet_id) {
+		$result = $this->db->where('id_sheet', $sheet_id)
+			->from($this->table_name)
+			->get()
+			->row();
+		
+		return $result;
+	}
 }

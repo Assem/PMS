@@ -10,7 +10,7 @@
 </div>
 
 <?php echo form_open('sheets/add/'.$pool->id.'/'.$respondent->id, array('id' => 'sheet_form')); ?>
-<?php drawModelData($fields, 1, 'edit-form'); ?>
+<?php drawModelDataToggle($fields, 1, 'edit-form'); ?>
 
 <div class="required-notice">* Question obligatoire</div>
 <?php echo form_submit('submit', 'Enregistrer', array('class' => 'submit-button')); ?>

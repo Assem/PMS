@@ -46,6 +46,7 @@ class Users extends MY_Controller
     		
     		if($user){
     			$user->sheets_number = $this->main_model->countSheets($user);
+    			$user->last_position = $this->main_model->getLastPositions($user, 1);
     			
 	    		$data['content_data'] = array(
     				'fields' => array(

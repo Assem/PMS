@@ -1,6 +1,6 @@
 <?php 
-	function getData($from, $sheet) {
-		switch ($from) {
+	function getData($relation, $sheet) {
+		switch ($relation) {
 			case 'pool':
 				echo '<td>'.strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name).'</td>' ;
     			break;
@@ -15,7 +15,7 @@
 	}
 ?>
 <script type="text/javascript">
-var from = '<?php echo $from; ?>';
+var from = '<?php echo $relation; ?>';
 </script>
 <h1 class="pmsH1"><?php echo $title; ?></h1>
 <?php
@@ -47,10 +47,13 @@ var from = '<?php echo $from; ?>';
 			<?php foreach($sheets as $sheet): ?>
 				<tr style="border-color: gray;">
 					<td><?php echo $sheet->id; ?></td>
-					<?php getData($from, $sheet); ?>
+					<?php getData($relation, $sheet); ?>
 					<td><?php echo date('d/m/Y H:i:s', strtotime($sheet->creation_date)); ?></td>
 					<td>
-						<?php drawActionsMenu('sheets', $sheet->id); ?>
+						<?php 
+						echo drawActionsMenuItem("sheets/view/".$sheet->id.$from, 'view.png', 'Afficher');
+						echo drawActionsMenuItem("sheets/delete/".$sheet->id.$from, 'delete.png', 'Supprimer', 'delete-action');
+						?>
 					</td>
 				</tr>
 			<?php endforeach;?>

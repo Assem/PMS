@@ -16,6 +16,30 @@ function drawModelData($fields, $column_per_line, $class='view-form') {
 	echo '</table>';
 }
 
+function drawModelDataToggle($fields, $column_per_line, $class='view-form') {
+	$classTr = 'even';
+	echo '<table class="'.$class.'">';
+	echo '<tr class="'.$classTr.'">';
+	$i = 1;
+	foreach ($fields as $label => $field) {
+		echo "<th>$label</th>";
+		echo "<td>$field</td>";
+		
+		if(($i % $column_per_line) == 0) {
+			if($classTr == 'even') {
+				$classTr = 'odd';
+			} else {
+				$classTr = 'even';
+			}
+			echo '</tr><tr class="'.$classTr.'">';
+		}
+		
+		$i++;
+	}
+	echo '</tr>';
+	echo '</table>';
+}
+
 /**
  * Create a link with icon
  * 
