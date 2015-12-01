@@ -93,7 +93,6 @@ class Answers extends MY_Controller
      * @param int $id_question ID of the Question to witch the answer will be added
      */
     public function add($id_question) {
-    	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin,super-agent') ) {
     		if(!isset($id_question) || !is_numeric($id_question)) {
 	    		show_404();
@@ -154,8 +153,6 @@ class Answers extends MY_Controller
      * @param int $id ID of the answer to view
      */
     public function view($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$answer = $this->_checkRecord($id);
     		
@@ -190,8 +187,6 @@ class Answers extends MY_Controller
      * @param int $id ID of the pool to edit
      */
     public function edit($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$answer = $this->_checkRecord($id);
     		
@@ -247,8 +242,6 @@ class Answers extends MY_Controller
      * @param string $action
      */
     public function move_rank($id=NULL, $action=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$answer = $this->_checkRecord($id);
     		

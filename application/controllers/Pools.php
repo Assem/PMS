@@ -18,8 +18,6 @@ class Pools extends MY_Controller
 		
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
-        
-        $this->output->enable_profiler(TRUE);
 	}
 	
 	/**
@@ -189,7 +187,6 @@ class Pools extends MY_Controller
      *
      */
     public function add() {
-    	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin,super-agent') ) {
     		$data = array(
     			'title' => "Ajouter un sondage",
@@ -242,8 +239,6 @@ class Pools extends MY_Controller
      * @param int $id ID of the pool to view
      */
     public function view($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$pool = $this->_checkRecord($id);
     		
@@ -291,8 +286,6 @@ class Pools extends MY_Controller
      * @param int $id ID of the pool to edit
      */
     public function edit($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$pool = $this->_checkRecord($id);
     		

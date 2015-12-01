@@ -275,7 +275,6 @@ class Users extends MY_Controller
      *
      */
     public function add() {
-    	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin') ) {
     		$this->load->helper(array('form', 'url'));
             $this->load->library('form_validation');

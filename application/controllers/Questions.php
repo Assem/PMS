@@ -84,7 +84,6 @@ class Questions extends MY_Controller
      * @param int $pool_id ID of the Pool to witch the question will be added
      */
     public function add($pool_id) {
-    	$this->output->enable_profiler(TRUE);
     	if( $this->require_role('admin,super-agent') ) {
     		if(!isset($pool_id) || !is_numeric($pool_id)) {
 	    		show_404();
@@ -146,8 +145,6 @@ class Questions extends MY_Controller
      * @param int $id ID of the question to view
      */
     public function view($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$question = $this->_checkRecord($id);
     		
@@ -185,8 +182,6 @@ class Questions extends MY_Controller
      * @param int $id ID of the pool to edit
      */
     public function edit($id=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$question = $this->_checkRecord($id);
     		$pool = $this->main_model->getPool($question);
@@ -247,8 +242,6 @@ class Questions extends MY_Controller
      * @param string $action
      */
     public function move_rank($id=NULL, $action=NULL) {
-    	$this->output->enable_profiler(TRUE);
-    	
     	if( $this->require_role('admin,super-agent') ) {
     		$question = $this->_checkRecord($id);
     		

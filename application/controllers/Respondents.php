@@ -19,56 +19,6 @@ class Respondents extends MY_Controller
         $this->load->library('form_validation');
     }
     
-    public function index() {
-    	/*if( $this->require_role('admin') ) {
-    		$data = array(
-	    		'title' => 'Liste des utilisateurs',
-    			'content' => 'users/index',
-	    		'js_to_load' => array('users.js'),
-	    		'users' => $this->main_model->getDataList()
-	    	);
-	    	
-	    	$this->load->view('global/layout', $data);
-    	}*/
-    }
-    
-    /**
-     * View a user profile
-     * 
-     * @param int $id ID of the user to view
-     */
-    public function view($id=NULL) {
-    	/*if( $this->require_role('admin') ) {
-    		$user = $this->_checkRecord($id);
-    		
-    		$data = array(
-    			'title' => "Detail d'un utilisateur",
-    			'content' => 'users/view',
-    			'user' => $user
-    		);
-    		
-    		if($user){
-	    		$data['content_data'] = array(
-    				'fields' => array(
-	    				'Nom' 		=> $user->pms_user_last_name,
-	    				'Prénom' 	=> $user->pms_user_first_name,
-	    				'Email' 	=> $user->user_email,
-	    				'GSM' 		=> $user->pms_user_gsm,
-    					'Nom d\'utilisateur' => $user->user_name,
-    					'Code interne' => $user->pms_user_code,
-    					'Rôle'		=> ucfirst($this->authentication->roles[$user->user_level]),
-    					'Actif'		=> ($user->user_banned)? 'NON' : 'OUI',
-    					'Date de création' => date('d/m/Y H:i:s', strtotime($user->user_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($user->user_modified)),
-    					'Dernière connexion' => isset($user->user_last_login)?date('d/m/Y H:i:s', strtotime($user->user_last_login)):''
-    				)
-	    		);
-    		}
-    		
-    		$this->load->view('global/layout', $data);
-    	}*/
-    }
-    
     /**
      * Delete a respondent (if we cancel sheet creation for example)
      *
