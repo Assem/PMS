@@ -216,19 +216,19 @@ if ( ! function_exists('random_string'))
 				switch ($type)
 				{
 					case 'alpha':
-						$pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+						$poll = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 						break;
 					case 'alnum':
-						$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+						$poll = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 						break;
 					case 'numeric':
-						$pool = '0123456789';
+						$poll = '0123456789';
 						break;
 					case 'nozero':
-						$pool = '123456789';
+						$poll = '123456789';
 						break;
 				}
-				return substr(str_shuffle(str_repeat($pool, ceil($len / strlen($pool)))), 0, $len);
+				return substr(str_shuffle(str_repeat($poll, ceil($len / strlen($poll)))), 0, $len);
 			case 'unique': // todo: remove in 3.1+
 			case 'md5':
 				return md5(uniqid(mt_rand()));

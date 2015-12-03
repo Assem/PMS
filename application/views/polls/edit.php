@@ -1,4 +1,4 @@
-<?php if(!$pool): ?>
+<?php if(!$poll): ?>
 	<div class="alert alert-danger">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
         <strong>Erreur! </strong>Sondage introuvable!
@@ -12,11 +12,11 @@
 	<?php echo validation_errors('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Erreur! </strong>', '</div>'); ?>
 	
 	<div class="view-menu">
-		<?php echo drawActionsMenuItem('pools/view/'.$pool->id, 'cancel.png', 'Annuler et quitter') ?>
-		<?php echo drawActionsMenuItem('pools/delete/'.$pool->id, 'delete.png', 'Supprimer', 'delete-action delete_pool') ?>
+		<?php echo drawActionsMenuItem('polls/view/'.$poll->id, 'cancel.png', 'Annuler et quitter') ?>
+		<?php echo drawActionsMenuItem('polls/delete/'.$poll->id, 'delete.png', 'Supprimer', 'delete-action delete_poll') ?>
 	</div>
 	
-	<?php echo form_open('pools/edit/'.$pool->id); ?>
+	<?php echo form_open('polls/edit/'.$poll->id); ?>
 	<?php drawModelData($fields, 2, 'edit-form'); ?>
 	
 	<div class="required-notice">* Champ obligatoire</div>
@@ -25,10 +25,10 @@
 	
 	<?php
 		$action = 'edit';
-		if($pool->sheets_count > 0) {
+		if($poll->sheets_count > 0) {
 			$action = 'view';
 		}
-		$this->load->view ( 'questions/_list', array('pool' => $pool, 'questions' => $questions, 'action' => $action) );
+		$this->load->view ( 'questions/_list', array('poll' => $poll, 'questions' => $questions, 'action' => $action) );
 	?>
 
 <?php endif; ?>

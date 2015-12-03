@@ -4,7 +4,7 @@
         <strong>Erreur! </strong>Fiche répondant introuvable!
     </div>
 <?php else: ?>
-	<h1 class="pmsH1">Sondage <?php echo $pool->label; ?>: Edition informations sur le répondant</h1>
+	<h1 class="pmsH1">Sondage <?php echo $poll->label; ?>: Edition informations sur le répondant</h1>
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>

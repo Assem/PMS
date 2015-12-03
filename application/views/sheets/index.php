@@ -1,14 +1,14 @@
 <?php 
 	function getData($relation, $sheet) {
 		switch ($relation) {
-			case 'pool':
+			case 'poll':
 				echo '<td>'.strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name).'</td>' ;
     			break;
     		case 'user':
-    			echo '<td>['.$sheet->pool_code.'] '.$sheet->pool_label.'</td>' ;
+    			echo '<td>['.$sheet->poll_code.'] '.$sheet->poll_label.'</td>' ;
     			break;
     		default:
-    			echo '<td>['.$sheet->pool_code.'] '.$sheet->pool_label.'</td>' ;
+    			echo '<td>['.$sheet->poll_code.'] '.$sheet->poll_label.'</td>' ;
     			echo '<td>'.strtoupper($sheet->pms_user_last_name).' '.ucfirst($sheet->pms_user_first_name).'</td>' ;
     			break;
 		}

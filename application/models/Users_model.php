@@ -200,13 +200,13 @@ class Users_model extends MY_Model {
 	 */
 	public function getLastPositions($user, $limit=0) {
 		$this->db->select('geolocations.*, 
-				pools.code as pool_code, pools.label as pool_label, 
+				polls.code as poll_code, polls.label as poll_label, 
 				sheets.id sheet_id', false)
 			->where('id_user', $user->user_id)
 			->order_by('geolocations.creation_date', 'desc')
 			->from('geolocations')
 			->join('sheets', 'sheets.id = geolocations.id_sheet', 'LEFT')
-			->join('pools', 'pools.id = sheets.id_pool', 'LEFT');
+			->join('polls', 'polls.id = sheets.id_poll', 'LEFT');
 		
 		if($limit) {
 			$this->db->limit($limit);

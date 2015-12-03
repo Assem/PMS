@@ -1,4 +1,4 @@
-<h1 class="pmsH1-small">Sondage <?php echo $pool->label; ?>: Création d'une fiche</h1>
+<h1 class="pmsH1-small">Sondage <?php echo $poll->label; ?>: Création d'une fiche</h1>
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
 ?>
@@ -9,7 +9,7 @@
 	<?php echo drawActionsMenuItem('respondents/delete/'.$respondent->id.'/true', 'cancel.png', 'Annuler et revenir à la sélection des sondages', ' back2') ?>
 </div>
 
-<?php echo form_open('sheets/add/'.$pool->id.'/'.$respondent->id, array('id' => 'sheet_form')); ?>
+<?php echo form_open('sheets/add/'.$poll->id.'/'.$respondent->id, array('id' => 'sheet_form')); ?>
 <?php drawModelDataToggle($fields, 1, 'edit-form'); ?>
 
 <div class="required-notice">* Question obligatoire</div>

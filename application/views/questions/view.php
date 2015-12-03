@@ -4,13 +4,13 @@
         <strong>Erreur! </strong>Question introuvable!
     </div>
 <?php else: ?>
-	<h1 class="pmsH1">Sondage <?php echo $pool->label; ?>: Détails d'une question</h1>
+	<h1 class="pmsH1">Sondage <?php echo $poll->label; ?>: Détails d'une question</h1>
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
 	<div class="view-menu">
-		<?php echo drawActionsMenuItem('pools/view/'.$pool->id, 'back.png', 'Revenir au sondage') ?>
-		<?php if($pool->sheets_count == 0): ?>
+		<?php echo drawActionsMenuItem('polls/view/'.$poll->id, 'back.png', 'Revenir au sondage') ?>
+		<?php if($poll->sheets_count == 0): ?>
 			<?php echo drawActionsMenuItem('questions/edit/'.$question->id, 'edit.png', 'Editer') ?>
 			<?php echo drawActionsMenuItem('questions/delete/'.$question->id, 'delete.png', 'Supprimer', 'delete-action') ?>
 		<?php endif; ?>

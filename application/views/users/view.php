@@ -24,7 +24,7 @@
 		<?php if($user->last_position):?>
 			<?php $position = $user->last_position[0]; ?>
 			<p>
-				<?php echo date('d/m/Y H:i:s', strtotime($position->creation_date)).'<br>Sondage: ['.$position->pool_code.'] '.$position->pool_label.' - ID Fiche: '.$position->sheet_id;?>
+				<?php echo date('d/m/Y H:i:s', strtotime($position->creation_date)).'<br>Sondage: ['.$position->poll_code.'] '.$position->poll_label.' - ID Fiche: '.$position->sheet_id;?>
 			</p>
 			<?php if($position->latitude): ?>
 				<?php $latlong = $position->latitude.','.$position->longitude; ?>

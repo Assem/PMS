@@ -1669,7 +1669,7 @@ class CI_Email {
 			return FALSE;
 		}
 
-		$result = $this->_spool_email();
+		$result = $this->_spoll_email();
 
 		if ($result && $auto_clear)
 		{
@@ -1732,7 +1732,7 @@ class CI_Email {
 				return FALSE;
 			}
 
-			$this->_spool_email();
+			$this->_spoll_email();
 		}
 	}
 
@@ -1769,11 +1769,11 @@ class CI_Email {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Spool mail to the mail server
+	 * Spoll mail to the mail server
 	 *
 	 * @return	bool
 	 */
-	protected function _spool_email()
+	protected function _spoll_email()
 	{
 		$this->_unwrap_specials();
 

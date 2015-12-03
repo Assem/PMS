@@ -15,7 +15,7 @@ class Answers extends MY_Controller
 		
 		$this->load->model('answers_model', 'main_model');
 		$this->load->model('questions_model');
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
 	}
@@ -31,8 +31,8 @@ class Answers extends MY_Controller
     		
     		if($record) {
     			$question = $this->questions_model->getRecordByID($record->id_question);
-	    		$pool = $this->questions_model->getPool($question);
-		    	$this->_can_edit($pool);
+	    		$poll = $this->questions_model->getPoll($question);
+		    	$this->_can_edit($poll);
 	    	
     			$this->main_model->delete($id);
     			$this->main_model->shiftDown($record->id_question, $record->order);
@@ -74,16 +74,16 @@ class Answers extends MY_Controller
     }
 	
 	/**
-     * Check if the pool have already some sheets, if yes, we can not add, edit or delete question
+     * Check if the poll have already some sheets, if yes, we can not add, edit or delete question
      * 
-     * @param pool $pool
+     * @param poll $poll
      */
-    private function _can_edit($pool) {
-    	//we can not add a question to pool having already some sheets (otherwise, we will have a problem with the stats)
-    	if($this->pools_model->countSheets($pool) > 0) {
+    private function _can_edit($poll) {
+    	//we can not add a question to poll having already some sheets (otherwise, we will have a problem with the stats)
+    	if($this->polls_model->countSheets($poll) > 0) {
     		$this->session->set_flashdata('error', 'Vous ne pouvez pas ajouter, éditer ou supprimer une question d\'un sondage qui possède des fiches!');
     		
-    		redirect('/pools/view/'.$pool->id);
+    		redirect('/polls/view/'.$poll->id);
     	}
     }
 	
@@ -104,8 +104,8 @@ class Answers extends MY_Controller
 	    		show_404();
 	    	}
 	    	
-	    	$pool = $this->questions_model->getPool($question);
-	    	$this->_can_edit($pool);
+	    	$poll = $this->questions_model->getPoll($question);
+	    	$this->_can_edit($poll);
     	
     		$data = array(
     			'title' => "Ajouter une réponse",
@@ -141,7 +141,7 @@ class Answers extends MY_Controller
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);
 	    	$data['content_data']['question'] = $question;
-	    	$data['content_data']['pool'] = $pool;
+	    	$data['content_data']['poll'] = $poll;
     		
     		$this->load->view('global/layout', $data);
     	}
@@ -164,12 +164,12 @@ class Answers extends MY_Controller
     		
     		if($answer){
     			$question = $this->questions_model->getRecordByID($answer->id_question);
-	    		$pool = $this->questions_model->getPool($question);
-    			$pool->sheets_number = $this->pools_model->countSheets($pool);
+	    		$poll = $this->questions_model->getPoll($question);
+    			$poll->sheets_number = $this->polls_model->countSheets($poll);
     			
     			$data['content_data'] = array(
     				'question' 	=> $question,
-    				'pool'		=> $pool,
+    				'poll'		=> $poll,
     				'fields' 	=> array(
 	    				'Description'		=> $answer->description,
     					'Valeur'			=> $answer->value
@@ -182,9 +182,9 @@ class Answers extends MY_Controller
     }
     
 	/**
-     * Edit a pool
+     * Edit a poll
      *
-     * @param int $id ID of the pool to edit
+     * @param int $id ID of the poll to edit
      */
     public function edit($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
@@ -198,9 +198,9 @@ class Answers extends MY_Controller
     		
     		if($answer) {
     			$question = $this->questions_model->getRecordByID($answer->id_question);
-	    		$pool = $this->questions_model->getPool($question);
+	    		$poll = $this->questions_model->getPoll($question);
 	    		
-	    		$this->_can_edit($pool);
+	    		$this->_can_edit($poll);
 	    		
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(
@@ -228,7 +228,7 @@ class Answers extends MY_Controller
 	    		
 	    		$data['content_data'] = $this->_getFields('edit', $data_values);
 	    		$data['content_data']['question'] = $question;
-	    		$data['content_data']['pool'] = $pool;
+	    		$data['content_data']['poll'] = $poll;
     		}
     		
     		$this->load->view('global/layout', $data);

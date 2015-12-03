@@ -2,7 +2,7 @@
 What is PMS
 ###################
 
-PMS stands for Pool Management System. This is an application that help compagnies create Pools and save results so that they can use them to take decisions.
+PMS stands for Poll Management System. This is an application that help compagnies create Polls and save results so that they can use them to take decisions.
 
 *******************
 Release Information

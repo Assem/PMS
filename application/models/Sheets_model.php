@@ -19,7 +19,7 @@ class Sheets_model extends MY_Model {
 		
 		$this->load->model('geolocations_model');
 		$this->load->model('sheet_answers_model');
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 		$this->load->model('respondents_model');
 		$this->load->model('users_model');
 	}
@@ -33,7 +33,7 @@ class Sheets_model extends MY_Model {
 		$this->db->trans_start();
 		
 		$sheet_data = array(
-			'id_pool' 		=> $data['id_pool'],
+			'id_poll' 		=> $data['id_poll'],
 			'id_respondent' => $data['id_respondent'],
 			'created_by' 	=> $data['created_by'],
 			'creation_date' => $data['creation_date'],
@@ -79,12 +79,12 @@ class Sheets_model extends MY_Model {
 	}
 	
 	/**
-	 * Return all the sheets of a pool
+	 * Return all the sheets of a poll
 	 * 
-	 * @param int $pool_id
+	 * @param int $poll_id
 	 */
-	function getPoolSheets($pool_id) {
-		$results = $this->db->where('id_pool', $pool_id)
+	function getPollSheets($poll_id) {
+		$results = $this->db->where('id_poll', $poll_id)
 			->order_by('creation_date', 'desc')
 			->from($this->table_name)
 			->join('users', 'users.user_id = sheets.created_by')
@@ -100,11 +100,11 @@ class Sheets_model extends MY_Model {
 	 * @param int $user_id
 	 */
 	function getUserSheets($user_id) {
-		$results = $this->db->select($this->table_name.'.*, pools.code as pool_code, pools.label as pool_label', false)
+		$results = $this->db->select($this->table_name.'.*, polls.code as poll_code, polls.label as poll_label', false)
 			->where($this->table_name.'.created_by', $user_id)
 			->order_by($this->table_name.'.creation_date', 'desc')
 			->from($this->table_name)
-			->join('pools', 'pools.id = sheets.id_pool')
+			->join('polls', 'polls.id = sheets.id_poll')
 			->get()
 			->result();
 		
@@ -112,16 +112,16 @@ class Sheets_model extends MY_Model {
 	}
 	
 	/**
-	 * Return all sheets with info on the Pool and Agent
+	 * Return all sheets with info on the Poll and Agent
 	 * 
 	 */
-	function getSheetsWithPoolAndUser() {
+	function getSheetsWithPollAndUser() {
 		$results = $this->db->select($this->table_name.'.*, 
-				pools.code as pool_code, pools.label as pool_label, 
+				polls.code as poll_code, polls.label as poll_label, 
 				users.pms_user_last_name, users.pms_user_first_name', false)
 			->order_by($this->table_name.'.creation_date', 'desc')
 			->from($this->table_name)
-			->join('pools', 'pools.id = sheets.id_pool')
+			->join('polls', 'polls.id = sheets.id_poll')
 			->join('users', 'users.user_id = sheets.created_by')
 			->get()
 			->result();
@@ -130,12 +130,12 @@ class Sheets_model extends MY_Model {
 	}
 	
 	/**
-	 * Return the pool of the sheet
+	 * Return the poll of the sheet
 	 * 
 	 * @param sheet $sheet
 	 */
-	function getPool($sheet) {
-		return $this->pools_model->getRecordByID($sheet->id_pool);
+	function getPoll($sheet) {
+		return $this->polls_model->getRecordByID($sheet->id_poll);
 	}
 	
 	/**

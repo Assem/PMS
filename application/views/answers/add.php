@@ -1,4 +1,4 @@
-<h1 class="pmsH1">Sondage <?php echo $pool->label; ?> -> Question <?php echo $question->order; ?>: Ajouter une réponse</h1>
+<h1 class="pmsH1">Sondage <?php echo $poll->label; ?> -> Question <?php echo $question->order; ?>: Ajouter une réponse</h1>
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
 ?>

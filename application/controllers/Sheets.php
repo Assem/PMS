@@ -14,7 +14,7 @@ class Sheets extends MY_Controller
         parent::__construct();
         
         $this->load->model('sheets_model', 'main_model');
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 		$this->load->model('users_model');
 		$this->load->model('respondents_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
@@ -25,7 +25,7 @@ class Sheets extends MY_Controller
     	if( $this->require_role('admin') ) {
     		$title = 'Liste des fiches';
     		$back_url = '';
-    		$columns = '<th>Pool</th><th>Agent</th>';
+    		$columns = '<th>Poll</th><th>Agent</th>';
     		$relation = '';
     		
     		if(isset($from)) {
@@ -33,16 +33,16 @@ class Sheets extends MY_Controller
     			$id = explode('-', $from)[1];
     			
     			switch ($relation) {
-    				case 'pool':
-    					$pool = $this->pools_model->getRecordByID($id);
+    				case 'poll':
+    					$poll = $this->polls_model->getRecordByID($id);
     					
-    					if(!$pool) {
+    					if(!$poll) {
     						show_404();
     					}
-    					$title = "Sondage '".$pool->code."': Liste des fiches";
-    					$sheets = $this->main_model->getPoolSheets($id);
+    					$title = "Sondage '".$poll->code."': Liste des fiches";
+    					$sheets = $this->main_model->getPollSheets($id);
     					
-    					$back_url = 'pools/view/'.$id;
+    					$back_url = 'polls/view/'.$id;
     					$columns = '<th>Agent</th>';
     					$columns_data = '';
     					break;
@@ -56,11 +56,11 @@ class Sheets extends MY_Controller
     					$sheets = $this->main_model->getUserSheets($id);
     					
     					$back_url = 'users/view/'.$id;
-    					$columns = '<th>Pool</th>';
+    					$columns = '<th>Poll</th>';
     					break;
     			}
     		} else {
-    			$sheets = $this->main_model->getSheetsWithPoolAndUser();
+    			$sheets = $this->main_model->getSheetsWithPollAndUser();
     		}
     			
     		$data = array(
@@ -101,7 +101,7 @@ class Sheets extends MY_Controller
     		);
     		
     		if($sheet){
-    			$pool = $this->main_model->getPool($sheet);
+    			$poll = $this->main_model->getPoll($sheet);
 	    		$respondent = $this->main_model->getRespondent($sheet);
 	    		$geolocation = $this->main_model->getLocation($sheet);
 	    		$answers = $this->main_model->getAnswers($sheet);
@@ -165,7 +165,7 @@ class Sheets extends MY_Controller
 	    			'answers_fields' => $answers_data
 	    		);
 	    		
-	    		$data['title'] = "Sondage '".$pool->code."' - Fiche N°$id";
+	    		$data['title'] = "Sondage '".$poll->code."' - Fiche N°$id";
     		}
     		
     		$this->load->view('global/layout', $data);
@@ -304,24 +304,24 @@ class Sheets extends MY_Controller
     }
     
 	/**
-     * Create a new sheet for a pool
+     * Create a new sheet for a poll
      *
      */
-	public function add($pool_id = NULL, $respondent_id = NULL) {
+	public function add($poll_id = NULL, $respondent_id = NULL) {
     	if( $this->require_role('admin,super-agent,agent') ) {
-    		if(!isset($pool_id) || !is_numeric($pool_id) || !isset($respondent_id) || !is_numeric($respondent_id)) {
+    		if(!isset($poll_id) || !is_numeric($poll_id) || !isset($respondent_id) || !is_numeric($respondent_id)) {
 	    		show_404();
 	    	}
 	    		
-	    	$pool = $this->pools_model->getRecordByID($pool_id);
+	    	$poll = $this->polls_model->getRecordByID($poll_id);
 	    	$respondent = $this->respondents_model->getRecordByID($respondent_id);
 	    	
-	    	if(!$pool || !$respondent || $respondent->id_pool != $pool_id) {
+	    	if(!$poll || !$respondent || $respondent->id_poll != $poll_id) {
 	    		show_404();
 	    	}
 	    	
 	    	//if we have reached the maximum sheet number, we don't go further and we delete the respondant record
-	    	if($pool->max_surveys_number > 0 && $pool->max_surveys_number <= $this->pools_model->countSheets($pool)) {
+	    	if($poll->max_surveys_number > 0 && $poll->max_surveys_number <= $this->polls_model->countSheets($poll)) {
 	    		$this->session->set_flashdata('success', 'Nombre de fiches maximum atteint; fiche annulée!', TRUE);
     					
     			redirect('respondents/delete/'.$respondent_id.'/true');
@@ -336,7 +336,7 @@ class Sheets extends MY_Controller
     		$data_values = array();
     		$questions_data = array();
     		
-    		$questions = $this->pools_model->getQuestions($pool);
+    		$questions = $this->polls_model->getQuestions($poll);
     		
     		foreach ($questions as $question) {
     			$answers = $this->questions_model->getAnswers($question->id);
@@ -375,7 +375,7 @@ class Sheets extends MY_Controller
     		
     		$data['content_data'] = array(
     			'fields' => $questions_data,
-    			'pool' 		=> $pool,
+    			'poll' 		=> $poll,
     			'respondent'=> $respondent
     		);
     		
@@ -385,13 +385,13 @@ class Sheets extends MY_Controller
     				
 					$data_values['created_by']		= $this->auth_user_id;
 					$data_values['creation_date']	= date('Y-m-d H:i:s');
-					$data_values['id_pool']			= $pool_id;
+					$data_values['id_poll']			= $poll_id;
 					$data_values['id_respondent']	= $respondent_id;
 					
 		            if($sheet_id = $this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Fiche créée avec succès!');
     					
-    					redirect("/pools/select");
+    					redirect("/polls/select");
     				} else {
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}

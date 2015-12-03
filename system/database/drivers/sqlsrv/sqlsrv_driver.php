@@ -116,10 +116,10 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 	/**
 	 * Database connection
 	 *
-	 * @param	bool	$pooling
+	 * @param	bool	$polling
 	 * @return	resource
 	 */
-	public function db_connect($pooling = FALSE)
+	public function db_connect($polling = FALSE)
 	{
 		$charset = in_array(strtolower($this->char_set), array('utf-8', 'utf8'), TRUE)
 			? 'UTF-8' : SQLSRV_ENC_CHAR;
@@ -128,7 +128,7 @@ class CI_DB_sqlsrv_driver extends CI_DB {
 			'UID'			=> empty($this->username) ? '' : $this->username,
 			'PWD'			=> empty($this->password) ? '' : $this->password,
 			'Database'		=> $this->database,
-			'ConnectionPooling'	=> ($pooling === TRUE) ? 1 : 0,
+			'ConnectionPolling'	=> ($polling === TRUE) ? 1 : 0,
 			'CharacterSet'		=> $charset,
 			'Encrypt'		=> ($this->encrypt === TRUE) ? 1 : 0,
 			'ReturnDatesAsStrings'	=> 1

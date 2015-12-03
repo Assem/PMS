@@ -5,10 +5,10 @@
 <?php echo validation_errors('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Erreur! </strong>', '</div>'); ?>
 
 <div class="view-menu">
-	<?php echo drawActionsMenuItem('pools/index', 'cancel.png', 'Annuler et quitter') ?>
+	<?php echo drawActionsMenuItem('polls/index', 'cancel.png', 'Annuler et quitter') ?>
 </div>
 
-<?php echo form_open('pools/add'); ?>
+<?php echo form_open('polls/add'); ?>
 <?php drawModelData($fields, 2, 'edit-form'); ?>
 
 <div class="required-notice">* Champ obligatoire</div>

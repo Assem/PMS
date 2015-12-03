@@ -2,18 +2,18 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * PMS - Pools Controller
+ * PMS - Polls Controller
  *
  * @author      Assem Bayahi
 */
 
-class Pools extends MY_Controller
+class Polls extends MY_Controller
 {
 	public function __construct()
 	{
 		parent::__construct();
 		
-		$this->load->model('pools_model', 'main_model');
+		$this->load->model('polls_model', 'main_model');
 		$this->load->model('sheets_model');
 		
 		$this->load->helper(array('form', 'url', 'my_date'));
@@ -21,31 +21,31 @@ class Pools extends MY_Controller
 	}
 	
 	/**
-	 * Select a pool to start creating users survey sheet
+	 * Select a poll to start creating users survey sheet
 	 */
 	public function select() {
 		if( $this->require_role('admin,super-agent,agent') ) {
-			$pools = array();
+			$polls = array();
 			
-			foreach ($this->main_model->getActivePools() as $pool) {
-				$pools[$pool->id] = '['.$pool->code.'] '.$pool->label;
+			foreach ($this->main_model->getActivePolls() as $poll) {
+				$polls[$poll->id] = '['.$poll->code.'] '.$poll->label;
 			}
 				
 			$data = array(
-				'content' => 'pools/select',
+				'content' => 'polls/select',
 				'title' => "Sélection de sondage",
-	    		'js_to_load' => array('pools.js'),
+	    		'js_to_load' => array('polls.js'),
 	    		'content_data' => array(
 					'fields' => array(
-						'Sondage' 	=> form_dropdown('pool', $pools, null, 'class="form-control"')
+						'Sondage' 	=> form_dropdown('poll', $polls, null, 'class="form-control"')
 					)
 				)
 			);
 			
-			if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' && set_value('pool', false)){
-				$seleted_pool_id = set_value('pool', false);
+			if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' && set_value('poll', false)){
+				$seleted_poll_id = set_value('poll', false);
 				
-				redirect('/respondents/add/'.$seleted_pool_id);
+				redirect('/respondents/add/'.$seleted_poll_id);
 			}
 			
 			$this->load->view('global/layout', $data);
@@ -53,27 +53,27 @@ class Pools extends MY_Controller
 	}
 	
 	/**
-	 * List all the pools
+	 * List all the polls
 	 */
 	public function index() {
 		if( $this->require_role('admin,super-agent,agent') ) {
 			if( $this->is_role('agent') ) { //if it's an agent so we redirect him
-				redirect( secure_site_url('pools/select') );
+				redirect( secure_site_url('polls/select') );
 			}
 			
-			$pools = array();
-			$pools_list = $this->main_model->getPoolsWithSheetsNumber();
+			$polls = array();
+			$polls_list = $this->main_model->getPollsWithSheetsNumber();
 			
-			foreach ($pools_list as $pool) {
-				$pool->sheets_count = $pool->sheets_number.'/'.$pool->max_surveys_number;
-				$pools[] = $pool;
+			foreach ($polls_list as $poll) {
+				$poll->sheets_count = $poll->sheets_number.'/'.$poll->max_surveys_number;
+				$polls[] = $poll;
 			}
 			
 			$data = array(
-				'content' => 'pools/index',
+				'content' => 'polls/index',
 				'title' => "Liste des sondages",
-	    		'js_to_load' => array('pools.js'),
-	    		'pools' => $pools
+	    		'js_to_load' => array('polls.js'),
+	    		'polls' => $polls
 			);
 			
 			$this->load->view('global/layout', $data);
@@ -81,9 +81,9 @@ class Pools extends MY_Controller
 	}
 	
 	/**
-     * Delete a pool
+     * Delete a poll
      *
-     * @param int $id ID of the pool to delete
+     * @param int $id ID of the poll to delete
      */
     public function delete($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
@@ -94,7 +94,7 @@ class Pools extends MY_Controller
     			
     			$this->session->set_flashdata('success', 'Sondage supprimé avec succès!');
     			
-    			redirect('/pools/index');
+    			redirect('/polls/index');
     		}
     	}
     }
@@ -179,7 +179,7 @@ class Pools extends MY_Controller
 				array('date_greater_than_equal_to' => 'La date de fin doit être supérieur ou égale à la date de début'));
 		
 		$this->form_validation->set_rules('max_surveys_number', 'Nbr maximum de fiches', 'trim|integer|max_length[11]');
-		$this->form_validation->set_rules('code', 'Code interne', "trim|required|max_length[20]|{$unique_fct}[pools.code{$unique_fct_params}]");
+		$this->form_validation->set_rules('code', 'Code interne', "trim|required|max_length[20]|{$unique_fct}[polls.code{$unique_fct_params}]");
     }
 	
 	/**
@@ -190,8 +190,8 @@ class Pools extends MY_Controller
     	if( $this->require_role('admin,super-agent') ) {
     		$data = array(
     			'title' => "Ajouter un sondage",
-    			'js_to_load' => array('pools.js'),
-    			'content' => 'pools/add'
+    			'js_to_load' => array('polls.js'),
+    			'content' => 'polls/add'
     		);
     		
     		$data_values = array(
@@ -220,7 +220,7 @@ class Pools extends MY_Controller
 		            if($this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Sondage créé avec succès!');
     					
-    					redirect('/pools/index');
+    					redirect('/polls/index');
     				} else {
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
@@ -234,43 +234,43 @@ class Pools extends MY_Controller
     }
     
 	/**
-     * View a pools detail
+     * View a polls detail
      * 
-     * @param int $id ID of the pool to view
+     * @param int $id ID of the poll to view
      */
     public function view($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
-    		$pool = $this->_checkRecord($id);
+    		$poll = $this->_checkRecord($id);
     		
     		$data = array(
     			'title' => "Detail d'un sondage",
-    			'content' => 'pools/view',
-    			'js_to_load' => array('pools.js'),
-    			'pool' => $pool
+    			'content' => 'polls/view',
+    			'js_to_load' => array('polls.js'),
+    			'poll' => $poll
     		);
     		
-    		if($pool){
-    			$pool->sheets_count = $this->main_model->countSheets($pool);
+    		if($poll){
+    			$poll->sheets_count = $this->main_model->countSheets($poll);
     			
-    			$questions = $this->main_model->getQuestions($pool);
+    			$questions = $this->main_model->getQuestions($poll);
     			$data['questions'] = $questions;
     			
-    			$createdBy = $this->main_model->getCreatedby($pool);
+    			$createdBy = $this->main_model->getCreatedby($poll);
     			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
     					strtoupper($createdBy->pms_user_last_name)." ".ucfirst($createdBy->pms_user_first_name));
     			
     			$data['content_data'] = array(
     				'fields' => array(
-	    				'Code interne' 		=> $pool->code,
-	    				'Client' 			=> $pool->customer,
-    					'Libellé' 			=> $pool->label,
-	    				'Description'		=> $pool->description,
-    					'Date de début' 	=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
-    					'Date de fin' 		=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
-    					'Nbr maximum de fiches' 		=> $pool->max_surveys_number,
-    					'Actif'				=> ($pool->actif)? 'OUI' : 'NON',
-    					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($pool->creation_date)),
-    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($pool->update_date)),
+	    				'Code interne' 		=> $poll->code,
+	    				'Client' 			=> $poll->customer,
+    					'Libellé' 			=> $poll->label,
+	    				'Description'		=> $poll->description,
+    					'Date de début' 	=> (isset($poll->start_date))? date('d/m/Y', strtotime($poll->start_date)):'',
+    					'Date de fin' 		=> (isset($poll->end_date))? date('d/m/Y', strtotime($poll->end_date)):'',
+    					'Nbr maximum de fiches' 		=> $poll->max_surveys_number,
+    					'Actif'				=> ($poll->actif)? 'OUI' : 'NON',
+    					'Date de création' 	=> date('d/m/Y H:i:s', strtotime($poll->creation_date)),
+    					'Dernière modification' => date('d/m/Y H:i:s', strtotime($poll->update_date)),
     					'Créé par' 			=> $createdByLink
     				)
 	    		);
@@ -281,25 +281,25 @@ class Pools extends MY_Controller
     }
     
 	/**
-     * Edit a pool
+     * Edit a poll
      *
-     * @param int $id ID of the pool to edit
+     * @param int $id ID of the poll to edit
      */
     public function edit($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
-    		$pool = $this->_checkRecord($id);
+    		$poll = $this->_checkRecord($id);
     		
     		$data = array(
     			'title' => "Edition d'un sondage",
-    			'js_to_load' => array('pools.js'),
-    			'content' => 'pools/edit',
-    			'pool' => $pool
+    			'js_to_load' => array('polls.js'),
+    			'content' => 'polls/edit',
+    			'poll' => $poll
     		);
     		
-    		if($pool){
-    			$pool->sheets_count = $this->main_model->countSheets($pool);
+    		if($poll){
+    			$poll->sheets_count = $this->main_model->countSheets($poll);
     			
-    			$questions = $this->main_model->getQuestions($pool);
+    			$questions = $this->main_model->getQuestions($poll);
     			$data['questions'] = $questions;
     			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
@@ -324,21 +324,21 @@ class Pools extends MY_Controller
 	    			 	if($this->main_model->update($id, $data_values)){
 	    					$this->session->set_flashdata('success', 'Sondage mis à jour avec succès!');
 	    					
-	    					redirect('/pools/view/'.$id);
+	    					redirect('/polls/view/'.$id);
 	    				} else {
 	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
 	    				}
 	                }
 	    		} else {
 	    			$data_values = array(
-	    				'code' 					=> $pool->code,
-	    				'label' 				=> $pool->label,
-	    				'customer' 				=> $pool->customer,
-	    				'start_date' 			=> (isset($pool->start_date))? date('d/m/Y', strtotime($pool->start_date)):'',
-	    				'end_date' 				=> (isset($pool->end_date))? date('d/m/Y', strtotime($pool->end_date)):'',
-	    				'max_surveys_number' 	=> $pool->max_surveys_number,
-	    				'actif' 				=> $pool->actif,
-	    				'description' 			=> $pool->description,
+	    				'code' 					=> $poll->code,
+	    				'label' 				=> $poll->label,
+	    				'customer' 				=> $poll->customer,
+	    				'start_date' 			=> (isset($poll->start_date))? date('d/m/Y', strtotime($poll->start_date)):'',
+	    				'end_date' 				=> (isset($poll->end_date))? date('d/m/Y', strtotime($poll->end_date)):'',
+	    				'max_surveys_number' 	=> $poll->max_surveys_number,
+	    				'actif' 				=> $poll->actif,
+	    				'description' 			=> $poll->description,
 	    			);
 	    		}
 	    		

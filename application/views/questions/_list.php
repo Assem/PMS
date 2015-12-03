@@ -1,7 +1,7 @@
 <h2 class="pmsH1">Liste des questions</h2>
 
 <?php if($action == 'edit'): ?>
-	<?php echo drawActionsMenuItem('questions/add/'.$pool->id, 'add.png', 'Ajouter'); ?>
+	<?php echo drawActionsMenuItem('questions/add/'.$poll->id, 'add.png', 'Ajouter'); ?>
 <?php endif; ?>
 
 <div id="tableInfo"></div>

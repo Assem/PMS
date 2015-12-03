@@ -121,10 +121,10 @@ ADD COLUMN `pms_user_code` VARCHAR(20) NOT NULL AFTER `pms_user_first_name`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pools`
+-- Table structure for table `polls`
 --
 
-CREATE TABLE `PMS`.`pools` (
+CREATE TABLE `PMS`.`polls` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` VARCHAR(80) NOT NULL,
   `description` VARCHAR(255) NULL,
@@ -138,16 +138,16 @@ CREATE TABLE `PMS`.`pools` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-ALTER TABLE `PMS`.`pools` 
+ALTER TABLE `PMS`.`polls` 
 ADD COLUMN `customer` VARCHAR(120) NULL AFTER `max_surveys_number`;
 
-ALTER TABLE `PMS`.`pools` 
+ALTER TABLE `PMS`.`polls` 
 ADD COLUMN `creation_date` DATETIME NOT NULL AFTER `customer`,
 ADD COLUMN `update_date` DATETIME NOT NULL AFTER `creation_date`,
 ADD COLUMN `created_by` INT(10) UNSIGNED NOT NULL AFTER `update_date`,
-ADD INDEX `fk_pools_1_idx` (`created_by` ASC);
-ALTER TABLE `PMS`.`pools` 
-ADD CONSTRAINT `fk_pools_1`
+ADD INDEX `fk_polls_1_idx` (`created_by` ASC);
+ALTER TABLE `PMS`.`polls` 
+ADD CONSTRAINT `fk_polls_1`
   FOREIGN KEY (`created_by`)
   REFERENCES `PMS`.`users` (`user_id`)
   ON DELETE NO ACTION
@@ -165,12 +165,12 @@ CREATE TABLE `PMS`.`questions` (
   `order` INT(3) NOT NULL,
   `type` INT NOT NULL,
   `required` TINYINT NOT NULL DEFAULT 1,
-  `id_pool` INT(10) UNSIGNED NOT NULL,
+  `id_poll` INT(10) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_questions_pool_idx` (`id_pool` ASC),
-  CONSTRAINT `fk_questions_pool`
-    FOREIGN KEY (`id_pool`)
-    REFERENCES `PMS`.`pools` (`id`)
+  INDEX `fk_questions_poll_idx` (`id_poll` ASC),
+  CONSTRAINT `fk_questions_poll`
+    FOREIGN KEY (`id_poll`)
+    REFERENCES `PMS`.`polls` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -178,11 +178,11 @@ ALTER TABLE `PMS`.`questions`
 CHANGE COLUMN `type` `type` VARCHAR(15) NOT NULL ;
 
 ALTER TABLE `PMS`.`questions` 
-DROP FOREIGN KEY `fk_questions_pool`;
+DROP FOREIGN KEY `fk_questions_poll`;
 ALTER TABLE `PMS`.`questions` 
-ADD CONSTRAINT `fk_questions_pool`
-  FOREIGN KEY (`id_pool`)
-  REFERENCES `PMS`.`pools` (`id`)
+ADD CONSTRAINT `fk_questions_poll`
+  FOREIGN KEY (`id_poll`)
+  REFERENCES `PMS`.`polls` (`id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
@@ -215,15 +215,15 @@ CREATE TABLE `PMS`.`answers` (
 
 CREATE TABLE `PMS`.`sheets` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `id_pool` INT UNSIGNED NOT NULL,
+  `id_poll` INT UNSIGNED NOT NULL,
   `id_respondent` INT UNSIGNED NOT NULL,
   `notes` VARCHAR(255) NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_sheets_pool_idx` (`id_pool` ASC),
+  INDEX `fk_sheets_poll_idx` (`id_poll` ASC),
   INDEX `fk_sheets_respondent_idx` (`id_respondent` ASC),
-  CONSTRAINT `fk_sheets_pool`
-    FOREIGN KEY (`id_pool`)
-    REFERENCES `PMS`.`pools` (`id`)
+  CONSTRAINT `fk_sheets_poll`
+    FOREIGN KEY (`id_poll`)
+    REFERENCES `PMS`.`polls` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_sheets_respondent`
@@ -292,20 +292,20 @@ CREATE TABLE `PMS`.`sheet_answers` (
 
     
 ALTER TABLE `PMS`.`respondents` 
-DROP FOREIGN KEY `fk_respondent_pool`;
+DROP FOREIGN KEY `fk_respondent_poll`;
 ALTER TABLE `PMS`.`respondents` 
-ADD CONSTRAINT `fk_respondent_pool`
-  FOREIGN KEY (`id_pool`)
-  REFERENCES `PMS`.`pools` (`id`)
+ADD CONSTRAINT `fk_respondent_poll`
+  FOREIGN KEY (`id_poll`)
+  REFERENCES `PMS`.`polls` (`id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 
 ALTER TABLE `PMS`.`sheets` 
-DROP FOREIGN KEY `fk_sheets_pool`;
+DROP FOREIGN KEY `fk_sheets_poll`;
 ALTER TABLE `PMS`.`sheets` 
-ADD CONSTRAINT `fk_sheets_pool`
-  FOREIGN KEY (`id_pool`)
-  REFERENCES `PMS`.`pools` (`id`)
+ADD CONSTRAINT `fk_sheets_poll`
+  FOREIGN KEY (`id_poll`)
+  REFERENCES `PMS`.`polls` (`id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 

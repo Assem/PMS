@@ -73,7 +73,7 @@ if ( ! function_exists('create_captcha'))
 			'word_length'	=> 8,
 			'font_size'	=> 16,
 			'img_id'	=> '',
-			'pool'		=> '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+			'poll'		=> '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 			'colors'	=> array(
 				'background'	=> array(255,255,255),
 				'border'	=> array(153,102,102),
@@ -125,9 +125,9 @@ if ( ! function_exists('create_captcha'))
 		if (empty($word))
 		{
 			$word = '';
-			for ($i = 0, $mt_rand_max = strlen($pool) - 1; $i < $word_length; $i++)
+			for ($i = 0, $mt_rand_max = strlen($poll) - 1; $i < $word_length; $i++)
 			{
-				$word .= $pool[mt_rand(0, $mt_rand_max)];
+				$word .= $poll[mt_rand(0, $mt_rand_max)];
 			}
 		}
 		elseif ( ! is_string($word))

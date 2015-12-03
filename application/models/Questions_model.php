@@ -15,20 +15,20 @@ class Questions_model extends Ordered_model {
 	{
 		parent::__construct();
 		
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 		
 		$this->table_name = 'questions';
 		$this->pk_column = 'id';
-		$this->parent_column = 'id_pool';
+		$this->parent_column = 'id_poll';
 	}
 	
 	/**
-	 * Return the pool of the question
+	 * Return the poll of the question
 	 * 
 	 * @param Question $question
 	 */
-	public function getPool($question) {
-		return $this->pools_model->getRecordByID($question->id_pool);
+	public function getPoll($question) {
+		return $this->polls_model->getRecordByID($question->id_poll);
 	}
 	
 	/**

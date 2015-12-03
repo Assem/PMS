@@ -14,7 +14,7 @@ class Respondents extends MY_Controller
         parent::__construct();
         
         $this->load->model('respondents_model', 'main_model');
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
     }
@@ -34,7 +34,7 @@ class Respondents extends MY_Controller
     			$this->main_model->delete($id);
     			
     			if($redirect_to_selection) {
-    				redirect('/pools/select');
+    				redirect('/polls/select');
     			}
     			redirect('/sheets/index');
     		}
@@ -70,9 +70,9 @@ class Respondents extends MY_Controller
     		);
     		
     		if($respondent){
-    			$pool = $this->pools_model->getRecordByID($respondent->id_pool);
+    			$poll = $this->polls_model->getRecordByID($respondent->id_poll);
     			
-    			$data['pool'] = $pool;
+    			$data['poll'] = $poll;
     			
     			$data_values = array(
 	    			'age' 					=> set_value('age', $respondent->age),
@@ -232,15 +232,15 @@ class Respondents extends MY_Controller
      * Add a new respondents
      *
      */
-    public function add($pool_id = NULL) {
+    public function add($poll_id = NULL) {
     	if( $this->require_role('admin,super-agent,agent') ) {
-    		if(!isset($pool_id) || !is_numeric($pool_id)) {
+    		if(!isset($poll_id) || !is_numeric($poll_id)) {
 	    		show_404();
 	    	}
 	    		
-	    	$pool = $this->pools_model->getRecordByID($pool_id);
+	    	$poll = $this->polls_model->getRecordByID($poll_id);
 	    	
-	    	if(!$pool) {
+	    	if(!$poll) {
 	    		show_404();
 	    	}
 	    	
@@ -273,12 +273,12 @@ class Respondents extends MY_Controller
 					
 					$data_values['created_by']		= $this->auth_user_id;
 					$data_values['creation_date']	= date('Y-m-d H:i:s');
-					$data_values['id_pool']	= $pool_id;
+					$data_values['id_poll']	= $poll_id;
 					
 		            if($respondent_id = $this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Fiche répondant créée avec succès!');
     					
-    					redirect("/sheets/add/$pool_id/$respondent_id");
+    					redirect("/sheets/add/$poll_id/$respondent_id");
     				} else {
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
@@ -286,7 +286,7 @@ class Respondents extends MY_Controller
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields($data_values);
-	    	$data['content_data']['pool'] = $pool;
+	    	$data['content_data']['poll'] = $poll;
     		
     		$this->load->view('global/layout', $data);
     	}

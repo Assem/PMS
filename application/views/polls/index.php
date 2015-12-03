@@ -2,7 +2,7 @@
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
 ?>
-<?php echo drawActionsMenuItem('pools/add', 'add.png', 'Ajouter'); ?>
+<?php echo drawActionsMenuItem('polls/add', 'add.png', 'Ajouter'); ?>
 <div id="tableInfo"></div>
 <div class="dataTable_wrapper">
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
@@ -31,20 +31,20 @@
 			</tr>
 		</thead>
 		<tbody id="tbody">
-			<?php foreach($pools as $pool): ?>
+			<?php foreach($polls as $poll): ?>
 				<tr style="border-color: gray;">
-					<td><?php echo $pool->id; ?></td>
-					<td><?php echo $pool->code; ?></td>
-					<td><?php echo $pool->label; ?></td>
-					<td><?php echo $pool->customer; ?></td>
-					<td><?php drawDate($pool->start_date); ?></td>
-					<td><?php drawDate($pool->end_date); ?></td>
-					<td><?php echo $pool->sheets_count ?></td>
+					<td><?php echo $poll->id; ?></td>
+					<td><?php echo $poll->code; ?></td>
+					<td><?php echo $poll->label; ?></td>
+					<td><?php echo $poll->customer; ?></td>
+					<td><?php drawDate($poll->start_date); ?></td>
+					<td><?php drawDate($poll->end_date); ?></td>
+					<td><?php echo $poll->sheets_count ?></td>
 					<td>
-						<?php echo ($pool->actif)? 1:0; ?>
+						<?php echo ($poll->actif)? 1:0; ?>
 					</td>
 					<td>
-						<?php drawActionsMenu('pools', $pool->id); ?>
+						<?php drawActionsMenu('polls', $poll->id); ?>
 					</td>
 				</tr>
 			<?php endforeach;?>

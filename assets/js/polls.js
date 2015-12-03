@@ -37,7 +37,7 @@ $(function() {
     	dateFormat: "dd/mm/yy"
     });
     
-    $('#datatable_fixed_column img.delete-action, .delete_pool').click(function(){
+    $('#datatable_fixed_column img.delete-action, .delete_poll').click(function(){
     	return confirm("Êtes-vous sûr de vouloir supprimer définitivement ce sondage; ceci supprimera toutes les fiches liées?");
     });
 });

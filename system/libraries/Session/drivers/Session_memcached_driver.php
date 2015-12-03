@@ -125,13 +125,13 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 			// If Memcached already has this server (or if the port is invalid), skip it
 			if (in_array($match[1].':'.$match[2], $server_list, TRUE))
 			{
-				log_message('debug', 'Session: Memcached server pool already has '.$match[1].':'.$match[2]);
+				log_message('debug', 'Session: Memcached server poll already has '.$match[1].':'.$match[2]);
 				continue;
 			}
 
 			if ( ! $this->_memcached->addServer($match[1], $match[2], isset($match[3]) ? $match[3] : 0))
 			{
-				log_message('error', 'Could not add '.$match[1].':'.$match[2].' to Memcached server pool.');
+				log_message('error', 'Could not add '.$match[1].':'.$match[2].' to Memcached server poll.');
 			}
 			else
 			{
@@ -141,7 +141,7 @@ class CI_Session_memcached_driver extends CI_Session_driver implements SessionHa
 
 		if (empty($server_list))
 		{
-			log_message('error', 'Session: Memcached server pool is empty.');
+			log_message('error', 'Session: Memcached server poll is empty.');
 			return FALSE;
 		}
 

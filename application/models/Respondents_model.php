@@ -17,16 +17,16 @@ class Respondents_model extends MY_Model {
 		
 		$this->table_name = 'respondents';
 		
-		$this->load->model('pools_model');
+		$this->load->model('polls_model');
 	}
 	
 	/**
-	 * Return the pool to witch this person responded
+	 * Return the poll to witch this person responded
 	 * 
 	 * @param Question $question
 	 */
-	public function getPool($respondent) {
-		return $this->pools_model->getRecordByID($respondent->id_pool);
+	public function getPoll($respondent) {
+		return $this->polls_model->getRecordByID($respondent->id_poll);
 	}
 	
 	public static function getEducationalLevel_List() {

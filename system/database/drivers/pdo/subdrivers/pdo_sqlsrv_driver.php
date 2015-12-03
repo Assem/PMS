@@ -107,9 +107,9 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 				$this->_quoted_identifier = (bool) $this->QuotedId;
 			}
 
-			if (isset($this->ConnectionPooling))
+			if (isset($this->ConnectionPolling))
 			{
-				$this->dsn .= ';ConnectionPooling='.$this->ConnectionPooling;
+				$this->dsn .= ';ConnectionPolling='.$this->ConnectionPolling;
 			}
 
 			if ($this->encrypt === TRUE)

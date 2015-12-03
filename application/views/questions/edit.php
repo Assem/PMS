@@ -4,7 +4,7 @@
         <strong>Erreur! </strong>Question introuvable!
     </div>
 <?php else: ?>
-	<h1 class="pmsH1">Sondage <?php echo $pool->label; ?>: Edition d'une question</h1>
+	<h1 class="pmsH1">Sondage <?php echo $poll->label; ?>: Edition d'une question</h1>
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
@@ -12,7 +12,7 @@
 	<?php echo validation_errors('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Erreur! </strong>', '</div>'); ?>
 	
 	<div class="view-menu">
-		<?php echo drawActionsMenuItem('pools/edit/'.$pool->id, 'back.png', 'Revenir au sondage') ?>
+		<?php echo drawActionsMenuItem('polls/edit/'.$poll->id, 'back.png', 'Revenir au sondage') ?>
 		<?php echo drawActionsMenuItem('questions/view/'.$question->id, 'cancel.png', 'Annuler') ?>
 		<?php echo drawActionsMenuItem('questions/delete/'.$question->id, 'delete.png', 'Supprimer', 'delete-action') ?>
 	</div>

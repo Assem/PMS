@@ -218,7 +218,7 @@ if ( ! function_exists('hash_pbkdf2'))
 			'tiger128,4' => 64,
 			'tiger160,4' => 64,
 			'tiger192,4' => 64,
-			'whirlpool' => 64
+			'whirlpoll' => 64
 		);
 
 		if (isset($block_sizes[$algo]) && strlen($password) > $block_sizes[$algo])
