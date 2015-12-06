@@ -64,7 +64,8 @@ $autoload['libraries'] = array(
 		'database',
 		'session',
 		'tokens',
-		'Authentication'
+		'Authentication',
+		'breadcrumbs'
 );
 
 /*

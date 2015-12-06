@@ -17,6 +17,7 @@ class Polls_model extends MY_Model {
 		$this->load->model('users_model');
 		$this->load->model('questions_model');
 		$this->load->model('sheets_model');
+		$this->load->model('sheet_answers_model');
 		
 		$this->table_name = 'polls';
 		$this->pk_column = 'id';
@@ -41,6 +42,21 @@ class Polls_model extends MY_Model {
 		
 		foreach ($questions as $question) {
 			$question->type_name = $this->questions_model->getType($question);
+		}
+		
+		return $questions;
+	}
+	
+	/**
+	 * Return all the questions of the poll with their answers
+	 * 
+	 * @param Polls $poll
+	 */
+	public function getQuestionsWithAnswers($poll) {
+		$questions = $this->getMany2OneRecords('questions', 'id_poll', $poll->id, 'order asc');
+		
+		foreach ($questions as $question) {
+			$question->answers = $this->questions_model->getAnswers($question->id);
 		}
 		
 		return $questions;
@@ -79,11 +95,25 @@ class Polls_model extends MY_Model {
 		return $results;
 	}
 	
+	/**
+	 * Select all Polls with number of saved sheets
+	 * 
+	 * @return list
+	 */
 	public function getPollsWithSheetsNumber() {
 		$results = $this->db->select($this->table_name.'.*, (SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) as sheets_number')
 			->from($this->table_name)
 			->get()->result();
 		
 		return $results;
+	}
+	
+	/**
+	 * Get all question's answers for a poll
+	 * 
+	 * @param int $poll_id
+	 */
+	public function getAllAnswers($poll_id) {
+		return $this->sheet_answers_model->getPollAnswers($poll_id);
 	}
 }

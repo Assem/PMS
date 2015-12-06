@@ -401,4 +401,19 @@ class Sheets extends MY_Controller
 	    	$this->load->view('global/layout', $data);
     	}
     }
+    
+    /**
+     * Delete all the sheets of a poll
+     * 
+     * @param unknown $poll_id
+     */
+    public function delete_all($poll_id) {
+    	if( $this->require_role('admin') ) {
+	    	$this->main_model->delete_from_poll($poll_id);
+	    			
+	    	$this->session->set_flashdata('success', 'Fiches supprimées avec succès!');
+	    			
+	    	redirect("/polls/view/$poll_id");
+    	}
+    }
 }

@@ -199,3 +199,25 @@ a.counter_link {
 img.answer_tick {
 	margin-right: 5px;
 }
+
+div.graph_holder {
+	width: 100%;
+	height: 200px;
+	margin-bottom: 20px;
+}
+
+div.graph_tip {
+	background-color: black;
+	padding: 5px;
+	color: white;
+}
+
+div.question_stats {
+	width: 48%;
+	float: left;
+	margin-right: 10px; 
+}
+
+h4.question_tilte {
+	text-align: left;
+}

@@ -41,4 +41,23 @@ class Sheet_answers_model extends MY_Model {
 		
 		return $result;
 	}
+	
+	/**
+	 * Get all the answers for a poll
+	 * 
+	 * @param int $id_poll
+	 */
+	public function getPollAnswers($id_poll) {
+		$results = $this->db->select($this->table_name.'.*, questions.type', 
+				false)
+			->join('sheets', 'sheets.id = sheet_answers.id_sheet', 'LEFT')
+			->join('questions', 'questions.id = sheet_answers.id_question', 'LEFT')
+			->where('sheets.id_poll', $id_poll)
+			->from($this->table_name)
+			->order_by('id_question asc')
+			->get()
+			->result();
+		
+		return $results;
+	}
 }

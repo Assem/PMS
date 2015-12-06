@@ -348,4 +348,104 @@ class Polls extends MY_Controller
     		$this->load->view('global/layout', $data);
     	}
     }
+    
+    /**
+     * Show a poll's statistics
+     * 
+     * @param int $id a Poll id
+     */
+    public function stats($id=NULL) {
+    	if( $this->require_role('admin') ) {
+    		$poll = $this->_checkRecord($id);
+    		
+    		$data = array(
+    			'title' => "Statistiques d'un sondage",
+    			'js_to_load' => array(
+    				'plugins/flot/jquery.flot.js', 
+    				'plugins/flot/jquery.flot.resize.min.js', 
+    				'plugins/flot/jquery.flot.tooltip.min.js', 
+    				'plugins/flot/jquery.flot.pie.js', 
+    				'graphs.js'),
+    			'content' => 'polls/stats',
+    			'poll' => $poll
+    		);
+    		
+    		if($poll){
+    			$poll->sheets_count = $this->main_model->countSheets($poll);
+    			$all_answers = $this->main_model->getAllAnswers($id);
+    			$questions_with_answers = $this->main_model->getQuestionsWithAnswers($poll);
+    			
+    			$counted_answers = array();
+    			$stats = array();
+    			$count_question_answers = 0;
+    			
+    			foreach ($all_answers as $answer) {
+	    			if(!isset($counted_answers[$answer->id_question])) {
+	    				$counted_answers[$answer->id_question] = array('global' => 0, 'details' => array());
+	    			}
+	    			
+	    			if($answer->type == 'free_text') {
+	    				if(trim($answer->value)) {
+	    					$counted_answers[$answer->id_question]['global'] += 1;
+	    				}		
+	    			} else {
+	    				$counted_answers[$answer->id_question]['global'] += 1;
+    					$choices = explode(',', $answer->value);
+    					
+    					foreach ($choices as $choice) {
+    						if(!isset($counted_answers[$answer->id_question]['details'][$choice])) {
+	    						$counted_answers[$answer->id_question]['details'][$choice] = 0;
+	    					}
+	    					$counted_answers[$answer->id_question]['details'][$choice] += 1;
+    					}
+	    			}
+	    		}
+	    		
+	    		foreach ($questions_with_answers as $question) {
+	    			$question_data = array(
+	    				'details' => $question
+	    			);
+	    			
+	    			if(!isset($counted_answers[$question->id])) {
+	    				$counted_answers[$question->id] = array('global' => 0, 'details' => array());
+	    			}
+	    			
+	    			$question_data['nbr_answers'] = $counted_answers[$question->id]['global'];
+	    			$question_data['graph'] = array('data' => array(), 'labels' => array());
+	    			$counted_answers[$question->id]['answers'] = array();
+	    			
+	    			if($question->type != 'free_text') {
+	    				$i = 0;
+	    				foreach ($question->answers as $answer) {
+	    					if(!isset($counted_answers[$question->id]['details'][$answer->id])) {
+	    						$question_data['graph']['data'][] = array($i, 0);
+	    					} else {
+	    						$question_data['graph']['data'][] = array($i, $counted_answers[$question->id]['details'][$answer->id]);
+	    					}
+	    					
+	    					$counted_answers[$question->id]['answers'][$answer->order] = $answer;
+	    					$question_data['graph']['labels'][] = array($i, $answer->order);
+	    					
+	    					$i++;
+	    				}
+	    			} else {
+	    				$question_data['graph']['data'][] = array(0, $counted_answers[$question->id]['global']);
+	    				$question_data['graph']['data'][] = array(1, $poll->sheets_count - $counted_answers[$question->id]['global']);
+	    				
+	    				$question_data['graph']['labels'][] = array(0, 'Ayant répondu');
+	    				$question_data['graph']['labels'][] = array(1, 'Pas de réponse');
+	    				
+	    				$counted_answers[$question->id]['answers'] = false;
+	    			}
+	    			
+	    			$stats[] = $question_data;
+	    		}
+	    		
+	    		$data['graphs_data'] = $stats;
+	    		$data['answers_data'] = $counted_answers;
+    		}
+    		
+    		$this->load->view('global/layout', $data);
+    	}
+    }
 }

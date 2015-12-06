@@ -14,6 +14,8 @@
 					'title' => 'Consulter les fiches',
 					'class' => 'counter_link'
 	)); ?>
+	<?php echo drawActionsMenuItem('polls/stats/'.$poll->id, 'charts.png', 'Statistiques') ?>
+	<?php echo drawActionsMenuItem('sheets/delete_all/'.$poll->id, 'delete-all.png', 'Supprimer toutes les fiches', 'delete-all-action') ?>
 	
 	<div class="view-menu">
 		<?php echo drawActionsMenuItem('polls/edit/'.$poll->id, 'edit.png', 'Editer') ?>

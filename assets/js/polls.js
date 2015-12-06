@@ -40,4 +40,8 @@ $(function() {
     $('#datatable_fixed_column img.delete-action, .delete_poll').click(function(){
     	return confirm("Êtes-vous sûr de vouloir supprimer définitivement ce sondage; ceci supprimera toutes les fiches liées?");
     });
+    
+    $('.delete-all-action').click(function(){
+    	return confirm("Êtes-vous sûr de vouloir supprimer définitivement toutes les fiches du sondage?");
+    });
 });

@@ -190,4 +190,13 @@ class Sheets_model extends MY_Model {
 		
 		return $results;
 	}
+	
+	/**
+	 * Delete all sheets of a poll
+	 * 
+	 * @param int $poll_id
+	 */
+	public function delete_from_poll($poll_id) {
+		$this->db->delete($this->table_name, array('id_poll' => $poll_id));
+	}
 }
