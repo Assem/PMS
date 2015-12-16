@@ -56,7 +56,7 @@ class Polls extends MY_Controller
 	 * List all the polls
 	 */
 	public function index() {
-		if( $this->require_role('admin,super-agent,agent') ) {
+		if( $this->require_role('admin,super-agent') ) {
 			if( $this->is_role('agent') ) { //if it's an agent so we redirect him
 				redirect( secure_site_url('polls/select') );
 			}

@@ -31,4 +31,24 @@ class Geolocations_model extends MY_Model {
 		
 		return $result;
 	}
+	
+	/**
+	 * Get geolocation errors
+	 * 
+	 * @param int $limit
+	 */
+	public function getErrors($limit=null) {
+		$req = $this->db->select($this->table_name.'.*, 
+				users.pms_user_last_name, users.pms_user_first_name', false)
+			->order_by($this->table_name.'.creation_date', 'desc')
+			->from($this->table_name)
+			->join('users', 'users.user_id = id_user')
+			->where('error IS NOT NULL AND error != ""');
+		
+		if($limit) {
+			$req->limit($limit);
+		}
+		
+		return $req->get()->result();
+	}	
 }

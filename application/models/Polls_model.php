@@ -75,12 +75,13 @@ class Polls_model extends MY_Model {
 	
 	/**
 	 * Return only active polls: Active = True and start_date <= NOW <= end_date (if dates are defined)
+	 * 
+	 * @param bool $check_max If True, we return only polls not reaching their max sheet number
 	 */
-	public function getActivePolls() {
-		$results = $this->db->select('*')
+	public function getActivePolls($check_max=TRUE) {
+		$request = $this->db->select('*')
 			->from($this->table_name)
 			->where('actif', 1)
-			->where('(SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) < polls.max_surveys_number', NULL, FALSE)
 			->group_start()
 				->where('start_date =', NULL)
 				->or_where('start_date <= NOW()')
@@ -89,10 +90,13 @@ class Polls_model extends MY_Model {
 				->where('end_date =', NULL)
 				->or_where('end_date >= NOW()')
 			->group_end()
-			->order_by('label', 'asc')
-		->get()->result();
+			->order_by('label', 'asc');
 		
-		return $results;
+		if($check_max) {
+			$request->where('(SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) < polls.max_surveys_number', NULL, FALSE);
+		}
+		
+		return $request->get()->result();
 	}
 	
 	/**

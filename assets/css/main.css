@@ -221,3 +221,32 @@ div.question_stats {
 h4.question_tilte {
 	text-align: left;
 }
+
+.map-header {
+    background-color: white;
+    color: #144b69;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.search {
+    padding: 6px 15px 6px 30px;
+    margin: 3px;
+    background: url('../img/search.png') no-repeat 8px 6px;
+    font-size: 1.5em !important;
+}
+
+.rounded {
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border: 1px solid #d0d0d0;
+    background-color: #fcfcfc;
+}
+
+.marker-tip {
+	text-align: left;
+}

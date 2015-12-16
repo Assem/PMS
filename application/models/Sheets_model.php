@@ -115,18 +115,20 @@ class Sheets_model extends MY_Model {
 	 * Return all sheets with info on the Poll and Agent
 	 * 
 	 */
-	function getSheetsWithPollAndUser() {
-		$results = $this->db->select($this->table_name.'.*, 
+	function getSheetsWithPollAndUser($limit=null) {
+		$req = $this->db->select($this->table_name.'.*, 
 				polls.code as poll_code, polls.label as poll_label, 
 				users.pms_user_last_name, users.pms_user_first_name', false)
 			->order_by($this->table_name.'.creation_date', 'desc')
 			->from($this->table_name)
 			->join('polls', 'polls.id = sheets.id_poll')
-			->join('users', 'users.user_id = sheets.created_by')
-			->get()
-			->result();
+			->join('users', 'users.user_id = sheets.created_by');
 		
-		return $results;
+		if($limit) {
+			$req->limit($limit);
+		}
+		
+		return $req->get()->result();
 	}
 	
 	/**
@@ -198,5 +200,27 @@ class Sheets_model extends MY_Model {
 	 */
 	public function delete_from_poll($poll_id) {
 		$this->db->delete($this->table_name, array('id_poll' => $poll_id));
+	}
+	
+	/**
+	 * Return today's sheets for a Poll
+	 * 
+	 * @param int $poll_id
+	 */
+	public function getPollTodaySheets($poll_id) {
+		$results = $this->db->select('users.user_id, sheets.creation_date, users.pms_user_code, users.pms_user_first_name, users.pms_user_last_name,
+									geolocations.latitude, geolocations.longitude', false)
+			->from($this->table_name)
+			->join('geolocations', 'geolocations.id_sheet = sheets.id')
+			->join('users', 'users.user_id = sheets.created_by')
+			->where('sheets.id_poll', $poll_id)
+			->where('DATE(sheets.creation_date) = CURDATE()')
+			->where('geolocations.latitude IS NOT NULL')
+			->where('geolocations.latitude <> ')
+			->order_by('users.user_id, sheets.creation_date DESC')
+			->get()
+			->result();
+		
+		return $results;
 	}
 }

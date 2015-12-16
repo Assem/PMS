@@ -370,6 +370,8 @@ class Sheets extends MY_Controller
 				'class'	=> 'form-control'
     		));
     		
+    		$this->form_validation->set_rules('notes', 'Remarques', 'trim');
+    		
     		//add hidden inputs to save the agent position
     		$questions_data[''] = form_hidden('geo_error', '').form_hidden('position', '');
     		
@@ -414,6 +416,42 @@ class Sheets extends MY_Controller
 	    	$this->session->set_flashdata('success', 'Fiches supprimées avec succès!');
 	    			
 	    	redirect("/polls/view/$poll_id");
+    	}
+    }
+    
+    /**
+     * Return the sheets created today: we take only the last sheet with valid localisation for each agent
+     * Return JSON
+     * 
+     * @param int $poll_id
+     */
+    public function today_sheets($poll_id) {
+    	$this->output->enable_profiler(FALSE);
+    	
+    	if( $this->require_role('admin') ) {
+    		$result = array();
+    		
+	    	foreach($this->main_model->getPollTodaySheets($poll_id) as $sheet) {
+	    		if(!isset($result[$sheet->user_id])) {
+	    			$sheet->since = floor(((new \DateTime("now"))->getTimestamp() - strtotime($sheet->creation_date)) / 60);
+	    			$sheet->creation_date_formatted = date('d/m/Y H:i:s', strtotime($sheet->creation_date));
+	    			$result[$sheet->user_id] = $sheet;
+	    		}
+	    	}
+	    	
+	    	$result = array_values($result);
+	    	
+	    	echo json_encode($result);
+    	}
+    }
+    
+    public function recent_sheets() {
+    	$this->output->enable_profiler(FALSE);
+    	
+    	if( $this->require_role('admin') ) {
+	    	$lastSheets = $this->main_model->getSheetsWithPollAndUser(10);
+	    	
+	    	$this->load->view('sheets/_recent_sheets', array('sheets' => $lastSheets));
     	}
     }
 }

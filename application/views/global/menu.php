@@ -19,8 +19,11 @@
 			id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
 				<?php $active_controller = $this->router->fetch_class();?>
+				<?php if($auth_role == 'admin'): ?>
+					<li <?php echo(($active_controller == 'dashboard')?'class="active"':''); ?>><?php echo secure_anchor('dashboard', 'Dashboard'); ?></li>
+				<?php endif; ?>
 				<?php if($auth_role == 'admin' || $auth_role == 'super-agent'): ?>
-					<li <?php echo(($active_controller == 'polls')?'class="active"':''); ?>><?php echo secure_anchor('polls/index', 'Sondages'); ?></li>
+					<li <?php echo((($active_controller == 'polls') || ($active_controller == 'questions') || ($active_controller == 'answers'))?'class="active"':''); ?>><?php echo secure_anchor('polls/index', 'Sondages'); ?></li>
 				<?php endif; ?>
 				<?php if($auth_role == 'admin'): ?>
 					<li <?php echo(($active_controller == 'sheets')?'class="active"':''); ?>><?php echo secure_anchor('sheets/index', 'Fiches'); ?></li>
