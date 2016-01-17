@@ -328,3 +328,62 @@ ADD CONSTRAINT `fk_geolocations_sheet`
   REFERENCES `PMS`.`sheets` (`id`)
   ON DELETE SET NULL
   ON UPDATE SET NULL;
+
+  
+  CREATE TABLE `PMS`.`lov` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `group` VARCHAR(45) NOT NULL,
+  `value` VARCHAR(255) NOT NULL,
+  `id_parent` INT UNSIGNED NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+  
+  ALTER TABLE `PMS`.`lov` 
+ADD INDEX `fk_lov_parent_idx` (`id_parent` ASC);
+ALTER TABLE `PMS`.`lov` 
+ADD CONSTRAINT `fk_lov_parent`
+  FOREIGN KEY (`id_parent`)
+  REFERENCES `PMS`.`lov` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+  
+  ALTER TABLE `PMS`.`respondents` 
+CHANGE COLUMN `educational_level` `educational_level` INT(11) UNSIGNED NULL DEFAULT NULL ;
+
+ALTER TABLE `PMS`.`respondents` 
+CHANGE COLUMN `marital_status` `marital_status` INT(11) UNSIGNED NULL DEFAULT NULL ,
+CHANGE COLUMN `professional_status` `professional_status` INT(11) UNSIGNED NULL DEFAULT NULL ,
+CHANGE COLUMN `company_type` `company_type` INT(3) UNSIGNED NULL DEFAULT NULL ;
+
+
+ALTER TABLE `PMS`.`respondents` 
+ADD INDEX `fk_respondents_marital_idx` (`marital_status` ASC),
+ADD INDEX `fk_respondents_prof_stat_idx` (`professional_status` ASC),
+ADD INDEX `fk_respondents_comp_type_idx` (`company_type` ASC);
+ALTER TABLE `PMS`.`respondents` 
+ADD CONSTRAINT `fk_respondents_marital`
+  FOREIGN KEY (`marital_status`)
+  REFERENCES `PMS`.`lov` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_respondents_prof_stat`
+  FOREIGN KEY (`professional_status`)
+  REFERENCES `PMS`.`lov` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `fk_respondents_comp_type`
+  FOREIGN KEY (`company_type`)
+  REFERENCES `PMS`.`lov` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;
+
+  
+  ALTER TABLE `PMS`.`respondents` 
+ADD INDEX `fk_respondents_educ_idx` (`educational_level` ASC);
+ALTER TABLE `PMS`.`respondents` 
+ADD CONSTRAINT `fk_respondents_educ`
+  FOREIGN KEY (`educational_level`)
+  REFERENCES `PMS`.`lov` (`id`)
+  ON DELETE SET NULL
+  ON UPDATE CASCADE;

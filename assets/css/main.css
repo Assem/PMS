@@ -250,3 +250,17 @@ h4.question_tilte {
 .marker-tip {
 	text-align: left;
 }
+
+.lov-wrapper {
+	width: 50%;
+	float: left;
+}
+
+.actions-button {
+	border: none;
+    background: none;
+}
+
+.mini {
+	width: 35px;
+}

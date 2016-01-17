@@ -9,9 +9,10 @@
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>
 			<tr role="row" class="pmsFilterTHeader">
-				<th>ID</th>
+				<th>Code</th>
 				<th>Nom</th>
 				<th>Prénom</th>
+				<th>Nom d'utilisateur</th>
 				<th>Email</th>
 				<th>GSM</th>
 				<th>Rôle</th>
@@ -19,9 +20,10 @@
 				<th></th>
 			</tr>
 			<tr role="row" class="pmsTHeader">
-				<th>ID</th>
+				<th>Code</th>
 				<th>Nom</th>
 				<th>Prénom</th>
+				<th>Nom d'utilisateur</th>
 				<th>Email</th>
 				<th>GSM</th>
 				<th>Rôle</th>
@@ -32,9 +34,10 @@
 		<tbody id="tbody">
 			<?php foreach($users as $user): ?>
 				<tr style="border-color: gray;">
-					<td><?php echo $user->user_id; ?></td>
+					<td><?php echo $user->pms_user_code; ?></td>
 					<td><?php echo $user->pms_user_last_name; ?></td>
 					<td><?php echo $user->pms_user_first_name; ?></td>
+					<td><?php echo $user->user_name; ?></td>
 					<td><?php echo $user->user_email; ?></td>
 					<td><?php echo $user->pms_user_gsm; ?></td>
 					<td><?php echo ucfirst($this->authentication->roles[$user->user_level]); ?></td>

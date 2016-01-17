@@ -32,3 +32,17 @@ $config['pms_map_refresh_interval'] = 10;
 |
 */
 $config['pms_agent_idle_time'] = 60;
+
+/*
+|--------------------------------------------------------------------------
+| The list of available List Of Values
+|--------------------------------------------------------------------------
+|
+|
+*/
+$config['pms_lov_s'] = array(
+	'educational_level'		=> 'Niveau éducatif',
+	'professional_status'	=> 'Status professionnel',
+	'company_type'			=> 'Nature de société',
+	'marital_status'		=> 'Status conjugale'
+);

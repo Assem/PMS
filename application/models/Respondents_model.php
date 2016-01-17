@@ -18,6 +18,7 @@ class Respondents_model extends MY_Model {
 		$this->table_name = 'respondents';
 		
 		$this->load->model('polls_model');
+		$this->load->model('lovs_model');
 	}
 	
 	/**
@@ -29,57 +30,42 @@ class Respondents_model extends MY_Model {
 		return $this->polls_model->getRecordByID($respondent->id_poll);
 	}
 	
-	public static function getEducationalLevel_List() {
-		return array(
-			'0' => '',
-			'1'	=> 'Aucun',
-			'2'	=> 'Primaire',
-			'3'	=> 'Secondaire',
-			'4'	=> 'Universitaire',
-			'5'	=> '3ième Cycle'
-		);
+	public function getEducationalLevel_List() {
+		return self::_convert_to_array($this->lovs_model->getListe('educational_level'));
 	}
 	
 	public function getEducationalLevel($respondent) {
 		return $this->getEducationalLevel_List()[$respondent->educational_level];
 	}
 	
-	public static function getMaritalStatus_List() {
-		return array(
-			'0' => '',
-			'1'	=> 'Célibataire',
-			'2'	=> 'Marié',
-			'3'	=> 'Divorcé',
-			'4'	=> 'Veuf'
-		);
+	public function getMaritalStatus_List() {
+		return self::_convert_to_array($this->lovs_model->getListe('marital_status'));
 	}
 	
 	public function getMaritalStatus($respondent) {
 		return $this->getMaritalStatus_List()[$respondent->marital_status];
 	}
 	
-	public static function getProfessionalStatus_List() {
-		return array(
-			'0' => '',
-			'1'	=> 'Elève',
-			'2'	=> 'Etudiant',
-			'3'	=> 'Chômeur',
-			'4'	=> 'Employé',
-			'5'	=> 'Directeur',
-			'6' => 'Fondateur'
-		);
+	public function getProfessionalStatus_List() {
+		return self::_convert_to_array($this->lovs_model->getListe('professional_status'));
 	}
 	
 	public function getProfessionalStatus($respondent) {
 		return $this->getProfessionalStatus_List()[$respondent->professional_status];
 	}
 	
-	public static function getCompanyType_List() {
-		return array(
-			'0' => '',
-			'1'	=> 'Etatique',
-			'2'	=> 'Privé'
-		);
+	private static function _convert_to_array($db_records) {
+		$results = array(null => '');
+		
+		foreach ($db_records as $record) {
+			$results[$record->id] = $record->value;
+		}
+		
+		return $results;
+	}
+	
+	public function getCompanyType_List() {
+		return self::_convert_to_array($this->lovs_model->getListe('company_type'));
 	}
 	
 	public function getCompanyType($respondent) {

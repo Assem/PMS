@@ -142,7 +142,13 @@ class Sheets extends MY_Controller
 		   			);
     			}
 	    		
-	    		$latlong = $geolocation->latitude.','.$geolocation->longitude;
+    			if($geolocation->latitude) {
+	    			$latlong = $geolocation->latitude.','.$geolocation->longitude;
+	    			$location = "<img src='https://maps.googleapis.com/maps/api/staticmap?center=$latlong&zoom=15&size=400x200&maptype=roadmap
+							&markers=color:blue|$latlong'/>";
+    			} else {
+    				$location = $geolocation->error;
+    			}
 							
 	    		$createdBy = $this->main_model->getCreatedby($sheet);
     			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
@@ -153,8 +159,7 @@ class Sheets extends MY_Controller
 	    				'Date' 		=> date('d/m/Y H:i:s', strtotime($sheet->creation_date)),
 	    				'Agent' 	=> $createdByLink,
 	    				'Remarque' 	=> $sheet->notes,
-    					'Location'  => "<img src='https://maps.googleapis.com/maps/api/staticmap?center=$latlong&zoom=15&size=400x200&maptype=roadmap
-							&markers=color:blue|$latlong'/>"
+    					'Location'  => $location
     				),
 	    			'respondent_view' => $this->load->view('respondents/_view_for_sheet', 
 	    				array(

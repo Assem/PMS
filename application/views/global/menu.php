@@ -28,10 +28,11 @@
 				<?php if($auth_role == 'admin'): ?>
 					<li <?php echo(($active_controller == 'sheets')?'class="active"':''); ?>><?php echo secure_anchor('sheets/index', 'Fiches'); ?></li>
 					<li <?php echo(($active_controller == 'users')?'class="active"':''); ?>><?php echo secure_anchor('users/index', 'Utilisateurs'); ?></li>
+					<li <?php echo(($active_controller == 'settings')?'class="active"':''); ?>><?php echo secure_anchor('settings/index', 'Configurations'); ?></li>
 				<?php endif; ?>
 				<li class="logout"><?php echo secure_anchor('users/logout', 'Déconnexion'); ?></li>
 			</ul>
-			<span class="welcome-span"><?php echo "Bonjour $auth_last_name $auth_first_name" ?></span>
+			<span class="welcome-span"><?php echo "Bonjour [$auth_user_name] $auth_last_name $auth_first_name" ?></span>
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>

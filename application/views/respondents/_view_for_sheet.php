@@ -1,5 +1,6 @@
 <h3>Détail du répondant</h3>
 <?php 
+$this->load->helper(array('my_config'));
 $data_values = array(
     'Âge' 					=> $respondent->age,
     'Email' 				=> $respondent->email,
@@ -7,13 +8,13 @@ $data_values = array(
     'Sexe' 					=> ($respondent->sexe == 'H')?'Homme':'Femme',
     'Pays' 					=> $this->respondents_model->getCountry($respondent),
     'Ville' 				=> $this->respondents_model->getCity($respondent),
-    'Etat civil' 			=> $this->respondents_model->getMaritalStatus($respondent),
+    get_lov_label('marital_status') 			=> $this->respondents_model->getMaritalStatus($respondent),
     'Nombre d\'enfants' 	=> $respondent->childs_nbr,
     'Nombre de frères' 		=> $respondent->brothers_nbr,
     'Nombre de soeurs' 		=> $respondent->sisters_nbr,
-    'Niveau éducatif' 		=> $this->respondents_model->getEducationalLevel($respondent),
-    'Etat professionnel' 	=> $this->respondents_model->getProfessionalStatus($respondent),
-    'Entreprise' 			=> $this->respondents_model->getCompanyType($respondent)
+    get_lov_label('educational_level') 		=> $this->respondents_model->getEducationalLevel($respondent),
+    get_lov_label('professional_status') 	=> $this->respondents_model->getProfessionalStatus($respondent),
+    get_lov_label('company_type') 			=> $this->respondents_model->getCompanyType($respondent)
 );
 
 drawModelData($data_values, 2, 'view-form');

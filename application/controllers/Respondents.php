@@ -15,7 +15,7 @@ class Respondents extends MY_Controller
         
         $this->load->model('respondents_model', 'main_model');
 		$this->load->model('polls_model');
-		$this->load->helper(array('form', 'url', 'my_date'));
+		$this->load->helper(array('form', 'url', 'my_date', 'my_config'));
         $this->load->library('form_validation');
     }
     
@@ -41,7 +41,10 @@ class Respondents extends MY_Controller
     	}
     }
     
-    private function _setValueToNull($data_array, $fields_list) {
+    private function _setValueToNull($data_array) {
+    	$fields_list = array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 
+    			'gsm', 'educational_level', 'professional_status', 'company_type', 'marital_status');
+    	
     	foreach ($fields_list as $field) {
     		if(empty($data_array[$field])) {
     			$data_array[$field] = NULL;
@@ -94,7 +97,7 @@ class Respondents extends MY_Controller
 	    			$this->_setValidationRules();
 						
 	    			if ($this->form_validation->run()) {
-	    				$data_values = $this->_setValueToNull($data_values, array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 'gsm'));
+	    				$data_values = $this->_setValueToNull($data_values);
 	    				
 	    				if($this->main_model->update($id, $data_values)){
 	    					$this->session->set_flashdata('success', 'Répondant mis à jour avec succès!');
@@ -168,7 +171,7 @@ class Respondents extends MY_Controller
 					'class'		=> 'form-control'
 					)
 				),
-				'Status conjugale'		=> form_dropdown(
+				get_lov_label('marital_status')		=> form_dropdown(
 					'marital_status', 
 					$this->main_model->getMaritalStatus_List(), 
 					$data_values['marital_status'], 
@@ -204,19 +207,19 @@ class Respondents extends MY_Controller
 					'class'		=> 'form-control'
 					)
 				),
-				'Niveau éducatif'		=> form_dropdown(
+				get_lov_label('educational_level')		=> form_dropdown(
 					'educational_level', 
 					$this->main_model->getEducationalLevel_List(), 
 					$data_values['educational_level'], 
 					'class="form-control"'
 				),
-				'Status professionnel'		=> form_dropdown(
+				get_lov_label('professional_status')		=> form_dropdown(
 					'professional_status', 
 					$this->main_model->getProfessionalStatus_List(), 
 					$data_values['professional_status'], 
 					'class="form-control"'
 				),
-				'Nature de société'		=> form_dropdown(
+				get_lov_label('company_type')	=> form_dropdown(
 					'company_type', 
 					$this->main_model->getCompanyType_List(), 
 					$data_values['company_type'], 
@@ -269,7 +272,7 @@ class Respondents extends MY_Controller
     			$this->_setValidationRules();
     			
 				if ($this->form_validation->run()) {
-					$data_values = $this->_setValueToNull($data_values, array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 'gsm'));
+					$data_values = $this->_setValueToNull($data_values);
 					
 					$data_values['created_by']		= $this->auth_user_id;
 					$data_values['creation_date']	= date('Y-m-d H:i:s');

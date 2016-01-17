@@ -14,8 +14,8 @@ function loadMapScript() {
 //create the maps and start getting data
 function initializeMap() {
 	var mapOptions = {
-		center: new google.maps.LatLng(48.8588589, 2.3470599),
-		zoom: 8
+		center: new google.maps.LatLng(34.4358705, 7.447448),
+		zoom: 6
 	};
 	
 	for(var i=0; i < mapsids.length; i++) {

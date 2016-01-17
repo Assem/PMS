@@ -34,7 +34,7 @@ $(function() {
     			"aoColumnDefs": aoColumnDefs,
     	    	"bInfo": false,
     	    	"oLanguage": PMS.myDataTable._dataTableLanguage,
-    	    	"lengthMenu": [ 5, 10, 25, 50, 75, 100 ]
+    	    	"lengthMenu": [[ 5, 20, 50, -1 ], [ 5, 20, 50, 'Tout' ]]
     	    });
         	
         	container.dataTable().columnFilter({
@@ -49,6 +49,11 @@ $(function() {
         		PMS.myDataTable.showTableInfos(otable);
         	});
         	
+        	$( ".dataTables_filter" ).parent().parent().append('<button class="actions-button" id="' + container.id + '-clear"><img height="36" class="action-icon " src="/assets/img/reset.png" title="Re-initialiser filtre"></button>');
+        	$('#' + container.id + '-clear').click(function(){
+    			PMS.myDataTable.resetAllFilters(otable);
+    	    });
+        	
         	return otable;
         },
         
@@ -60,6 +65,17 @@ $(function() {
 			);
         },
         
+        resetAllFilters: function(oTable) {
+        	$('.dataTables_filter input').val('');
+        	$('.pmsFilterTHeader input').val('');
+        	
+        	oTable.columns().eq(0).each( function ( colIdx ) {
+        		oTable.column( colIdx ).search('');
+        	} );
+        	oTable.search('');
+            oTable.draw();
+        },
+        
         validateDeletion: function () {
         	return confirm("Êtes-vous sûr de vouloir supprimer définitivement cet enregistrement?");
         }
@@ -68,4 +84,16 @@ $(function() {
     $('.delete-action').click(function(){
     	return PMS.myDataTable.validateDeletion();
     });
+    
+    $.fn.dataTableExt.oApi.fnResetAllFilters = function (oSettings, bDraw/*default true*/) {
+        for(iCol = 0; iCol < oSettings.aoPreSearchCols.length; iCol++) {
+                oSettings.aoPreSearchCols[ iCol ].sSearch = '';
+        }
+        oSettings.oPreviousSearch.sSearch = '';
+ 
+        if(typeof bDraw === 'undefined') bDraw = true;
+        if(bDraw) this.fnDraw();
+    }
+    
+    
 });
