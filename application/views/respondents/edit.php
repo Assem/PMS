@@ -24,3 +24,6 @@
 
 <?php endif; ?>
 
+<script type="text/javascript">
+var cities = <?php echo json_encode($cities); ?>;
+</script>

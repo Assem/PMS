@@ -256,6 +256,11 @@ h4.question_tilte {
 	float: left;
 }
 
+.countries-wrapper {
+	width: 60%;
+	margin-left: 20%;
+}
+
 .actions-button {
 	border: none;
     background: none;

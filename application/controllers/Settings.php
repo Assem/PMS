@@ -26,7 +26,7 @@ class Settings extends MY_Controller
 			foreach ($this->config->item('pms_lov_s') as $group => $label) {
 				$liste_lov_s[$group] = array(
     				'label' => $label,
-    				'items' => $this->lovs_model->getListe($group)
+    				'items' => $this->lovs_model->getList($group)
     			);
 			}
 			
@@ -37,6 +37,8 @@ class Settings extends MY_Controller
 	    		'map_refresh' 	=> $this->config->item('pms_map_refresh_interval'),
     			'idle_time' 	=> $this->config->item('pms_agent_idle_time'),
     			'listes'		=> $liste_lov_s,
+				'countries'		=> $this->lovs_model->getList('country'),
+				'towns'			=> $this->lovs_model->getListWithParent('town'),
 				'data_url'		=> base_url("settings/lov_management/"),
     			'js_to_load' 	=> array('settings.js'),
     		);
@@ -60,10 +62,15 @@ class Settings extends MY_Controller
     				$result = "success";
     				break;
     			case 'add':
+    				$parent = NULL;
+    				if($this->input->post('parent_value')) {
+    					$parent = $this->input->post('parent_value');
+    				}
     				$this->lovs_model->create(
     					array(
-	    					'value' => $this->input->post('value'),
-	    					'group' => $this->input->post('group')
+    						'id_parent' => $parent,
+	    					'value' 	=> $this->input->post('value'),
+	    					'group' 	=> $this->input->post('group')
 	    				)
     				);
     				$result = "success";

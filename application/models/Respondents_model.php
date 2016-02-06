@@ -31,7 +31,7 @@ class Respondents_model extends MY_Model {
 	}
 	
 	public function getEducationalLevel_List() {
-		return self::_convert_to_array($this->lovs_model->getListe('educational_level'));
+		return self::_convert_to_array($this->lovs_model->getList('educational_level'));
 	}
 	
 	public function getEducationalLevel($respondent) {
@@ -39,7 +39,7 @@ class Respondents_model extends MY_Model {
 	}
 	
 	public function getMaritalStatus_List() {
-		return self::_convert_to_array($this->lovs_model->getListe('marital_status'));
+		return self::_convert_to_array($this->lovs_model->getList('marital_status'));
 	}
 	
 	public function getMaritalStatus($respondent) {
@@ -47,7 +47,7 @@ class Respondents_model extends MY_Model {
 	}
 	
 	public function getProfessionalStatus_List() {
-		return self::_convert_to_array($this->lovs_model->getListe('professional_status'));
+		return self::_convert_to_array($this->lovs_model->getList('professional_status'));
 	}
 	
 	public function getProfessionalStatus($respondent) {
@@ -65,38 +65,40 @@ class Respondents_model extends MY_Model {
 	}
 	
 	public function getCompanyType_List() {
-		return self::_convert_to_array($this->lovs_model->getListe('company_type'));
+		return self::_convert_to_array($this->lovs_model->getList('company_type'));
 	}
 	
 	public function getCompanyType($respondent) {
 		return $this->getCompanyType_List()[$respondent->company_type];
 	}
 	
-	public static function getCountry_List() {
-		return array(
-			'1'	=> 'Algérie'
-		);
+	public function getCountry_List() {
+		return self::_convert_to_array($this->lovs_model->getList('country'));
 	}
 	
 	public function getCountry($respondent) {
 		return $this->getCountry_List()[$respondent->country];
 	}
 	
-	public static function getCity_List($id_country=1) {
-		$cities = array(
-			'1' => array(
-				'1' => 'Alger',
-				'2'	=> 'Oran',
-				'3'	=> 'Constantine',
-				'4'	=> 'Annaba',
-				'5'	=> 'Blida'
-			)
-		);
+	public function getCity_List($id_country=NULL) {
+		$db_records = $this->lovs_model->getListWithParent('town');
+		$results = array(null => '');
 		
-		return $cities[$id_country];
+		foreach ($db_records as $record) {
+			if(!isset($results[$record->parent_id])) {
+				$results[$record->parent_id] = array();
+			}
+			$results[$record->parent_id][$record->id] = $record->child;
+		}
+		
+		if($id_country) {
+			return $results[$id_country];
+		}
+		
+		return $results;
 	}
 	
 	public function getCity($respondent) {
-		return $this->getCity_List()[$respondent->city];
+		return $this->getCity_List($respondent->country)[$respondent->city];
 	}
 }

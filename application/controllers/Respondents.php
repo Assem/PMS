@@ -101,6 +101,8 @@ class Respondents extends MY_Controller
 	    				
 	    				if($this->main_model->update($id, $data_values)){
 	    					$this->session->set_flashdata('success', 'Répondant mis à jour avec succès!');
+	    					
+	    					redirect("/sheets/add/" . $respondent->id_poll . "/$id");
 	    				} else {
 	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
 	    				}
@@ -108,6 +110,8 @@ class Respondents extends MY_Controller
 	    		}
 	    		
 	    		$data['content_data'] = $this->_getFields($data_values);
+	    		$data['content_data']['cities'] = $this->main_model->getCity_List();
+	    		$data['js_to_load'] = array('respondents.js');
     		}
     		
     		$this->load->view('global/layout', $data);
@@ -124,19 +128,24 @@ class Respondents extends MY_Controller
     }
     
     private function _getFields($data_values) {
+    	$cities = [null => ''];
+    	if(!empty($data_values['country'])) {
+    		$cities = $this->main_model->getCity_List($data_values['country']);
+    	}
+    	
     	$data = array(
 			'fields' => array(
 				'Pays'		=> form_dropdown(
 					'country', 
 					$this->main_model->getCountry_List(), 
 					$data_values['country'], 
-					'class="form-control"'
+					'class="form-control" id="country_input"'
 				),
 				'Ville'		=> form_dropdown(
 					'city', 
-					$this->main_model->getCity_List(), 
+					$cities, 
 					$data_values['city'], 
-					'class="form-control"'
+					'class="form-control" id="city_input"'
 				),
 				'Sexe'		=> form_dropdown(
 					'sexe', 
@@ -289,7 +298,9 @@ class Respondents extends MY_Controller
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields($data_values);
+	    	$data['content_data']['cities'] = $this->main_model->getCity_List();
 	    	$data['content_data']['poll'] = $poll;
+	    	$data['js_to_load'] = array('respondents.js');
     		
     		$this->load->view('global/layout', $data);
     	}

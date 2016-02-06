@@ -111,8 +111,8 @@
                     inputvalue = currentFilter;
                 search_init = '';
             }
-
-            var input = $('<input type="text" class="' + search_init + sCSSClass + '" value="' + inputvalue + '" rel="' + i + '"/>');
+            
+            var input = $('<input type="text" data-prefix="' + th.data('prefix') + '" id="' + th.attr('id') + '" class="' + search_init + sCSSClass + '" value="' + inputvalue + '" rel="' + i + '"/>');
             if (iMaxLenght != undefined && iMaxLenght != -1) {
                 input.attr('maxlength', iMaxLenght);
             }
@@ -153,8 +153,12 @@
                             $(this).data("dt-iLastFilterLength", iCurrentFilterLength);
                         }
                     }
+                    var searchVal = this.value;
+                    if($(this).data('prefix') != "undefined") {
+                    	searchVal = $(this).data('prefix') + this.value;
+                    }
                     /* Filter on the column (the index) of this element */
-                    oTable.fnFilter(this.value, _fnColumnIndex(index), regex, smart); //Issue 37
+                    oTable.fnFilter(searchVal, _fnColumnIndex(index), regex, smart); //Issue 37
                     fnOnFiltered();
                 });
             }

@@ -14,3 +14,7 @@
 <div class="required-notice">* Champ obligatoire</div>
 <?php echo form_submit('submit', 'Enregistrer', array('class' => 'submit-button')); ?>
 <?php echo form_reset('reset', 'Réinitialiser', array('class' => 'submit-button')); ?>
+
+<script type="text/javascript">
+var cities = <?php echo json_encode($cities); ?>;
+</script>
