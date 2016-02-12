@@ -15,6 +15,7 @@ class Polls extends MY_Controller
 		
 		$this->load->model('polls_model', 'main_model');
 		$this->load->model('sheets_model');
+		$this->load->model('sequences_model');
 		
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
@@ -195,7 +196,7 @@ class Polls extends MY_Controller
     		);
     		
     		$data_values = array(
-    			'code' 				=> set_value('code'),
+    			'code' 				=> set_value('code', $this->sequences_model->getNextSequenceByKey('polls_code_seq')),
     			'label' 			=> set_value('label'),
     			'customer' 			=> set_value('customer'),
     			'start_date' 		=> set_value('start_date'),

@@ -354,6 +354,10 @@ class Sheets extends MY_Controller
     				$rules .= '|required';
     			}
     			
+    			if($question->type == 'free_text' && $question->free_answer_type == 'numeric') {
+    				$rules .= '|numeric';
+    			}
+    			
     			if($question->type == 'mutiple_choice') {
     				$input_name .= '[]';
     			}

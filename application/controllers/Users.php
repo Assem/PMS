@@ -14,6 +14,7 @@ class Users extends MY_Controller
         parent::__construct();
         
         $this->load->model('users_model', 'main_model');
+        $this->load->model('sequences_model');
     }
     
     public function index() {
@@ -284,18 +285,18 @@ class Users extends MY_Controller
     			'content' => 'users/add'
     		);
     		
-    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-    			$data_values = array(
-    				'pms_user_last_name' 	=> set_value('pms_user_last_name'),
-    				'pms_user_first_name' 	=> set_value('pms_user_first_name'),
-    				'user_email' 			=> set_value('user_email'),
-    				'pms_user_gsm' 			=> set_value('pms_user_gsm'),
-    				'user_name' 			=> set_value('user_name'),
-    				'pms_user_code' 		=> set_value('pms_user_code'),
-    				'user_level' 			=> set_value('user_level'),
-    				'user_banned' 			=> set_value('user_banned')
-    			);
+    		$data_values = array(
+    			'pms_user_last_name' 	=> set_value('pms_user_last_name'),
+    			'pms_user_first_name' 	=> set_value('pms_user_first_name'),
+    			'user_email' 			=> set_value('user_email'),
+    			'pms_user_gsm' 			=> set_value('pms_user_gsm'),
+   				'user_name' 			=> set_value('user_name'),
+   				'pms_user_code' 		=> set_value('pms_user_code', $this->sequences_model->getNextSequenceByKey('users_code_seq')),
+   				'user_level' 			=> set_value('user_level'),
+   				'user_banned' 			=> set_value('user_banned')
+   			);
     			
+    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
     			$this->_setValidationRules('add');
     			
 				if ($this->form_validation->run()) {
@@ -320,17 +321,6 @@ class Users extends MY_Controller
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
                 }
-    		} else {
-    			$data_values = array(
-    				'pms_user_last_name' 	=> '',
-    				'pms_user_first_name' 	=> '',
-    				'user_email' 			=> '',
-    				'pms_user_gsm' 			=> '',
-    				'user_name' 			=> '',
-    				'pms_user_code' 		=> '',
-    				'user_level' 			=> '',
-    				'user_banned' 			=> TRUE
-    			);
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);

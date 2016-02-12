@@ -4,7 +4,6 @@
 	<?php echo drawActionsMenuItem('answers/add/'.$question->id, 'add.png', 'Ajouter'); ?>
 <?php endif; ?>
 
-<div id="tableInfo"></div>
 <div class="dataTable_wrapper">
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="answers_datatable" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>

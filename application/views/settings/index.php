@@ -2,7 +2,7 @@
 	<ul>
 		<li><a href="#lov">Listes de valeurs</a></li>
 		<li><a href="#countries">Pays/Villes</a></li>
-		<li><a href="#dashboard">Dashboard</a></li>
+		<li><a href="#sequences">Séquences</a></li>
 	</ul>
 	<div id="lov" data-index="0">
 		<?php
@@ -14,8 +14,10 @@
 			$this->load->view ( 'settings/_countries' );
 		?>
 	</div>
-	<div id="dashboard" data-index="2">
-		
+	<div id="sequences" data-index="2">
+		<?php
+			$this->load->view ( 'settings/_sequences' );
+		?>
 	</div>
 </div>
 

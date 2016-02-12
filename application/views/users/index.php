@@ -4,7 +4,7 @@
 ?>
 <?php echo drawActionsMenuItem('users/add', 'add.png', 'Ajouter'); ?>
 
-<div id="tableInfo"></div>
+<div id="datatable_fixed_column_tableInfo" class="tableInfo"></div>
 <div class="dataTable_wrapper">
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>

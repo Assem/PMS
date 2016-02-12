@@ -11,7 +11,22 @@ switch ($question->type) {
 		$options['maxlength']	= '255';
 		$options['class']	= 'form-control';
 		
-		echo form_textarea($input_name, set_value($input_name, '', FALSE), $options);
+		if($question->type == 'free_text' && $question->free_answer_type == 'numeric') {
+			$options['type'] = 'number';
+			$options['step'] = 'any';
+			
+			echo form_input(array(
+				'name'	=> $input_name,
+				'id'	=> $input_name,
+				'value'	=> set_value($input_name, '', FALSE),
+				'type'	=> 'number',
+				'maxlength' => '11',
+				'step'		=> 'any',
+				'class'		=> 'form-control'
+			));
+		} else {
+			echo form_textarea($input_name, set_value($input_name, '', FALSE), $options);
+		}
 	break;
 	case 'one_choice':
 		echo '<table class="answers">';

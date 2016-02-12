@@ -21,8 +21,8 @@ var from = '<?php echo $relation; ?>';
 <?php
 	$this->load->view ( 'global/flash_messages', array('title' => $title) );
 ?>
-<div id="tableInfo"></div>
 
+<div id="datatable_fixed_column_tableInfo" class="tableInfo"></div>
 <div class="view-menu">
 	<?php echo drawActionsMenuItem($back_url, 'back.png', 'Revenir') ?>
 </div>

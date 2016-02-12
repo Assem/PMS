@@ -28,6 +28,7 @@ $(function() {
         },
 
         createDataTable: function (container, aaSorting, aoColumnDefs, aoColumnsFilter) {
+        	var container_id = container.attr('id');
         	var otable = container.DataTable({
     			"aaSorting": aaSorting,
     			"bAutoWidth": true,
@@ -43,31 +44,31 @@ $(function() {
     			aoColumns: aoColumnsFilter
     		});
         	
-        	PMS.myDataTable.showTableInfos(otable);
+        	PMS.myDataTable.showTableInfos(otable, container_id);
         	
         	otable.on( 'draw.dt', function () {
-        		PMS.myDataTable.showTableInfos(otable);
+        		PMS.myDataTable.showTableInfos(otable, container_id);
         	});
         	
-        	$( ".dataTables_filter" ).parent().parent().append('<button class="actions-button" id="' + container.id + '-clear"><img height="36" class="action-icon " src="/assets/img/reset.png" title="Re-initialiser filtre"></button>');
-        	$('#' + container.id + '-clear').click(function(){
-    			PMS.myDataTable.resetAllFilters(otable);
+        	$( "#" + container_id + "_filter" ).parent().parent().append('<button class="actions-button" id="' + container_id + '-clear"><img height="36" class="action-icon " src="/assets/img/reset.png" title="Re-initialiser filtre"></button>');
+        	$('#' + container_id + '-clear').click(function(){
+    			PMS.myDataTable.resetAllFilters(otable, container_id);
     	    });
         	
         	return otable;
         },
         
-        showTableInfos: function(otable) {
+        showTableInfos: function(otable, container_id) {
         	var info = otable.page.info();
         	
-        	$('#tableInfo').html(
+        	$('#' + container_id + '_tableInfo').html(
 			    'Nombre total: '+info.recordsTotal+' | Nombre filtré: '+info.recordsDisplay
 			);
         },
         
-        resetAllFilters: function(oTable) {
-        	$('.dataTables_filter input').val('');
-        	$('.pmsFilterTHeader input').val('');
+        resetAllFilters: function(oTable, container_id) {
+        	$("#" + container_id + "_filter").val('');
+        	$('#' + container_id + ' .pmsFilterTHeader input').val('');
         	
         	oTable.columns().eq(0).each( function ( colIdx ) {
         		oTable.column( colIdx ).search('');

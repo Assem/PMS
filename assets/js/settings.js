@@ -24,7 +24,37 @@ $(function() {
 		];		
 		towns_table = PMS.myDataTable.createDataTable($('#towns_table'), aaSorting, aoColumnDefs, aoColumnFilterDefs);
 	}
+	
+	if($('#sequences_table').length) {
+		var s_aaSorting = [[ 0, "asc" ]];
+		var s_aoColumnDefs = [
+	         { bSortable: false, aTargets: [ -1 ] }
+		];
+		var s_aoColumnFilterDefs = [		
+			{ type: "text" },	
+			null,
+			{ type: "text" }
+		];		
+		PMS.myDataTable.createDataTable($('#sequences_table'), s_aaSorting, s_aoColumnDefs, s_aoColumnFilterDefs);
+	}
+	
+	// update sequence preview
+	$('#prefix, #fillers, #next_index').keyup(update_sequence_preview);
+	if($('#preview').length) {
+		update_sequence_preview();
+	}
 });
+
+function update_sequence_preview() {
+	var preview = $('#prefix').val() + pad($('#next_index').val(), $('#fillers').val());
+	$('#preview').html(preview);
+}
+
+function pad(n, width, z) {
+	z = z || '0';
+	n = n + '';
+	return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 
 function edit_lov(id, default_value, parent_default_value) {
 	$('#item_value_' + id).toggle();

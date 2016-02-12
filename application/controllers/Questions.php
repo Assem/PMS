@@ -53,7 +53,8 @@ class Questions extends MY_Controller
 					)
 				),
 				'Type <font color="red">*</font>' 	=> form_dropdown('type', $this->main_model->getTypes(), $data_values['type'], 'class="form-control"'),
-				'Obligatoire'		=> form_checkbox('required', '1', $data_values['required'], 'class="form-control"')
+				'Obligatoire'		=> form_checkbox('required', '1', $data_values['required'], 'class="form-control"'),
+				'Type de réponse'	=> form_dropdown('free_answer_type', $this->main_model->getFreeAnswerTypes(), $data_values['free_answer_type'], 'class="form-control"')
 			)
 		);
     	
@@ -99,16 +100,18 @@ class Questions extends MY_Controller
 	    	
 	    	$data = array(
     			'title' => "Ajouter une question",
-    			'content' => 'questions/add'
+    			'content' => 'questions/add',
+	    		'js_to_load' => array('questions.js')
     		);
-    		
+	    	
+	    	$data_values = array(
+    			'description' 		=> set_value('description', '', FALSE),
+    			'type' 				=> set_value('type', ''),
+	    		'free_answer_type' 	=> set_value('free_answer_type', 'alphanumeric'),
+    			'required' 			=> set_value('required', FALSE)
+    		);
+	    	
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-    			$data_values = array(
-    				'description' 			=> set_value('description', '', FALSE),
-    				'type' 					=> set_value('type'),
-    				'required' 				=> set_value('required')
-    			);
-    			
     			$this->_setValidationRules('add');
     			
 				if ($this->form_validation->run()) {
@@ -116,20 +119,18 @@ class Questions extends MY_Controller
 					$data_values['order'] = $this->main_model->getNextIndex($poll_id);
 					$data_values['id_poll'] = $poll->id;
 					
-					if($this->main_model->create($data_values)){
+					if($id = $this->main_model->create($data_values)){
     					$this->session->set_flashdata('success', 'Question créée avec succès!');
     					
+    					// if the question is a choice one, we stay on the question page, so the user can add answers
+    					if($data_values['type'] == 'mutiple_choice' || $data_values['type'] == 'one_choice') {
+    						redirect('/questions/edit/'.$id);
+    					}
     					redirect('/polls/edit/'.$poll->id);
     				} else {
     					$this->session->set_flashdata('error', 'La création a échoué!');
     				}
                 }
-    		} else {
-    			$data_values = array(
-    				'description' 			=> '',
-    				'type' 					=> '',
-    				'required' 				=> FALSE
-    			);
     		}
 	    		
 	    	$data['content_data'] = $this->_getFields('add', $data_values);
@@ -170,6 +171,10 @@ class Questions extends MY_Controller
     					'Obligatoire'		=> ($question->required)? 'OUI' : 'NON'
     				)
 	    		);
+    			
+    			if($question->type == 'free_text') {
+    				$data['content_data']['fields']['Type de réponse'] = $this->main_model->getFreeAnswerType($question);
+    			}
     		}
     		
     		$this->load->view('global/layout', $data);
@@ -200,13 +205,14 @@ class Questions extends MY_Controller
     			$answers = $this->main_model->getAnswers($question->id);
     			$data['answers'] = $answers;
     			
+	    		$data_values = array(
+	    			'description' 			=> set_value('description', $question->description, FALSE),
+    				'type' 					=> set_value('type', $question->type),
+	    			'free_answer_type' 		=> set_value('free_answer_type', $question->free_answer_type),
+    				'required' 				=> set_value('required', $question->required)
+	    		);
+	    		
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-	    			$data_values = array(
-	    				'description' 			=> set_value('description', '', FALSE),
-    					'type' 					=> set_value('type'),
-    					'required' 				=> set_value('required')
-	    			);
-	    			
 	    			$this->_setValidationRules('edit', $id);
 	    			
 	    			if ($this->form_validation->run()) {
@@ -220,12 +226,6 @@ class Questions extends MY_Controller
 	    					$this->session->set_flashdata('error', 'La mise à jour a échoué!');
 	    				}
 	                }
-	    		} else {
-	    			$data_values = array(
-	    				'description' 	=> $question->description,
-    					'type' 			=> $question->type,
-    					'required' 		=> $question->required
-	    			);
 	    		}
 	    		
 	    		$data['content_data'] = $this->_getFields('edit', $data_values);

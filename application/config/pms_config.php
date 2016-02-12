@@ -46,3 +46,15 @@ $config['pms_lov_s'] = array(
 	'company_type'			=> 'Nature de société',
 	'marital_status'		=> 'Status conjugale'
 );
+
+/*
+|--------------------------------------------------------------------------
+| The list of available sequences
+|--------------------------------------------------------------------------
+|
+|
+*/
+$config['pms_sequences'] = array(
+	'polls_code_seq'	=> 'Sondages - Code Interne',
+	'users_code_seq'	=> 'Utilisateurs - Code Interne',
+);

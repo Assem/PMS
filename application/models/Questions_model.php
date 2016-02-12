@@ -50,6 +50,23 @@ class Questions_model extends Ordered_model {
 	}
 	
 	/**
+	 * Get the list of available free answer types
+	 * 
+	 */
+	public function getFreeAnswerTypes() {
+		return array(
+			'numeric' => 'Numérique',
+			'alphanumeric' => 'Alphanumérique'
+		);
+	}
+	
+	public function getFreeAnswerType($question) {
+		$types = $this->getFreeAnswerTypes();
+		
+		return $types[$question->free_answer_type];
+	}
+	
+	/**
 	 * Return all the answers of the question
 	 * 
 	 * @param int $id_question

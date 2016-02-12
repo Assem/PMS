@@ -58,7 +58,7 @@ class Answers extends MY_Controller
 					'id'	=> 'value',
 					'value'	=> $data_values['value'],
 					'type'	=> 'number',
-					'max' => '99',
+					'max' 	=> '99',
 					'class'		=> 'form-control'
 					)
 				)

@@ -387,3 +387,21 @@ ADD CONSTRAINT `fk_respondents_educ`
   REFERENCES `PMS`.`lov` (`id`)
   ON DELETE SET NULL
   ON UPDATE CASCADE;
+
+  
+CREATE TABLE `PMS`.`sequences` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `key` VARCHAR(20) NOT NULL,
+  `next_index` INT UNSIGNED NOT NULL DEFAULT 1,
+  `prefix` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `key_UNIQUE` (`key` ASC));
+  
+  
+  ALTER TABLE `PMS`.`sequences` 
+ADD COLUMN `fillers` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `prefix`,
+ADD UNIQUE INDEX `key_next_Unique` (`key` ASC, `next_index` ASC, `prefix` ASC, `fillers` ASC);
+
+
+ALTER TABLE `PMS`.`questions` 
+ADD COLUMN `free_answer_type` VARCHAR(15) NULL AFTER `id_poll`;
