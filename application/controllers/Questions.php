@@ -123,7 +123,7 @@ class Questions extends MY_Controller
     					$this->session->set_flashdata('success', 'Question créée avec succès!');
     					
     					// if the question is a choice one, we stay on the question page, so the user can add answers
-    					if($data_values['type'] == 'mutiple_choice' || $data_values['type'] == 'one_choice') {
+    					if($data_values['type'] == 'multiple_choice' || $data_values['type'] == 'one_choice') {
     						redirect('/questions/edit/'.$id);
     					}
     					redirect('/polls/edit/'.$poll->id);
@@ -140,7 +140,7 @@ class Questions extends MY_Controller
     	}
     }
     
-	/**
+    /**
      * View a question's detail
      * 
      * @param int $id ID of the question to view

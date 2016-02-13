@@ -88,6 +88,41 @@ class Answers extends MY_Controller
     }
 	
 	/**
+     * Add two answers: Yes and No
+     * 
+     * @param int $id_question ID of the question
+     */
+    function add_yes_no($id_question=NULL) {
+    	if( $this->require_role('admin,super-agent') ) {
+    		if(!isset($id_question) || !is_numeric($id_question)) {
+	    		show_404();
+	    	}
+	    		
+	    	$question = $this->questions_model->getRecordByID($id_question);
+	    	
+	    	if(!$question) {
+	    		show_404();
+	    	}
+    		
+    		$this->main_model->create(array(
+    			'id_question' => $id_question,
+    			'description' => 'OUI',
+    			'order'		  => $this->main_model->getNextIndex($id_question),
+    			'value'		  => 0
+    		));
+    			
+    		$this->main_model->create(array(
+    			'id_question' => $id_question,
+    			'description' => 'NON',
+    			'order'		  => $this->main_model->getNextIndex($id_question),
+    			'value'		  => 0
+    		));
+    		
+    		redirect('/questions/edit/'.$id_question);
+    	}
+    }
+    
+	/**
      * Add a new answer to a question
      * 
      * @param int $id_question ID of the Question to witch the answer will be added

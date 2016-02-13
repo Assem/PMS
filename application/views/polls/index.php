@@ -8,7 +8,7 @@
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>
 			<tr role="row" class="pmsFilterTHeader">
-				<th>ID</th>
+				<th></th>
 				<th>Code</th>
 				<th>Libellé</th>
 				<th>Client</th>
@@ -19,7 +19,7 @@
 				<th></th>
 			</tr>
 			<tr role="row" class="pmsTHeader">
-				<th>ID</th>
+				<th></th>
 				<th>Code</th>
 				<th>Libellé</th>
 				<th>Client</th>
@@ -33,7 +33,7 @@
 		<tbody id="tbody">
 			<?php foreach($polls as $poll): ?>
 				<tr style="border-color: gray;">
-					<td><?php echo $poll->id; ?></td>
+					<td><?php drawPollStatus($poll); ?></td>
 					<td><?php echo $poll->code; ?></td>
 					<td><?php echo $poll->label; ?></td>
 					<td><?php echo $poll->customer; ?></td>

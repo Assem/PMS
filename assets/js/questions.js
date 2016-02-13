@@ -19,11 +19,16 @@ $(function() {
 function toggle_answer_type() {
 	var free_answer_type = $('select[name="free_answer_type"]');
 	var type = $('select[name="type"]');
+	$('#generate_yes_no').hide();
 	if(type.length && type.val() == 'free_text') {
 		free_answer_type.show();
 		free_answer_type.closest('td').prev('th').show();
 	} else {
 		free_answer_type.hide();
 		free_answer_type.closest('td').prev('th').hide();
+		
+		if(type.val() == 'one_choice') {
+			$('#generate_yes_no').show();
+		}
 	}
 }

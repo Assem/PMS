@@ -13,7 +13,7 @@ switch ($type) {
 			echo $img.$answer->a_description.'<br>';
 		}
 	break;
-	case 'mutiple_choice':
+	case 'multiple_choice':
 		foreach ($answers as $answer) {
 			$choices = explode(',', $answer->value);
 			

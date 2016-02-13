@@ -358,7 +358,7 @@ class Sheets extends MY_Controller
     				$rules .= '|numeric';
     			}
     			
-    			if($question->type == 'mutiple_choice') {
+    			if($question->type == 'multiple_choice') {
     				$input_name .= '[]';
     			}
     			
@@ -438,17 +438,19 @@ class Sheets extends MY_Controller
     	$this->output->enable_profiler(FALSE);
     	
     	if( $this->require_role('admin') ) {
-    		$result = array();
+    		$poll = $this->polls_model->getRecordByID($poll_id);
+    		$result = array('total' => $this->polls_model->countSheets($poll));
+    		$agents = array();
     		
 	    	foreach($this->main_model->getPollTodaySheets($poll_id) as $sheet) {
-	    		if(!isset($result[$sheet->user_id])) {
+	    		if(!isset($agents[$sheet->user_id])) {
 	    			$sheet->since = floor(((new \DateTime("now"))->getTimestamp() - strtotime($sheet->creation_date)) / 60);
 	    			$sheet->creation_date_formatted = date('d/m/Y H:i:s', strtotime($sheet->creation_date));
-	    			$result[$sheet->user_id] = $sheet;
+	    			$agents[$sheet->user_id] = $sheet;
 	    		}
 	    	}
 	    	
-	    	$result = array_values($result);
+	    	$result['agents'] = array_values($agents);
 	    	
 	    	echo json_encode($result);
     	}

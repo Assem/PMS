@@ -59,8 +59,9 @@ function retrieveData(url, map, id) {
 		url: url,
 		dataType: 'json',
 		success: function(result) {
-			if(result && result.length > 0) {
-				updateMap(map, result, id);
+			if(result && result['agents'].length > 0) {
+				$('#sheet_number_' + id).html(result['total']);
+				updateMap(map, result['agents'], id);
 		    } else {
 		    	var searchInputID = "#" + id + 'seach';
 		    	if($(searchInputID).hasClass("ui-autocomplete-input")) {

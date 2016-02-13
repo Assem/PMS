@@ -10,6 +10,7 @@
 		<thead>
 			
 			<tr role="row" class="pmsFilterTHeader">
+				<th></th>
 				<th>Rang</th>
 				<th>Description</th>
 				<th>Type</th>
@@ -18,6 +19,7 @@
 			</tr>
 			
 			<tr role="row" class="pmsTHeader">
+				<th></th>
 				<th>Rang</th>
 				<th>Description</th>
 				<th>Type</th>
@@ -29,6 +31,13 @@
 			<?php $max_order = count($questions); ?>
 			<?php foreach($questions as $question): ?>
 				<tr style="border-color: gray;">
+					<td>
+						<?php if($question->warning): ?>
+							<img class="action-icon" src="/assets/img/warning.png" title="Pensez à ajouter des réponses!" />
+						<?php else: ?>
+							<img class="action-icon" src="/assets/img/selected.png" title="Tout est bon" />
+						<?php endif?>
+					</td>
 					<td><?php echo $question->order; ?></td>
 					<td><?php echo $question->description; ?></td>
 					<td><?php echo $question->type_name; ?></td>

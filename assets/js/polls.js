@@ -2,11 +2,11 @@ $(function() {
 	if($('#datatable_fixed_column').length) {
 		var aaSorting = [[ 4, "desc" ]];
 		var aoColumnDefs = [
-	         { bSortable: false, aTargets: [ -1, -3 ] },
+	         { bSortable: false, aTargets: [ 0, -1, -3 ] },
 	         { sType: "date-euro", aTargets: [ 4, 5 ] },
 		];
 		var aoColumnFilterDefs = [		
-			{ type: "number" },		
+			null,		
 			{ type: "text" },		
 			{ type: "text" },		
 			{ type: "text" },		
@@ -19,11 +19,12 @@ $(function() {
 	}
 	
 	if($('#questions_datatable').length) {
-		var q_aaSorting = [[ 0, "asc" ]];
+		var q_aaSorting = [[ 1, "asc" ]];
 		var q_aoColumnDefs = [
-	         { bSortable: false, aTargets: [ -1 ] },
+	         { bSortable: false, aTargets: [ 0, -1 ] },
 		];
-		var q_aoColumnFilterDefs = [		
+		var q_aoColumnFilterDefs = [	
+		    null,
 			{ type: "number" },		
 			{ type: "text" },		
 			{ type: "text" },		

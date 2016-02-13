@@ -94,3 +94,23 @@ function drawManageRankingMenu($controller, $id, $rank, $max_rank) {
 function drawDate($date) {
 	echo (isset($date))? DateTime::createFromFormat('Y-m-d H:i:s', $date." 00:00:00")->format('d/m/Y'):'';
 }
+
+/**
+ * Draw icons showing if the poll is ready to be used, or if it lacks questions or if one of it's question
+ * lack answers
+ * 
+ * @param Polls $poll
+ */
+function drawPollStatus($poll) {
+	$status = '<img class="action-icon" src="'.base_url("assets/img/selected.png").'" title="Tout est bon" />';
+	
+	if($poll->questions_number == 0) {
+		$status = '<img class="action-icon" src="'.base_url("assets/img/warning.png").'" title="Pas de questions!" />';
+	}
+	
+	if($poll->questions_without_answers_number != 0) {
+		$status = '<img class="action-icon" src="'.base_url("assets/img/warning.png").'" title="Des questions sans réponses!" />';
+	}
+	
+	echo $status;
+}

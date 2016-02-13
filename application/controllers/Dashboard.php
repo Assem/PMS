@@ -33,7 +33,7 @@ class Dashboard extends MY_Controller
     		foreach ($polls as $poll) {
     			$poll->sheets_count = $this->polls_model->countSheets($poll);
     			$color = ($poll->sheets_count == $poll->max_surveys_number)? 'red':'green';
-    			$poll->show_count = "<span style='color:$color'> (".$poll->sheets_count.'/'.$poll->max_surveys_number.')</span>';
+    			$poll->show_count = "<span style='color:$color'> (<span id='sheet_number_" . $poll->id . "'>".$poll->sheets_count.'</span>/'.$poll->max_surveys_number.')</span>';
     		}
     		
     		$data = array(

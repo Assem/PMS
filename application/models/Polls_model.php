@@ -56,7 +56,15 @@ class Polls_model extends MY_Model {
 		$questions = $this->getMany2OneRecords('questions', 'id_poll', $poll->id, 'order asc');
 		
 		foreach ($questions as $question) {
+			$question->type_name = $this->questions_model->getType($question);
 			$question->answers = $this->questions_model->getAnswers($question->id);
+			
+			// if it's a choice question, it must contains at least two answers
+			if(($question->type == 'multiple_choice' || $question->type == 'one_choice') && count($question->answers) < 2) {
+				$question->warning = TRUE;
+			} else {
+				$question->warning = FALSE;
+			}
 		}
 		
 		return $questions;
@@ -105,7 +113,13 @@ class Polls_model extends MY_Model {
 	 * @return list
 	 */
 	public function getPollsWithSheetsNumber() {
-		$results = $this->db->select($this->table_name.'.*, (SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) as sheets_number')
+		$results = $this->db->select($this->table_name.'.*, 
+				(SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) as sheets_number, 
+				(SELECT count(*) FROM questions WHERE questions.id_poll = polls.id) as questions_number,
+				(SELECT count(*) FROM questions q WHERE 
+					q.id_poll = polls.id AND 
+					q.type in ("multiple_choice", "one_choice") AND
+					NOT EXISTS(SELECT count(id) as nbr_a FROM answers WHERE answers.id_question = q.id HAVING nbr_a > 1)) as questions_without_answers_number')
 			->from($this->table_name)
 			->get()->result();
 		

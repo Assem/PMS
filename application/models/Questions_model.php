@@ -37,7 +37,7 @@ class Questions_model extends Ordered_model {
 	 */
 	public function getTypes() {
 		return array(
-			'mutiple_choice' => 'Choix mutiple',
+			'multiple_choice' => 'Choix mutiple',
 			'one_choice' => 'Choix unique',
 			'free_text' => 'Réponse libre'
 		);

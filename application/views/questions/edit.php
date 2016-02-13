@@ -4,7 +4,7 @@
         <strong>Erreur! </strong>Question introuvable!
     </div>
 <?php else: ?>
-	<h1 class="pmsH1">Sondage <?php echo $poll->label; ?>: Edition d'une question</h1>
+	<h1 class="pmsH1">Sondage '<?php echo $poll->label; ?>': Edition d'une question</h1>
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
@@ -19,6 +19,15 @@
 	
 	<?php echo form_open('questions/edit/'.$question->id); ?>
 	<?php drawModelData($fields, 2, 'edit-form'); ?>
+	
+	<div id="generate_yes_no" style="display: none; float: right;">
+		<?php 
+			echo secure_anchor(
+					'answers/add_yes_no/'.$question->id, 
+					'<input type="button" id="generate_yes_no_button" name="generate_yes_no_button" title="Générer OUI/NON réponses" value="+ OUI/NON" class="submit-button"/>'
+				);
+		?>
+	</div>
 	
 	<div class="required-notice">* Champ obligatoire</div>
 	<?php echo form_submit('submit', 'Enregistrer', array('class' => 'submit-button')); ?>

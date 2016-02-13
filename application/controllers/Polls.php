@@ -252,9 +252,16 @@ class Polls extends MY_Controller
     		
     		if($poll){
     			$poll->sheets_count = $this->main_model->countSheets($poll);
+    			$warning = False;
     			
-    			$questions = $this->main_model->getQuestions($poll);
+    			$questions = $this->main_model->getQuestionsWithAnswers($poll);
     			$data['questions'] = $questions;
+    			
+    			foreach ($questions as $question) {
+    				$warning = $warning || $question->warning;
+    			}
+    			
+    			$data['warning'] = $warning;
     			
     			$createdBy = $this->main_model->getCreatedby($poll);
     			$createdByLink = secure_anchor("users/view/".$createdBy->user_id, 
@@ -299,9 +306,16 @@ class Polls extends MY_Controller
     		
     		if($poll){
     			$poll->sheets_count = $this->main_model->countSheets($poll);
+    			$warning = False;
     			
-    			$questions = $this->main_model->getQuestions($poll);
+    			$questions = $this->main_model->getQuestionsWithAnswers($poll);
     			$data['questions'] = $questions;
+    			
+    			foreach ($questions as $question) {
+    				$warning = $warning || $question->warning;
+    			}
+    			
+    			$data['warning'] = $warning;
     			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
 	    			$data_values = array(

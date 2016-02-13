@@ -8,7 +8,9 @@
 	<?php
 		$this->load->view ( 'global/flash_messages', array('title' => $title) );
 	?>
-	
+	<?php if($warning): ?>
+		<img class="action-icon" src="/assets/img/warning.png" title="Des questions sans réponses!" />
+	<?php endif?>
 	<?php echo validation_errors('<div class="alert alert-danger"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>Erreur! </strong>', '</div>'); ?>
 	
 	<div class="view-menu">

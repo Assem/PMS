@@ -11,7 +11,7 @@ $(document).ready(function() {
     		if(question['details']['type'] == 'free_text') {
     			label = '';
     			color = "red";
-    		} else if (question['details']['type'] == 'mutiple_choice') {
+    		} else if (question['details']['type'] == 'multiple_choice') {
     			color = "green";
     		}
     		
@@ -28,11 +28,11 @@ $(document).ready(function() {
     			var answer = flotItem.series.answers[xval + 1];
         		
         		return  '<div class="graph_tip">' + (xval+1) + '.' + answer.description + "<br><br>"
-        				+ 'Nombre de répondants: ' + yval + ' => ' + yval/total_fiches*100 + '%'
+        				+ 'Nombre de répondants: ' + yval + ' => ' + round_percent(yval/total_fiches*100) + '%'
         				+ '</div>';
     		}
     		
-    		return '<div class="graph_tip">' + 'Nombre de répondants: ' + yval + ' => ' + yval/total_fiches*100 + '%'
+    		return '<div class="graph_tip">' + 'Nombre de répondants: ' + yval + ' => ' + round_percent(yval/total_fiches*100) + '%'
 					+ '</div>';
     	},
     	getGraphOptions: function(labels) {
@@ -78,3 +78,7 @@ $(document).ready(function() {
 		);
 	}
 });
+
+function round_percent(number) {
+	return (Math.round(number * 100)/100).toFixed(2);
+}

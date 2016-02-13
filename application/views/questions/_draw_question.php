@@ -38,7 +38,7 @@ switch ($question->type) {
 		}
 		echo '</table>';
 	break;
-	case 'mutiple_choice':
+	case 'multiple_choice':
 		$input_name .= '[]';
 		
 		echo '<table style="width:100%">';
