@@ -203,24 +203,25 @@ class Sheets_model extends MY_Model {
 	}
 	
 	/**
-	 * Return today's sheets for a Poll
+	 * Return poll's sheets
 	 * 
 	 * @param int $poll_id
 	 */
-	public function getPollTodaySheets($poll_id) {
-		$results = $this->db->select('users.user_id, sheets.creation_date, users.pms_user_code, users.pms_user_first_name, users.pms_user_last_name,
+	public function getPollSheetsWithLocalisations($poll_id, $all=FALSE) {
+		$query = $this->db->select('sheets.id, users.user_id, sheets.creation_date, users.pms_user_code, users.pms_user_first_name, users.pms_user_last_name,
 									geolocations.latitude, geolocations.longitude', false)
 			->from($this->table_name)
 			->join('geolocations', 'geolocations.id_sheet = sheets.id')
 			->join('users', 'users.user_id = sheets.created_by')
 			->where('sheets.id_poll', $poll_id)
-			->where('DATE(sheets.creation_date) = CURDATE()')
 			->where('geolocations.latitude IS NOT NULL')
 			->where('geolocations.latitude <> ')
-			->order_by('users.user_id, sheets.creation_date DESC')
-			->get()
-			->result();
+			->order_by('users.user_id, sheets.creation_date DESC');
 		
-		return $results;
+		if(!$all) {
+			$query->where('DATE(sheets.creation_date) = CURDATE()');
+		}
+		
+		return $query->get()->result();
 	}
 }

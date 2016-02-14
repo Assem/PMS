@@ -108,7 +108,7 @@ function updateMap(map, result, id) {
 		
 		drawMarker(vData, map);
 		searchData.push({
-			label: "[" + vData.pms_user_code + "] " + vData.pms_user_last_name.toUpperCase() + ' ' + vData.pms_user_first_name,
+			label: "F-" + vData.id + ": [" + vData.pms_user_code + "] " + vData.pms_user_last_name.toUpperCase() + ' ' + vData.pms_user_first_name,
 			value: vData.latitude + ':' + vData.longitude
 		});
 	}
@@ -141,7 +141,7 @@ function updateMap(map, result, id) {
 
 function drawMarker(vhData, map) {
 	var icon;
-	var al = '<div class="marker-tip">' + vhData.creation_date_formatted + ' => <b>' + vhData.since + "min.</b><br>" + 
+	var al = '<div class="marker-tip"><b>F-' + vhData.id + '</b><br>' + vhData.creation_date_formatted + ' => <b>' + vhData.since + "min.</b><br>" + 
 			"[" + vhData.pms_user_code + "] " + vhData.pms_user_last_name.toUpperCase() + ' ' + vhData.pms_user_first_name +
 			'</div>';
 	var moving = '1';

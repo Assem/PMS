@@ -17,6 +17,8 @@ class Sheets extends MY_Controller
 		$this->load->model('polls_model');
 		$this->load->model('users_model');
 		$this->load->model('respondents_model');
+		$this->load->model('settings_model');
+		
 		$this->load->helper(array('form', 'url', 'my_date'));
         $this->load->library('form_validation');
     }
@@ -429,26 +431,38 @@ class Sheets extends MY_Controller
     }
     
     /**
-     * Return the sheets created today: we take only the last sheet with valid localisation for each agent
+     * Return a Poll's sheets with valid localisation:
+     * Depending on the settings, we will return only today's sheets (the last one for each agent), or all the sheets
      * Return JSON
      * 
      * @param int $poll_id
      */
-    public function today_sheets($poll_id) {
+    public function get_sheets($poll_id) {
     	$this->output->enable_profiler(FALSE);
     	
     	if( $this->require_role('admin') ) {
     		$poll = $this->polls_model->getRecordByID($poll_id);
     		$result = array('total' => $this->polls_model->countSheets($poll));
     		$agents = array();
+    		$all = intval($this->settings_model->getRecordByID('map_show_all_sheets')->value);
     		
-	    	foreach($this->main_model->getPollTodaySheets($poll_id) as $sheet) {
-	    		if(!isset($agents[$sheet->user_id])) {
-	    			$sheet->since = floor(((new \DateTime("now"))->getTimestamp() - strtotime($sheet->creation_date)) / 60);
+    		$sheets = $this->main_model->getPollSheetsWithLocalisations($poll_id, $all);
+    		
+    		if($all) {
+    			foreach($sheets as $sheet) {
+		    		$sheet->since = floor(((new \DateTime("now"))->getTimestamp() - strtotime($sheet->creation_date)) / 60);
 	    			$sheet->creation_date_formatted = date('d/m/Y H:i:s', strtotime($sheet->creation_date));
-	    			$agents[$sheet->user_id] = $sheet;
-	    		}
-	    	}
+	    			$agents[$sheet->id] = $sheet;
+		    	}
+    		} else {
+	    		foreach($sheets as $sheet) {
+		    		if(!isset($agents[$sheet->user_id])) {
+		    			$sheet->since = floor(((new \DateTime("now"))->getTimestamp() - strtotime($sheet->creation_date)) / 60);
+		    			$sheet->creation_date_formatted = date('d/m/Y H:i:s', strtotime($sheet->creation_date));
+		    			$agents[$sheet->user_id] = $sheet;
+		    		}
+		    	}
+    		}
 	    	
 	    	$result['agents'] = array_values($agents);
 	    	
@@ -456,11 +470,16 @@ class Sheets extends MY_Controller
     	}
     }
     
+    /**
+     * Show recent recorded sheets
+     */
     public function recent_sheets() {
     	$this->output->enable_profiler(FALSE);
     	
     	if( $this->require_role('admin') ) {
-	    	$lastSheets = $this->main_model->getSheetsWithPollAndUser(10);
+    		// we get the number of sheets to retrieve from the settings table
+    		$limit = $this->settings_model->getRecordByID('dashboard_last_sheets_number')->value;
+	    	$lastSheets = $this->main_model->getSheetsWithPollAndUser(intval($limit));
 	    	
 	    	$this->load->view('sheets/_recent_sheets', array('sheets' => $lastSheets));
     	}

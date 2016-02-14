@@ -335,6 +335,7 @@ class Polls extends MY_Controller
 	    				$data_values['update_date']	= date('Y-m-d H:i:s');
 	    				$data_values['start_date'] = prepareDateForSave($data_values['start_date']);
 						$data_values['end_date'] = prepareDateForSave($data_values['end_date']);
+						$data_values['actif']	  = (empty($data_values['actif']))? '0' : '1';
 	    				
 	    			 	if($this->main_model->update($id, $data_values)){
 	    					$this->session->set_flashdata('success', 'Sondage mis à jour avec succès!');

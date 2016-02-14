@@ -405,3 +405,16 @@ ADD UNIQUE INDEX `key_next_Unique` (`key` ASC, `next_index` ASC, `prefix` ASC, `
 
 ALTER TABLE `PMS`.`questions` 
 ADD COLUMN `free_answer_type` VARCHAR(15) NULL AFTER `id_poll`;
+
+
+CREATE TABLE `PMS`.`settings` (
+  `key` VARCHAR(100) NOT NULL,
+  `value` VARCHAR(100) NULL,
+  PRIMARY KEY (`key`));
+
+  
+  INSERT INTO `PMS`.`settings` (`key`, `value`) VALUES ('map_update_interval', '30');
+INSERT INTO `PMS`.`settings` (`key`, `value`) VALUES ('map_show_all_sheets', '0');
+INSERT INTO `PMS`.`settings` (`key`, `value`) VALUES ('dashboard_last_sheets_number', '10');
+INSERT INTO `PMS`.`settings` (`key`, `value`) VALUES ('dashboard_last_errors_number', '10');
+INSERT INTO `PMS`.`settings` (`key`, `value`) VALUES ('map_idle_interval', '30');
