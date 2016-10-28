@@ -224,7 +224,7 @@ class MY_Model extends CI_Model {
 	public function update($id, $data){
 		$this->db->update($this->table_name, $data, array($this->pk_column => $id));
 		
-		if ($this->db->affected_rows() == 1) {
+		if ($this->db->affected_rows() >= 0) {
 			return true;
 		}
 		

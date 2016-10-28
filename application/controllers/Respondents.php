@@ -43,7 +43,7 @@ class Respondents extends MY_Controller
     
     private function _setValueToNull($data_array) {
     	$fields_list = array('age', 'childs_nbr', 'brothers_nbr', 'sisters_nbr', 
-    			'gsm', 'educational_level', 'professional_status', 'company_type', 'marital_status');
+    			'gsm', 'educational_level', 'professional_status', 'company_type', 'marital_status', 'country', 'city');
     	
     	foreach ($fields_list as $field) {
     		if(empty($data_array[$field])) {
@@ -90,11 +90,12 @@ class Respondents extends MY_Controller
 	    			'brothers_nbr' 			=> set_value('brothers_nbr', $respondent->brothers_nbr),
 	    			'sisters_nbr' 			=> set_value('sisters_nbr', $respondent->sisters_nbr),
 	    			'gsm' 					=> set_value('gsm', $respondent->gsm),
-	    			'company_type' 			=> set_value('company_type', $respondent->company_type)
+	    			'company_type' 			=> set_value('company_type', $respondent->company_type),
+	    			'notes' 				=> set_value('notes', $respondent->notes, FALSE)
 	    		);
     			
 	    		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-	    			$this->_setValidationRules();
+					$this->_setValidationRules();
 						
 	    			if ($this->form_validation->run()) {
 	    				$data_values = $this->_setValueToNull($data_values);
@@ -233,6 +234,11 @@ class Respondents extends MY_Controller
 					$this->main_model->getCompanyType_List(), 
 					$data_values['company_type'], 
 					'class="form-control"'
+				),
+				'Autres' 	=> form_textarea('notes', $data_values['notes'], array(
+					'maxlength' => '255',
+					'class'		=> 'form-control'
+					)
 				)
 			)
 		);
@@ -274,7 +280,8 @@ class Respondents extends MY_Controller
     			'brothers_nbr' 			=> set_value('brothers_nbr'),
     			'sisters_nbr' 			=> set_value('sisters_nbr'),
     			'gsm' 					=> set_value('gsm'),
-    			'company_type' 			=> set_value('company_type')
+    			'company_type' 			=> set_value('company_type'),
+    			'notes' 				=> set_value('notes', '', FALSE)
     		);
     			
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
