@@ -101,7 +101,7 @@ class Polls_model extends MY_Model {
 			->order_by('label', 'asc');
 		
 		if($check_max) {
-			$request->where('(SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) < polls.max_surveys_number', NULL, FALSE);
+			$request->where('(polls.max_surveys_number = 0 OR (SELECT count(*) FROM sheets WHERE sheets.id_poll = polls.id) < polls.max_surveys_number)', NULL, FALSE);
 		}
 		
 		return $request->get()->result();
