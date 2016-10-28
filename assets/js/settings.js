@@ -96,7 +96,7 @@ function add_save_lov(group, with_parent) {
 	with_parent = typeof with_parent !== 'undefined' ? with_parent : false;
 	
 	var value = $('#add_input_' + group).val().trim();
-	var parent = false;
+	var parent = null;
 	if(with_parent) {
 		parent = $('#add_input_parent_' + group).val().trim();
 	}

@@ -81,7 +81,7 @@ class Settings extends MY_Controller
 				'sequences'		=> $sequences,
 				'settings'		=> $settings_fields,
 				'data_url'		=> base_url("settings/lov_management/"),
-    			'js_to_load' 	=> array('settings.js'),
+    			'js_to_load' 	=> array('settings.js?v=1'),
     		);
 	    	$this->load->view('global/layout', $data);
     	}
