@@ -85,6 +85,30 @@ $(function() {
     $('.delete-action').click(function(){
     	return PMS.myDataTable.validateDeletion();
     });
+
+    $('.delete-selected-action').click(function(){
+        if(confirm("Êtes-vous sûr de vouloir supprimer toutes les lignes sélectionnées?")) {
+            var parent = $(this).data('parent');
+            var lignes = '';
+            $('#' + parent + ' #tbody input:checked').each(function(){
+                lignes += $(this).attr('id') + '-';
+            });
+
+            lignes = lignes.replace(/-+$/, '');
+
+            if(lignes != '') {
+                if($(this).data('add')) {
+                    lignes += $(this).data('add');
+                }
+
+                window.location = $(this).data('href') + '/' + lignes;
+            }
+        }
+    });
+
+    $('.checkall').click(function(){
+        $('.lineselect').prop('checked', this.checked);
+    });
     
     $.fn.dataTableExt.oApi.fnResetAllFilters = function (oSettings, bDraw/*default true*/) {
         for(iCol = 0; iCol < oSettings.aoPreSearchCols.length; iCol++) {
@@ -95,6 +119,4 @@ $(function() {
         if(typeof bDraw === 'undefined') bDraw = true;
         if(bDraw) this.fnDraw();
     }
-    
-    
 });

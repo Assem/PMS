@@ -31,12 +31,18 @@ var from = '<?php echo $relation; ?>';
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="datatable_fixed_column" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>
 			<tr role="row" class="pmsFilterTHeader">
+				<th style="text-align: center">
+					<img class="action-icon delete-selected-action" src="<?php echo base_url('assets/img/delete-all.png') ?>" title="Supprimer les lignes sélectionnées" data-parent="datatable_fixed_column" data-href="<?php echo base_url('sheets/delete/') ?>" data-add="<?php echo $from ?>"/>
+				</th>
 				<th>ID</th>
 				<?php echo $columns; ?>
 				<th>Date</th>
 				<th></th>
 			</tr>
 			<tr role="row" class="pmsTHeader">
+				<th>
+					<input type="checkbox" class="checkall">
+				</th>
 				<th>ID</th>
 				<?php echo $columns; ?>
 				<th>Date</th>
@@ -46,6 +52,9 @@ var from = '<?php echo $relation; ?>';
 		<tbody id="tbody">
 			<?php foreach($sheets as $sheet): ?>
 				<tr style="border-color: gray;">
+					<td>
+						<input type="checkbox" class="lineselect" id="<?php echo $sheet->id; ?>">
+					</td>
 					<td><?php echo $sheet->id; ?></td>
 					<?php getData($relation, $sheet); ?>
 					<td><?php echo date('d/m/Y H:i:s', strtotime($sheet->creation_date)); ?></td>

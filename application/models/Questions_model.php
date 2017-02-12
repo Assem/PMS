@@ -39,7 +39,8 @@ class Questions_model extends Ordered_model {
 		return array(
 			'multiple_choice' => 'Choix mutiple',
 			'one_choice' => 'Choix unique',
-			'free_text' => 'Réponse libre'
+			'ordered_choices' => 'Choix ordonnés',
+			'free_text' => 'Réponse libre',
 		);
 	}
 	

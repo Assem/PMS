@@ -19,11 +19,12 @@ $(function() {
 	}
 	
 	if($('#questions_datatable').length) {
-		var q_aaSorting = [[ 1, "asc" ]];
+		var q_aaSorting = [[ 2, "asc" ]];
 		var q_aoColumnDefs = [
-	         { bSortable: false, aTargets: [ 0, -1 ] },
+	         { bSortable: false, aTargets: [ 0, 1, -1 ] },
 		];
 		var q_aoColumnFilterDefs = [	
+		    null,
 		    null,
 			{ type: "number" },		
 			{ type: "text" },		

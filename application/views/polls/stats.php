@@ -21,6 +21,7 @@
 					if($question['details']->required) {
 						echo '<font color="red">*</font>';
 					}
+					//echo drawActionsMenuItem('questions/stats/'.$question['details']->id, 'charts.png', 'Statistiques pour cette question');
 				?>
 			</h4>
 			
@@ -34,10 +35,6 @@
 	var answers_data = <?php echo json_encode($answers_data); ?>;
 	var total_fiches = <?php echo $poll->sheets_count; ?>;
 	</script>
-	
-	<?php
-		//$this->load->view ( 'questions/_list', array('poll' => $poll, 'questions' => $questions, 'action' => 'view') );
-	?>
 
 <?php endif; ?>
 

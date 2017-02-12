@@ -14,7 +14,8 @@ $data_values = array(
     'Nombre de soeurs' 		=> $respondent->sisters_nbr,
     get_lov_label('educational_level') 		=> $this->respondents_model->getEducationalLevel($respondent),
     get_lov_label('professional_status') 	=> $this->respondents_model->getProfessionalStatus($respondent),
-    get_lov_label('company_type') 			=> $this->respondents_model->getCompanyType($respondent)
+    get_lov_label('company_type') 			=> $this->respondents_model->getCompanyType($respondent),
+    'Autres'                   => $respondent->notes,
 );
 
 drawModelData($data_values, 2, 'view-form');

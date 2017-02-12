@@ -4,7 +4,7 @@
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/datepicker-fr.js"); ?>"></script>
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/jquery-ui-timepicker-fr.js"); ?>"></script>
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/bootstrap.js"); ?>"></script>
-		<script type="text/javascript" src="<?php echo base_url("assets/js/main.js"); ?>"></script>
+		<script type="text/javascript" src="<?php echo base_url("assets/js/main.js?v=1"); ?>"></script>
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/jquery.dataTables.min.js"); ?>"></script>
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/dataTables.responsive.js"); ?>"></script>
 		<script type="text/javascript" src="<?php echo base_url("assets/js/plugins/dataTables.bootstrap.min.js"); ?>"></script>

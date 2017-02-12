@@ -68,7 +68,7 @@ class Sheets extends MY_Controller
     		$data = array(
 	    		'title' 		=> $title,
     			'content' 		=> 'sheets/index',
-	    		'js_to_load' 	=> array('sheets.js'),
+	    		'js_to_load' 	=> array('sheets.js?v=1'),
 	    		'sheets' 		=> $sheets,
     			'back_url' 		=> $back_url,
     			'relation'		=> $relation,
@@ -186,19 +186,27 @@ class Sheets extends MY_Controller
      */
     public function delete($id=NULL, $redirect=NULL) {
     	if( $this->require_role('admin') ) {
-    		$sheet = $this->_checkRecord($id);
+    		$ids = explode('-', $id);
+            $flash = 'Fiche supprimée';
+            if(count($ids) > 1) {
+                $flash = 'Fiches supprimées';
+            }
+
+            foreach ($ids as $id) {
+                $sheet = $this->_checkRecord($id);
     		
-    		if($sheet) {
-    			$this->main_model->delete($id);
-    			
-    			$this->session->set_flashdata('success', 'Fiche supprimée avec succès!');
-    			
-    			if($redirect) {
-    				redirect("/sheets/index/$redirect");
-    			}
-    			
-    			redirect("/sheets/index");
-    		}
+        		if($sheet) {
+        			$this->main_model->delete($id);
+        			
+        			$this->session->set_flashdata('success', "$flash avec succès!");
+        		}
+            }
+                    
+            if($redirect) {
+                redirect("/sheets/index/$redirect");
+            }
+            
+            redirect("/sheets/index");
     	}
     }
     
@@ -337,7 +345,7 @@ class Sheets extends MY_Controller
     		$data = array(
     			'title' => "Création d'une fiche",
     			'content' => 'sheets/add',
-    			'js_to_load' => array('location_detection.js'),
+    			'js_to_load' => array('location_detection.js', 'questions_values.js')
     		);
     		
     		$data_values = array();
@@ -356,13 +364,17 @@ class Sheets extends MY_Controller
     				$rules .= '|required';
     			}
     			
-    			if($question->type == 'free_text' && $question->free_answer_type == 'numeric') {
+    			if($question->type == 'free_text' && $question->free_answer_type == 'numeric' || $question->type == 'ordered_choices') {
     				$rules .= '|numeric';
     			}
     			
     			if($question->type == 'multiple_choice') {
     				$input_name .= '[]';
     			}
+
+                if($question->type == 'ordered_choices') {
+                    $input_name .= '[hidden]';
+                }
     			
     			$questions_data[$label] = $this->load->view('questions/_draw_question', 
     				array(
@@ -393,7 +405,7 @@ class Sheets extends MY_Controller
     		);
     		
     		if( strtolower( $_SERVER['REQUEST_METHOD'] ) == 'post' ){
-    			if ($this->form_validation->run()) {
+                if ($this->form_validation->run()) {
     				$data_values = $this->input->post();
     				
 					$data_values['created_by']		= $this->auth_user_id;

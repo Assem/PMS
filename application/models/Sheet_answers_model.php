@@ -29,7 +29,17 @@ class Sheet_answers_model extends MY_Model {
 		
 		foreach ($data as $id_question => $value) {
 			if(is_array($value)) {
-				$value = implode(',', $value);
+				if(array_key_exists('hidden', $value)) { // order question
+					unset($value['hidden']);
+					$val = '';
+					foreach ($value as $answer_id => $order) {
+						$val .= $answer_id . '|' . $order . '*';
+					}
+
+					$value = $val;
+				} else { // multiple choice
+					$value = implode(',', $value);
+				}
 			}
 			
 			$result = $result && $this->create(array(

@@ -13,20 +13,27 @@ $(document).ready(function() {
     			color = "red";
     		} else if (question['details']['type'] == 'multiple_choice') {
     			color = "green";
-    		}
+    		} else if (question['details']['type'] == 'ordered_choices') {
+                color = "#7FFF00";
+            }
     		
     		return [{
     			data: question['graph']['data'],
     			bars: { show: true },
     			color: color,
     			answers: answers_data[question['details']['id']]['answers'],
-    			label: label
+    			label: label,
+                qtype: question['details']['type']
     		}];
     	},
     	getGraphTooltip: function(label, xval, yval, flotItem) {
     		if(flotItem.series.answers) {
     			var answer = flotItem.series.answers[xval + 1];
         		
+                if(flotItem.series.qtype == 'ordered_choices') {
+                    return  '<div class="graph_tip">' + (xval+1) + '.' + answer.description;
+                } 
+
         		return  '<div class="graph_tip">' + (xval+1) + '.' + answer.description + "<br><br>"
         				+ 'Nombre de répondants: ' + yval + ' => ' + round_percent(yval/total_fiches*100) + '%'
         				+ '</div>';

@@ -8,8 +8,12 @@
 <div class="dataTable_wrapper">
     <table class="table table-striped table-hover responsive dataTable no-footer inline collapsed" id="questions_datatable" cellspacing="0" width="100%"  style="width: 100%;">
 		<thead>
-			
 			<tr role="row" class="pmsFilterTHeader">
+				<th style="text-align: center">
+					<?php if($action == 'edit'): ?>
+						<img class="action-icon delete-selected-action" src="<?php echo base_url('assets/img/delete-all.png') ?>" title="Supprimer les lignes sélectionnées" data-parent="questions_datatable" data-href="<?php echo base_url('questions/delete/') ?>"/>
+					<?php endif; ?>
+				</th>
 				<th></th>
 				<th>Rang</th>
 				<th>Description</th>
@@ -19,7 +23,12 @@
 			</tr>
 			
 			<tr role="row" class="pmsTHeader">
-				<th></th>
+				<th>
+					<?php if($action == 'edit'): ?>
+						<input type="checkbox" class="checkall">
+					<?php endif; ?>
+				</th>
+				<th>Etat</th>
 				<th>Rang</th>
 				<th>Description</th>
 				<th>Type</th>
@@ -31,6 +40,11 @@
 			<?php $max_order = count($questions); ?>
 			<?php foreach($questions as $question): ?>
 				<tr style="border-color: gray;">
+					<td>
+						<?php if($action == 'edit'): ?>
+							<input type="checkbox" class="lineselect" id="<?php echo $question->id; ?>">
+						<?php endif; ?>
+					</td>
 					<td>
 						<?php if($question->warning): ?>
 							<img class="action-icon" src="/assets/img/warning.png" title="Pensez à ajouter des réponses!" />

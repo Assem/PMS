@@ -11,7 +11,7 @@
 	<!--[if lt IE 9]>
 		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
-	<link rel="stylesheet" href="<?php echo base_url("assets/css/main.css"); ?>" />
+	<link rel="stylesheet" href="<?php echo base_url("assets/css/main.css?v=1"); ?>" />
 	
 	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/dataTables.bootstrap.css"); ?>" />
 	<link rel="stylesheet" href="<?php echo base_url("assets/css/plugins/dataTables.responsive.css"); ?>" />

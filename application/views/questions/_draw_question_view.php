@@ -24,4 +24,36 @@ switch ($type) {
 			echo $img.$answer->a_description.'<br>';
 		}
 	break;
+	case 'ordered_choices':
+		// parse answers
+		$user_answers = array();
+		$last = 1000;
+		foreach (explode('*', $answers[0]->value) as $u_answer) {
+			if($u_answer) {
+				$u_answer = explode('|', $u_answer);
+				$order = $u_answer[1];
+
+				if(!$order) {
+					$order = $last;
+					$last++;
+				}
+
+				$user_answers[$u_answer[0]] = $order;
+			}
+		}
+
+		asort($user_answers);
+
+		// Order answers by the user order
+		foreach ($user_answers as $id => $order) {
+			foreach ($answers as $answer) {
+				if($id == $answer->a_id) {
+					if($order >= 1000) {
+						$order = 0;
+					}
+					echo '<b>' . $order . '.&nbsp;&nbsp;</b>' .$answer->a_description.'<br>';
+				}
+			}
+		}
+	break;
 }

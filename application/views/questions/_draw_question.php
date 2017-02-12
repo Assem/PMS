@@ -50,4 +50,27 @@ switch ($question->type) {
 		}
 		echo '</table>';
 	break;
+	case 'ordered_choices':
+		echo '<table style="width:100%">';
+		echo form_hidden($input_name . '[hidden]');
+		foreach ($answers as $answer) {
+			$order_input_name = $input_name . '[' . $answer->id . ']';
+
+			echo '<tr>';
+				echo '<td class="order-input-column">' . form_input(array(
+					'name'	=> $order_input_name,
+					'id'	=> $order_input_name,
+					'value'	=> set_value($order_input_name, '', FALSE),
+					'type'	=> 'number',
+					'maxlength' => '3',
+					'min'		=> 1,
+					'step'		=> 'any',
+					'class'		=> 'form-control order-input',
+					'data-qid'	=> $question->id
+				)) . '</td>';
+				echo '<td>'.form_label($answer->description, $order_input_name).'</td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+	break;
 }

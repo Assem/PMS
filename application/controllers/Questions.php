@@ -26,20 +26,27 @@ class Questions extends MY_Controller
      */
     public function delete($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
-    		$record = $this->_checkRecord($id);
-    		
-    		$poll = $this->polls_model->getRecordByID($record->id_poll);
-	    	
-	    	$this->_can_edit($poll);
-    		
-    		if($record) {
-    			$this->main_model->delete($id);
-    			$this->main_model->shiftDown($record->id_poll, $record->order);
-    			
-    			$this->session->set_flashdata('success', 'Question supprimée avec succès!');
-    			
-    			redirect('/polls/edit/'.$record->id_poll);
-    		}
+            $ids = explode('-', $id);
+            $flash = 'Question supprimée';
+            if(count($ids) > 1) {
+                $flash = 'Questions supprimées';
+            }
+
+            foreach ($ids as $id) {
+                $record = $this->_checkRecord($id);
+                
+                $poll = $this->polls_model->getRecordByID($record->id_poll);
+                
+                $this->_can_edit($poll);
+                
+                if($record) {
+                    $this->main_model->delete($id);
+                    $this->main_model->shiftDown($record->id_poll, $record->order);
+                    
+                    $this->session->set_flashdata('success', "$flash avec succès!");
+                }
+            }
+            redirect('/polls/edit/'.$record->id_poll);
     	}
     }
 	
@@ -123,7 +130,7 @@ class Questions extends MY_Controller
     					$this->session->set_flashdata('success', 'Question créée avec succès!');
     					
     					// if the question is a choice one, we stay on the question page, so the user can add answers
-    					if($data_values['type'] == 'multiple_choice' || $data_values['type'] == 'one_choice') {
+    					if($data_values['type'] == 'multiple_choice' || $data_values['type'] == 'one_choice' || $data_values['type'] == 'ordered_choices') {
     						redirect('/questions/edit/'.$id);
     					}
     					redirect('/polls/edit/'.$poll->id);
@@ -182,9 +189,9 @@ class Questions extends MY_Controller
     }
     
 	/**
-     * Edit a poll
+     * Edit a question
      *
-     * @param int $id ID of the poll to edit
+     * @param int $id ID of the question to edit
      */
     public function edit($id=NULL) {
     	if( $this->require_role('admin,super-agent') ) {
@@ -283,6 +290,108 @@ class Questions extends MY_Controller
     					
     			redirect('/polls/edit/'.$question->id_poll);
     		}
+    	}
+    }
+    
+	/**
+     * Show a question's statistics
+     * 
+     * @param int $id a Question id
+     */
+    public function stats($id=NULL) {
+    	if( $this->require_role('admin') ) {
+    		$question = $this->_checkRecord($id);
+    		
+    		$data = array(
+    			'js_to_load' => array(
+    				'plugins/flot/jquery.flot.js', 
+    				'plugins/flot/jquery.flot.resize.min.js', 
+    				'plugins/flot/jquery.flot.tooltip.min.js', 
+    				'plugins/flot/jquery.flot.pie.js', 
+    				'graphs.js?v=1'),
+    			'content' => 'questions/stats',
+    			'question' => $question
+    		);
+    		
+    		if($question){
+    			$data['title'] = "Statistiques d'une question";
+    			
+    			/*$poll->sheets_count = $this->main_model->countSheets($poll);
+    			$all_answers = $this->main_model->getAllAnswers($id);
+    			$questions_with_answers = $this->main_model->getQuestionsWithAnswers($poll);
+    			
+    			$counted_answers = array();
+    			$stats = array();
+    			$count_question_answers = 0;
+    			
+    			foreach ($all_answers as $answer) {
+	    			if(!isset($counted_answers[$answer->id_question])) {
+	    				$counted_answers[$answer->id_question] = array('global' => 0, 'details' => array());
+	    			}
+	    			
+	    			if($answer->type == 'free_text') {
+	    				if(trim($answer->value)) {
+	    					$counted_answers[$answer->id_question]['global'] += 1;
+	    				}		
+	    			} else {
+	    				$counted_answers[$answer->id_question]['global'] += 1;
+    					$choices = explode(',', $answer->value);
+    					
+    					foreach ($choices as $choice) {
+    						if(!isset($counted_answers[$answer->id_question]['details'][$choice])) {
+	    						$counted_answers[$answer->id_question]['details'][$choice] = 0;
+	    					}
+	    					$counted_answers[$answer->id_question]['details'][$choice] += 1;
+    					}
+	    			}
+	    		}
+	    		
+	    		foreach ($questions_with_answers as $question) {
+	    			$question_data = array(
+	    				'details' => $question
+	    			);
+	    			
+	    			if(!isset($counted_answers[$question->id])) {
+	    				$counted_answers[$question->id] = array('global' => 0, 'details' => array());
+	    			}
+	    			
+	    			$question_data['nbr_answers'] = $counted_answers[$question->id]['global'];
+	    			$question_data['graph'] = array('data' => array(), 'labels' => array());
+	    			$counted_answers[$question->id]['answers'] = array();
+	    			
+	    			if($question->type != 'free_text') {
+	    				$i = 0;
+	    				foreach ($question->answers as $answer) {
+	    					if(!isset($counted_answers[$question->id]['details'][$answer->id])) {
+	    						$question_data['graph']['data'][] = array($i, 0);
+	    					} else {
+	    						$question_data['graph']['data'][] = array($i, $counted_answers[$question->id]['details'][$answer->id]);
+	    					}
+	    					
+	    					$counted_answers[$question->id]['answers'][$answer->order] = $answer;
+	    					$question_data['graph']['labels'][] = array($i, $answer->order);
+	    					
+	    					$i++;
+	    				}
+	    			} else {
+	    				$question_data['graph']['data'][] = array(0, $counted_answers[$question->id]['global']);
+	    				$question_data['graph']['data'][] = array(1, $poll->sheets_count - $counted_answers[$question->id]['global']);
+	    				
+	    				$question_data['graph']['labels'][] = array(0, 'Ayant répondu');
+	    				$question_data['graph']['labels'][] = array(1, 'Pas de réponse');
+	    				
+	    				$counted_answers[$question->id]['answers'] = false;
+	    			}
+	    			
+	    			$stats[] = $question_data;
+	    		}
+	    		
+	    		$data['graphs_data'] = $stats;
+	    		$data['answers_data'] = $counted_answers;
+	    		*/
+    		}
+    		
+    		$this->load->view('global/layout', $data);
     	}
     }
 }

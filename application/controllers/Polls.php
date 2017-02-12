@@ -35,7 +35,7 @@ class Polls extends MY_Controller
 			$data = array(
 				'content' => 'polls/select',
 				'title' => "Sélection de sondage",
-	    		'js_to_load' => array('polls.js'),
+	    		'js_to_load' => array('polls.js?v=1'),
 	    		'content_data' => array(
 					'fields' => array(
 						'Sondage' 	=> form_dropdown('poll', $polls, null, 'class="form-control"')
@@ -73,7 +73,7 @@ class Polls extends MY_Controller
 			$data = array(
 				'content' => 'polls/index',
 				'title' => "Liste des sondages",
-	    		'js_to_load' => array('polls.js'),
+	    		'js_to_load' => array('polls.js?v=1'),
 	    		'polls' => $polls
 			);
 			
@@ -191,7 +191,7 @@ class Polls extends MY_Controller
     	if( $this->require_role('admin,super-agent') ) {
     		$data = array(
     			'title' => "Ajouter un sondage",
-    			'js_to_load' => array('polls.js'),
+    			'js_to_load' => array('polls.js?v=1'),
     			'content' => 'polls/add'
     		);
     		
@@ -246,7 +246,7 @@ class Polls extends MY_Controller
     		$data = array(
     			'title' => "Detail d'un sondage",
     			'content' => 'polls/view',
-    			'js_to_load' => array('polls.js'),
+    			'js_to_load' => array('polls.js?v=1'),
     			'poll' => $poll
     		);
     		
@@ -299,7 +299,7 @@ class Polls extends MY_Controller
     		
     		$data = array(
     			'title' => "Edition d'un sondage",
-    			'js_to_load' => array('polls.js'),
+    			'js_to_load' => array('polls.js?v=1'),
     			'content' => 'polls/edit',
     			'poll' => $poll
     		);
@@ -381,7 +381,7 @@ class Polls extends MY_Controller
     				'plugins/flot/jquery.flot.resize.min.js', 
     				'plugins/flot/jquery.flot.tooltip.min.js', 
     				'plugins/flot/jquery.flot.pie.js', 
-    				'graphs.js'),
+    				'graphs.js?v=1'),
     			'content' => 'polls/stats',
     			'poll' => $poll
     		);
@@ -406,14 +406,36 @@ class Polls extends MY_Controller
 	    				}		
 	    			} else {
 	    				$counted_answers[$answer->id_question]['global'] += 1;
-    					$choices = explode(',', $answer->value);
-    					
-    					foreach ($choices as $choice) {
-    						if(!isset($counted_answers[$answer->id_question]['details'][$choice])) {
-	    						$counted_answers[$answer->id_question]['details'][$choice] = 0;
+	    				if($answer->type == 'ordered_choices') {
+	    					// parse answers
+							foreach (explode('*', $answer->value) as $u_answer) {
+								if($u_answer) {
+									$u_answer = explode('|', $u_answer);
+									$order = $u_answer[1];
+									$id_answer = $u_answer[0];
+
+									if(!$order) {
+										$order = 0;
+									}
+
+									if(!isset($counted_answers[$answer->id_question]['details'][$id_answer])) {
+			    						$counted_answers[$answer->id_question]['details'][$id_answer] = 0;
+			    					}
+			    					$counted_answers[$answer->id_question]['details'][$id_answer] += $order;
+								}
+							}
+
+							asort($counted_answers[$answer->id_question]['details']);
+	    				} else {
+	    					$choices = explode(',', $answer->value);
+	    					
+	    					foreach ($choices as $choice) {
+	    						if(!isset($counted_answers[$answer->id_question]['details'][$choice])) {
+		    						$counted_answers[$answer->id_question]['details'][$choice] = 0;
+		    					}
+		    					$counted_answers[$answer->id_question]['details'][$choice] += 1;
 	    					}
-	    					$counted_answers[$answer->id_question]['details'][$choice] += 1;
-    					}
+	    				}
 	    			}
 	    		}
 	    		
@@ -440,7 +462,7 @@ class Polls extends MY_Controller
 	    					}
 	    					
 	    					$counted_answers[$question->id]['answers'][$answer->order] = $answer;
-	    					$question_data['graph']['labels'][] = array($i, $answer->order);
+	    					$question_data['graph']['labels'][] = array($i, $answer->description);
 	    					
 	    					$i++;
 	    				}
